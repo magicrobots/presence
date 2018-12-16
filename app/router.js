@@ -6,7 +6,11 @@ const Router = EmberRouter.extend({
   rootURL: config.rootURL
 });
 
+// about images help | search?
 Router.map(function() {
+  this.route('about');
+  this.route('images');
+  this.route('help');
 });
 
 export default Router;
