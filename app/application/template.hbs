@@ -1,8 +1,13 @@
 <div id="application-root">
-    top part
-    {{the-nav}}
+    <div class="header">
+        top part
+    </div>
 
     <main>
-        {{outlet}}
+        <div class="content-container">
+            {{outlet}}
+        </div>
+        
+        {{the-nav}}
     </main>
 </div>
