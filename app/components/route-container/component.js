@@ -24,13 +24,13 @@ export default Component.extend(ResizeObservable, {
             // make it a 4:3 ratio as big as possible in the viewport
 
             const border = 50;
-            const outputRatio = 4/3;
+            const outputRatio = 4 / 3;
             const currHeight = this.containerHeight;
             const currWidth = this.containerWidth;
             const maxHeight = currHeight - (border * 2);
             const maxWidth = currWidth - (border * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
-            
+
             let newHeight;
             let newWidth;
             let newLeft;
@@ -61,14 +61,14 @@ export default Component.extend(ResizeObservable, {
         const imgContainer = this.$('.route-container');
         let bgCounter = 1;
 
-        const doSnow = setInterval(function() {
-              imgContainer.css('background-image', `url("assets/snow-${bgCounter}.jpg")`);
-              bgCounter++;
+        const doSnow = setInterval(function () {
+            imgContainer.css('background-image', `url("assets/snow-${bgCounter}.jpg")`);
+            bgCounter++;
 
-              if(bgCounter > 5) {
-                  clearInterval(doSnow);
-              imgContainer.css('background-image', 'url("assets/emptyScreen.jpg")');
-              }
-        }, 125);
+            if (bgCounter > 5) {
+                clearInterval(doSnow);
+                imgContainer.css('background-image', 'url("assets/emptyScreen.jpg")');
+            }
+        }, 75);
     }
 });
