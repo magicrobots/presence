@@ -10,18 +10,27 @@ export default Component.extend({
     TEXT_EDGE_BUFFER: 80,
     PROMPT_LINE_1: 'node|0656324 magicrobots/ (unknown user)',
     PROMPT_LINE_2: '$',
+    CURSOR_CHAR: '_',
 
     isPromptCursorVisible: true,
 
     classNames: ['image-viewer'],
 
-    //ctx: null,
-    //bgImageData: null,
-
     // ------------------- ember hooks -------------------
+    didInsertElement: function() {
+        // TODO: move this to keycontrol mixin?
+        return this.$().attr({ tabindex: 1 }), this.$().focus();
+    },
 
     keyDown(event) {
-        console.log('keyDOwn ' + event);
+        console.log('key: ' + event.keyCode);
+    },
+
+    click() {
+        // TODO: why this doing nothing?
+        console.log('click');
+        this.$().attr({ tabindex: 1 });
+        this.$()[0].focus();
     },
 
     init() {
@@ -34,9 +43,6 @@ export default Component.extend({
     didRender() {
         const canvasSource = this.$('#source-canvas')[0];
         const ctx = canvasSource.getContext("2d");
-
-        set(this, 'ctx', ctx)
-
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
@@ -44,6 +50,9 @@ export default Component.extend({
         const w = this.canvasWidth;
         const h = this.canvasHeight;
         const scope = this;
+
+        // store reference to ctx for render loop access
+        set(this, 'ctx', ctx)
 
         // canvas to put interaction items into
         ctx.fillStyle = "blue";
@@ -53,6 +62,7 @@ export default Component.extend({
         ctx2.fillStyle = "rgba(0,0,0,0)";
         ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
+        // load BG image
         imageObj.onload = function() {
             // ctx.drawImage(this, 0, 0, w, h);
             set(scope, 'bgImageData', this);
@@ -91,7 +101,13 @@ export default Component.extend({
     _startPromptCursorLoop() {
         const scope = this;
         setInterval(function() {
-            set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
+            // check for focus
+            if (document.activeElement === scope.$()[0]) {
+                console.log('is active');
+                set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
+            } else {
+                set(scope, 'isPromptCursorVisible', false);
+            }
         }, 500);
     },
 
@@ -102,11 +118,11 @@ export default Component.extend({
             const bgImage = scope.bgImageData;
             const ctx = scope.ctx;
 
-            if (!isPresent(bgImage)) {
-                return;
-            }
+            // if (!isPresent(bgImage)) {
+            //     return;
+            // }
 
-            if(isPresent(ctx)) {
+            if(isPresent(ctx) && isPresent(bgImage)) {
                 const w = scope.canvasWidth;
                 const h = scope.canvasHeight;
                 ctx.drawImage(bgImage, 0, 0, w, h);
@@ -119,7 +135,7 @@ export default Component.extend({
         ctx.font = `${this.FONT_SIZE}px Courier`;
         ctx.fillStyle = "white";
 
-        const cursor = this.isPromptCursorVisible ? '_' : '';
+        const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
         const interactiveLine = `${this.PROMPT_LINE_2}: ${cursor}`;
 
         ctx.fillText(this.PROMPT_LINE_1, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER);
