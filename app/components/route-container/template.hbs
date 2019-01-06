@@ -1,7 +1,8 @@
 
-<div class="route-container" style="{{routeContainerStyle}}">
-    <img class="vignette" src="assets/vignette.png">
-    {{outlet}}
+<div class="route-container" style={{routeContainerStyle}}>
+    <img class="vignette" alt="vignette" src="assets/vignette.png">
+    {{!-- {{outlet viewportMeasurements=viewportMeasurements}} --}}
+    {{image-viewer viewportMeasurements=viewportMeasurements}}
 
     {{the-nav}}
 </div>
