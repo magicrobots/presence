@@ -16,13 +16,11 @@ export default Component.extend(ResizeObservable, {
     _setContainerSize() {
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
-        this._doBackgroundCycle();
     },
 
-    routeContainerStyle: computed('containerHeight', 'containerWidth', {
+    viewportMeasurements: computed('containerHeight', 'containerWidth', {
         get() {
             // make it a 4:3 ratio as big as possible in the viewport
-
             const border = 50;
             const outputRatio = 4 / 3;
             const currHeight = this.containerHeight;
@@ -31,44 +29,35 @@ export default Component.extend(ResizeObservable, {
             const maxWidth = currWidth - (border * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
 
-            let newHeight;
-            let newWidth;
-            let newLeft;
-            let newTop;
+            let height;
+            let width;
+            let left;
+            let top;
 
             if (isWideViewport) {
-                newHeight = maxHeight;
-                newWidth = outputRatio * newHeight;
-                newTop = 0;
+                height = maxHeight;
+                width = outputRatio * height;
+                top = 0;
             } else {
-                newWidth = maxWidth;
-                newHeight = maxWidth * (1 / outputRatio);
-                newTop = (currHeight - newHeight) / 2 - (border * 1);
+                width = maxWidth;
+                height = maxWidth * (1 / outputRatio);
+                top = (currHeight - height) / 2 - (border * 1);
             }
 
-            newLeft = (currWidth - newWidth) / 2;
+            left = (currWidth - width) / 2;
 
-            const styleString = `height: ${newHeight}px; 
-                width: ${newWidth}px; 
-                left: ${newLeft}px;
-                top: ${newTop}px`;
-
-            return htmlSafe(styleString);
+            return {left, top, width, height};
         }
     }),
 
-    _doBackgroundCycle() {
-        const imgContainer = this.$('.route-container');
-        let bgCounter = 1;
+    routeContainerStyle: computed('viewportMeasurements', {
+        get() {
+            const styleString = `height: ${this.viewportMeasurements.height}px; 
+                width: ${this.viewportMeasurements.width}px; 
+                left: ${this.viewportMeasurements.left}px;
+                top: ${this.viewportMeasurements.top}px`;
 
-        const doSnow = setInterval(function () {
-            imgContainer.css('background-image', `url("assets/snow-${bgCounter}.jpg")`);
-            bgCounter++;
-
-            if (bgCounter > 5) {
-                clearInterval(doSnow);
-                imgContainer.css('background-image', 'url("assets/emptyScreen.jpg")');
-            }
-        }, 75);
-    }
+            return htmlSafe(styleString);
+        }
+    })
 });
