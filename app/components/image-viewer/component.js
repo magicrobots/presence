@@ -16,21 +16,24 @@ export default Component.extend({
 
     classNames: ['image-viewer'],
 
+    currentEntry: '',
+
     // ------------------- ember hooks -------------------
     didInsertElement: function() {
         // TODO: move this to keycontrol mixin?
-        return this.$().attr({ tabindex: 1 }), this.$().focus();
+        //document.addEventListener('focus', this._onFocusChange, true);
+        this.$().attr({ tabindex: 1 });
+        this.$().focus();
     },
 
     keyDown(event) {
-        console.log('key: ' + event.keyCode);
+        set(this, 'currentEntry', this.currentEntry.concat(event.key));
     },
 
     click() {
-        // TODO: why this doing nothing?
-        console.log('click');
+        // set focus on app for keyboard listener
         this.$().attr({ tabindex: 1 });
-        this.$()[0].focus();
+        this.$().focus();
     },
 
     init() {
@@ -102,8 +105,7 @@ export default Component.extend({
         const scope = this;
         setInterval(function() {
             // check for focus
-            if (document.activeElement === scope.$()[0]) {
-                console.log('is active');
+            if (scope._getIsKeyboardActive()) {
                 set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
             } else {
                 set(scope, 'isPromptCursorVisible', false);
@@ -136,10 +138,19 @@ export default Component.extend({
         ctx.fillStyle = "white";
 
         const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
-        const interactiveLine = `${this.PROMPT_LINE_2}: ${cursor}`;
+        const interactiveLine = `${this.PROMPT_LINE_2}:${this.currentEntry}${cursor}`;
 
         ctx.fillText(this.PROMPT_LINE_1, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER);
-        ctx.fillText(interactiveLine, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER + this.FONT_SIZE);
+
+        // add interactive line if the app is interactable
+        if (this._getIsKeyboardActive()) {
+            ctx.fillText(interactiveLine, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER + this.FONT_SIZE);
+        }
+    },
+
+    _getIsKeyboardActive() {
+        const isViewerActiveDiv = document.activeElement === this.$()[0];
+        return isViewerActiveDiv;
     },
 
     _deform(ctx, scope, imgData) {
