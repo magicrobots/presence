@@ -1,8 +1,10 @@
 import Component from '@ember/component';
 import { set, computed } from '@ember/object';
 import { isPresent } from '@ember/utils';
+import { inject as service } from '@ember/service';
 
 export default Component.extend({
+    keyHandler: service(),
 
     // ------------------- vars -------------------
 
@@ -16,24 +18,17 @@ export default Component.extend({
 
     classNames: ['image-viewer'],
 
-    currentEntry: '',
-
     // ------------------- ember hooks -------------------
     didInsertElement: function() {
-        // TODO: move this to keycontrol mixin?
-        //document.addEventListener('focus', this._onFocusChange, true);
-        this.$().attr({ tabindex: 1 });
-        this.$().focus();
+        this._setDomFocusToSelf();
     },
 
     keyDown(event) {
-        set(this, 'currentEntry', this.currentEntry.concat(event.key));
+        this.keyHandler.processKey(event);
     },
 
     click() {
-        // set focus on app for keyboard listener
-        this.$().attr({ tabindex: 1 });
-        this.$().focus();
+        this._setDomFocusToSelf();
     },
 
     init() {
@@ -101,6 +96,11 @@ export default Component.extend({
 
     // ------------------- private functions -------------------
 
+    _setDomFocusToSelf() {
+        this.$().attr({ tabindex: 1 });
+        this.$().focus();
+    },
+
     _startPromptCursorLoop() {
         const scope = this;
         setInterval(function() {
@@ -120,10 +120,6 @@ export default Component.extend({
             const bgImage = scope.bgImageData;
             const ctx = scope.ctx;
 
-            // if (!isPresent(bgImage)) {
-            //     return;
-            // }
-
             if(isPresent(ctx) && isPresent(bgImage)) {
                 const w = scope.canvasWidth;
                 const h = scope.canvasHeight;
@@ -138,7 +134,7 @@ export default Component.extend({
         ctx.fillStyle = "white";
 
         const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
-        const interactiveLine = `${this.PROMPT_LINE_2}:${this.currentEntry}${cursor}`;
+        const interactiveLine = `${this.PROMPT_LINE_2}:${this.keyHandler.currentCommand}${cursor}`;
 
         ctx.fillText(this.PROMPT_LINE_1, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER);
 
