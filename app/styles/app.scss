@@ -21,6 +21,12 @@ body {
         height: $borderHeight;
         width: 100%;
         background-color: $outerColor;
+        
+        .header-image {
+            height: 30px;
+            margin-top: 0px;
+            width: 100%;
+        }
     }
     
     main {
@@ -66,6 +72,12 @@ body {
         background-color: $outerColor;
         bottom: 0px;
         position: absolute;
-        width: 100%;
+        width: 100%;        
+        
+        .footer-image {
+            height: 30px;
+            margin-top: 20px;
+            width: 100%;
+        }
     }
 }
