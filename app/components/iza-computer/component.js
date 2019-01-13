@@ -1,44 +1,43 @@
 import Component from '@ember/component';
 import { set, computed } from '@ember/object';
+import { htmlSafe } from '@ember/string';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
-export default Component.extend({
-    keyHandler: service(),
+import ResizeObservable from 'ember-resize-observer/mixins/resize-observable';
+
+export default Component.extend(ResizeObservable, {
+    inputProcessor: service(),
 
     // ------------------- vars -------------------
 
     FONT_SIZE: 12,
     TEXT_EDGE_BUFFER: 80,
-    PROMPT_LINE_1: 'node|0656324 magicrobots/ (unknown user)',
-    PROMPT_LINE_2: '$',
-    CURSOR_CHAR: '_',
-
-    isPromptCursorVisible: true,
-
-    classNames: ['image-viewer'],
 
     // ------------------- ember hooks -------------------
+
+    init() {
+        this._super(...arguments);
+
+        this._startRenderLoop();
+    },
+    
     didInsertElement: function() {
         this._setDomFocusToSelf();
-    },
-
-    keyDown(event) {
-        this.keyHandler.processKey(event);
+        set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
     },
 
     click() {
         this._setDomFocusToSelf();
     },
 
-    init() {
-        this._super(...arguments);
-
-        this._startPromptCursorLoop();
-        this._startRenderLoop();
+    keyDown(event) {
+        this.inputProcessor.processKey(event);
     },
 
     didRender() {
+        this._setContainerSize();
+
         const canvasSource = this.$('#source-canvas')[0];
         const ctx = canvasSource.getContext("2d");
         const canvasAltered = this.$('#altered-canvas')[0];
@@ -81,13 +80,78 @@ export default Component.extend({
         imageObj.src = 'assets/emptyScreen.jpg';
     },
 
+    observedResize() {
+        this._setContainerSize();
+    },
+
     // ------------------- computed properties -------------------
+
+    visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', {
+        get() {
+            const allLines = this.inputProcessor.allDisplayLines;
+            const returnSet = [];
+            for (let i = 0; i < allLines.length; i++) {
+                const currLine = allLines[i];
+
+                returnSet.push({
+                    text: currLine,
+                    x: this.TEXT_EDGE_BUFFER,
+                    y: this.TEXT_EDGE_BUFFER + (this.FONT_SIZE * i)});
+            }
+
+            return returnSet;
+        }
+    }),
+
+    viewportMeasurements: computed('containerHeight', 'containerWidth', {
+        get() {
+            // make it a 4:3 ratio as big as possible in the viewport
+            const border = 50;
+            const outputRatio = 4 / 3;
+            const currHeight = this.containerHeight;
+            const currWidth = this.containerWidth;
+            const maxHeight = currHeight - (border * 2);
+            const maxWidth = currWidth - (border * 2);
+            const isWideViewport = maxWidth / maxHeight > outputRatio;
+
+            let height;
+            let width;
+            let left;
+            let top;
+
+            if (isWideViewport) {
+                height = maxHeight;
+                width = outputRatio * height;
+                top = 0;
+            } else {
+                width = maxWidth;
+                height = maxWidth * (1 / outputRatio);
+                top = (currHeight - height) / 2 - (border * 1);
+            }
+
+            left = (currWidth - width) / 2;
+
+            return {left, top, width, height};
+        }
+    }),
+
+    routeContainerStyle: computed('viewportMeasurements', {
+        get() {
+            const styleString = `height: ${this.viewportMeasurements.height}px; 
+                width: ${this.viewportMeasurements.width}px; 
+                left: ${this.viewportMeasurements.left}px;
+                top: ${this.viewportMeasurements.top}px`;
+
+            return htmlSafe(styleString);
+        }
+    }),
 
     canvasWidth: computed('viewportMeasurements', {
         get() {
             return this.viewportMeasurements.width;
         }
     }),
+
     canvasHeight: computed('viewportMeasurements', {
         get() {
             return this.viewportMeasurements.height;
@@ -96,21 +160,14 @@ export default Component.extend({
 
     // ------------------- private functions -------------------
 
+    _setContainerSize() {
+        set(this, 'containerHeight', window.innerHeight);
+        set(this, 'containerWidth', window.innerWidth);
+    },
+
     _setDomFocusToSelf() {
         this.$().attr({ tabindex: 1 });
         this.$().focus();
-    },
-
-    _startPromptCursorLoop() {
-        const scope = this;
-        setInterval(function() {
-            // check for focus
-            if (scope._getIsKeyboardActive()) {
-                set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
-            } else {
-                set(scope, 'isPromptCursorVisible', false);
-            }
-        }, 500);
     },
 
     _startRenderLoop() {
@@ -133,20 +190,11 @@ export default Component.extend({
         ctx.font = `${this.FONT_SIZE}px Courier`;
         ctx.fillStyle = "white";
 
-        const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
-        const interactiveLine = `${this.PROMPT_LINE_2}:${this.keyHandler.currentCommand}${cursor}`;
+        const temp = ctx;
 
-        ctx.fillText(this.PROMPT_LINE_1, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER);
-
-        // add interactive line if the app is interactable
-        if (this._getIsKeyboardActive()) {
-            ctx.fillText(interactiveLine, this.TEXT_EDGE_BUFFER, this.TEXT_EDGE_BUFFER + this.FONT_SIZE);
-        }
-    },
-
-    _getIsKeyboardActive() {
-        const isViewerActiveDiv = document.activeElement === this.$()[0];
-        return isViewerActiveDiv;
+        this.visibleDisplayLines.forEach((currLine) => {
+            temp.fillText(currLine.text, currLine.x, currLine.y);
+        });
     },
 
     _deform(ctx, scope, imgData) {

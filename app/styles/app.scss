@@ -9,10 +9,10 @@ body {
     color: white;
 }
 
-a {
-    color: skyblue;
-    text-decoration: none;
-}
+// a {
+//     color: skyblue;
+//     text-decoration: none;
+// }
 
 #application-root {
     display: block;
@@ -32,17 +32,25 @@ a {
     
         .route-container {
             position: relative;
-            left: 50px;
+            // left: 50px;
             background-color: rgba(100,100,100,0.75);
             background-size: cover;
             background-repeat: no-repeat;
             border-radius: $borderRadius;
 
-            .image-viewer {
-                canvas {
-                    position: absolute;
-                }
+            canvas {
+                position: absolute;
             }
+
+            .outlet-container {
+                position: absolute;
+            }
+
+            // .image-viewer {
+            //     canvas {
+            //         position: absolute;
+            //     }
+            // }
 
             .vignette {
                 width: 100%;
@@ -57,30 +65,34 @@ a {
                 width: 100%;
             }
         }
-    
-        .nav--left {
-            position: absolute;
-            height: 100%;
-            top: 0px;
-            left: 0px;
-            width: 25%;
-            min-width: 200px;
-            background-color: rgba(0,0,0,0.4);
-            border-top-left-radius: $borderRadius;
-            border-bottom-left-radius: $borderRadius;
-            display: none;
-    
-            .nav--left_button {
-                display: block;
-                height: 15px;
-                margin-top: 5px;
-                margin-left: 15px;
-    
-                &:first-child {
-                    margin-top: 15px;
-                }
-            }
+
+        .route-container:focus {
+            outline: none;
         }
+    
+        // .nav--left {
+        //     position: absolute;
+        //     height: 100%;
+        //     top: 0px;
+        //     left: 0px;
+        //     width: 25%;
+        //     min-width: 200px;
+        //     background-color: rgba(0,0,0,0.4);
+        //     border-top-left-radius: $borderRadius;
+        //     border-bottom-left-radius: $borderRadius;
+        //     display: none;
+    
+        //     .nav--left_button {
+        //         display: block;
+        //         height: 15px;
+        //         margin-top: 5px;
+        //         margin-left: 15px;
+    
+        //         &:first-child {
+        //             margin-top: 15px;
+        //         }
+        //     }
+        // }
     }
     
     .footer {
@@ -92,15 +104,15 @@ a {
         width: 100%;
     }
 
-    .command-bar {
-        height: 14px;
-        font-size: 12px;
-        font-weight: bold;
-        background-color: green;
-        color:black;
-        position: fixed;
-        bottom: 0px;
-        width: 100%;
-        text-align: left;
-    }
+    // .command-bar {
+    //     height: 14px;
+    //     font-size: 12px;
+    //     font-weight: bold;
+    //     background-color: green;
+    //     color:black;
+    //     position: fixed;
+    //     bottom: 0px;
+    //     width: 100%;
+    //     text-align: left;
+    // }
 }
