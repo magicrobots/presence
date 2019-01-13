@@ -1,7 +1,9 @@
 import Service from '@ember/service';
 import { set, computed } from '@ember/object';
 import { isPresent } from '@ember/utils';
-import { copy } from '@ember/object/internals';
+import { getOwner } from '@ember/application';
+
+import commandRegistry from '../const/command-registry';
 
 export default Service.extend({
 
@@ -9,16 +11,17 @@ export default Service.extend({
 
     currentCommand: '',
     currentArgs: undefined,
-    commandHistory: [],
-    registeredApps: [ 'about', 'contact' ],
-    appResponse: [],
     activeApp: undefined,
     isPromptCursorVisible: true,
     relevantMarkup: undefined,
-    previousExecutionBlocks: [],
 
     init() {
         this._super(...arguments);
+
+        // set defaults
+        set(this, 'commandHistory', []),
+        set(this, 'appResponse', []),
+        set(this, 'previousExecutionBlocks', []),
 
         this._startPromptCursorLoop();
     },
@@ -111,33 +114,37 @@ export default Service.extend({
 
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
-        const appName = commandComponents[0];
-        const args = commandComponents.splice(1);
+        const appName = commandComponents[0].toUpperCase();
+        set(this, 'args', commandComponents.splice(1));
 
         // unset stuff
         this._resetCommandLine();
 
-        // global actions
-        if (isPresent(this.activeApp)) {
-            if (appName.toUpperCase() === 'Q') {
-                Ember.getOwner(this).lookup('router:main').transitionTo('index');
-                set(this, 'activeApp', undefined);
-                return;
-            }
-        }
 
-        // does command exist?
-        if(this.registeredApps.includes(appName)) {
-            set(this, 'currentArgs', args);
-            set(this, 'activeApp', appName);
-            Ember.getOwner(this).lookup('router:main').transitionTo(appName);
+        const commandList = commandRegistry.registry;
+        const matchedCommand = commandList.filter((currCmdDef) => {
+            if(currCmdDef.commandName.toUpperCase() === appName) {
+                return true;
+            }
+        })[0];
+
+        if (isPresent(matchedCommand)) {
+            this._handleCommandExecution(matchedCommand, appName);
         } else {
             this._handleInvalidInput(appName);
         }
     },
 
+    _handleCommandExecution(commandDefinition, appName) {
+        if (isPresent(commandDefinition.routeName)) {
+            getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
+        } else {
+            set(this, 'appResponse', [`ERROR: ${appName} route not defined.`]);
+        }
+    },
+
     _handleInvalidInput(appName) {
-        set(this, 'appResponse', ['theres no such thing as ' + appName]);
+        set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
     },
 
     // ------------------- public methods -------------------
@@ -149,7 +156,17 @@ export default Service.extend({
         set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
     },
 
+    clear() {
+        set(this, 'previousExecutionBlocks', []);
+        set(this, 'activeApp', undefined);
+        this._resetCommandLine();
+        getOwner(this).lookup('router:main').transitionTo('index');
+    },
+
     processKey(keyEvent) {
+        let deleteFromCommand;
+        let appendedCommand;
+
         switch(keyEvent.key.toUpperCase()) {
             case 'F1':
             case 'F2':
@@ -187,15 +204,16 @@ export default Service.extend({
                 // ignore the above keystrokes
                 break;
             case 'BACKSPACE':
-                const deleteFromCommand = this.currentCommand.slice(0, -1);
+                // remove char from command
+                deleteFromCommand = this.currentCommand.slice(0, -1);
                 set(this, 'currentCommand', deleteFromCommand);
                 break;
             case 'ENTER':
                 this._execute();
                 break;
             default:
-                // add to command
-                const appendedCommand = this.currentCommand.concat(keyEvent.key);
+                // add char to command
+                appendedCommand = this.currentCommand.concat(keyEvent.key);
                 set(this, 'currentCommand', appendedCommand);
                 break;
         }

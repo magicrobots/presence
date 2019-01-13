@@ -8,10 +8,14 @@ const Router = EmberRouter.extend({
 
 // about images help | search?
 Router.map(function() {
-  this.route('about');
-  this.route('robots');
-  this.route('contact');
-  this.route('help');
+  this.route('cmd-about');
+  this.route('cmd-clear');
+  this.route('cmd-contact');
+  this.route('cmd-help');
+  this.route('cmd-ls');
+  this.route('cmd-q');
+  this.route('cmd-robots');
+  this.route('cmd-settings');
 });
 
 export default Router;
