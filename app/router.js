@@ -9,7 +9,8 @@ const Router = EmberRouter.extend({
 // about images help | search?
 Router.map(function() {
   this.route('about');
-  this.route('images');
+  this.route('robots');
+  this.route('contact');
   this.route('help');
 });
 

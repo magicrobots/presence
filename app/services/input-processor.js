@@ -6,10 +6,11 @@ import { copy } from '@ember/object/internals';
 export default Service.extend({
 
     CURSOR_CHAR: '_',
+
     currentCommand: '',
     currentArgs: undefined,
     commandHistory: [],
-    registeredApps: [ 'about' ],
+    registeredApps: [ 'about', 'contact' ],
     appResponse: [],
     activeApp: undefined,
     isPromptCursorVisible: true,
@@ -44,7 +45,10 @@ export default Service.extend({
                 ` ${this.activeApp}` :
                 '';
 
-            return `${timestamp}${context} $`;
+            // only display context if it's requested
+            const displayedContext = this.displayAppNameInPrompt ? context : '';
+
+            return `${timestamp}${displayedContext} $`;
         }
     }),
 
@@ -58,7 +62,7 @@ export default Service.extend({
             const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
             const interactiveLine = `${this.PROMPT_LINE_2}:${this.currentCommand}${cursor}`;
 
-            return [this.PROMPT_LINE_1, interactiveLine].concat(this.appResponse);
+            return this.appResponse.concat(['', this.PROMPT_LINE_1, interactiveLine]);
         }
     }),
 
@@ -90,6 +94,12 @@ export default Service.extend({
         return isViewerActiveDiv;
     },
 
+    _resetCommandLine() {
+        set(this, 'currentCommand', '');
+        set(this, 'currentArgs', undefined);
+        set(this, 'appResponse', []);
+    },
+
     _execute() {
         // store command in history
         this.commandHistory.push(this.currentCommand);
@@ -105,9 +115,9 @@ export default Service.extend({
         const args = commandComponents.splice(1);
 
         // unset stuff
-        set(this, 'currentCommand', '');
-        set(this, 'currentArgs', undefined);
+        this._resetCommandLine();
 
+        // global actions
         if (isPresent(this.activeApp)) {
             if (appName.toUpperCase() === 'Q') {
                 Ember.getOwner(this).lookup('router:main').transitionTo('index');
@@ -127,17 +137,16 @@ export default Service.extend({
     },
 
     _handleInvalidInput(appName) {
-        this.setAppResponse('theres no such thing as ' + appName);
+        set(this, 'appResponse', ['theres no such thing as ' + appName]);
     },
 
     // ------------------- public methods -------------------
 
-    setAppResponse(newResponse) {
-        set(this, 'appResponse', newResponse);
-    },
-
-    setActiveApp(newActiveApp) {
-        set(this, 'activeApp', newActiveApp);
+    setAppEnvironment(appEnvironment) {
+        set(this, 'activeApp', appEnvironment.activeAppName);
+        set(this, 'appResponse', appEnvironment.response);
+        set(this, 'displayAppNameInPrompt', appEnvironment.displayAppNameInPrompt);
+        set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
     },
 
     processKey(keyEvent) {

@@ -4,14 +4,14 @@ import { htmlSafe } from '@ember/string';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
-import ResizeObservable from 'ember-resize-observer/mixins/resize-observable';
-
-export default Component.extend(ResizeObservable, {
+export default Component.extend({
     inputProcessor: service(),
+    classNames: ['iza-computer'],
 
     // ------------------- vars -------------------
 
     FONT_SIZE: 12,
+    SPACE_BETWEEN_LINES: 2,
     TEXT_EDGE_BUFFER: 80,
 
     // ------------------- ember hooks -------------------
@@ -25,6 +25,11 @@ export default Component.extend(ResizeObservable, {
     didInsertElement: function() {
         this._setDomFocusToSelf();
         set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
+
+        const scope = this;
+        window.addEventListener('resize', function() {
+            scope._setContainerSize();
+        })
     },
 
     click() {
@@ -36,51 +41,6 @@ export default Component.extend(ResizeObservable, {
     },
 
     didRender() {
-        this._setContainerSize();
-
-        const canvasSource = this.$('#source-canvas')[0];
-        const ctx = canvasSource.getContext("2d");
-        const canvasAltered = this.$('#altered-canvas')[0];
-        const ctx2 = canvasAltered.getContext("2d");
-
-        const imageObj = new Image();
-        const w = this.canvasWidth;
-        const h = this.canvasHeight;
-        const scope = this;
-
-        // store reference to ctx for render loop access
-        set(this, 'ctx', ctx)
-
-        // canvas to put interaction items into
-        ctx.fillStyle = "blue";
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-        // canvas to put modified image onto
-        ctx2.fillStyle = "rgba(0,0,0,0)";
-        ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-        // load BG image
-        imageObj.onload = function() {
-            // ctx.drawImage(this, 0, 0, w, h);
-            set(scope, 'bgImageData', this);
-
-            // store canvas image with original pixel objects
-            // const imgData = ctx.getImageData(0, 0, w, h);
-            // set(scope, 'originalScreenBitmap', imgData);
-
-            // scope._drawText(ctx);
-
-            // begin animation loop
-            // return setInterval(scope._deform,
-            //     ctx,
-            //     scope,
-            //     imgData);
-        };
-
-        imageObj.src = 'assets/emptyScreen.jpg';
-    },
-
-    observedResize() {
         this._setContainerSize();
     },
 
@@ -96,7 +56,7 @@ export default Component.extend(ResizeObservable, {
                 returnSet.push({
                     text: currLine,
                     x: this.TEXT_EDGE_BUFFER,
-                    y: this.TEXT_EDGE_BUFFER + (this.FONT_SIZE * i)});
+                    y: this.TEXT_EDGE_BUFFER + ((this.SPACE_BETWEEN_LINES + this.FONT_SIZE) * i)});
             }
 
             return returnSet;
@@ -146,13 +106,13 @@ export default Component.extend(ResizeObservable, {
         }
     }),
 
-    canvasWidth: computed('viewportMeasurements', {
+    canvasWidth: computed('viewportMeasurements.width', {
         get() {
             return this.viewportMeasurements.width;
         }
     }),
 
-    canvasHeight: computed('viewportMeasurements', {
+    canvasHeight: computed('viewportMeasurements.height', {
         get() {
             return this.viewportMeasurements.height;
         }
@@ -163,6 +123,47 @@ export default Component.extend(ResizeObservable, {
     _setContainerSize() {
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
+
+        const canvasSource = this.$('#source-canvas')[0];
+        const ctx = canvasSource.getContext("2d");
+        const canvasAltered = this.$('#altered-canvas')[0];
+        const ctx2 = canvasAltered.getContext("2d");
+
+        const imageObj = new Image();
+        const w = this.canvasWidth;
+        const h = this.canvasHeight;
+        const scope = this;
+
+        // store reference to ctx for render loop access
+        set(this, 'ctx', ctx)
+
+        // canvas to put interaction items into
+        ctx.fillStyle = "blue";
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+        // canvas to put modified image onto
+        ctx2.fillStyle = "rgba(0,0,0,0)";
+        ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+        // load BG image
+        imageObj.onload = function() {
+            // ctx.drawImage(this, 0, 0, w, h);
+            set(scope, 'bgImageData', this);
+
+            // store canvas image with original pixel objects
+            // const imgData = ctx.getImageData(0, 0, w, h);
+            // set(scope, 'originalScreenBitmap', imgData);
+
+            // scope._drawText(ctx);
+
+            // begin animation loop
+            // return setInterval(scope._deform,
+            //     ctx,
+            //     scope,
+            //     imgData);
+        };
+
+        imageObj.src = 'assets/emptyScreen.jpg';
     },
 
     _setDomFocusToSelf() {
