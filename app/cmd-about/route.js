@@ -11,11 +11,13 @@ export default Route.extend({
             interruptPrompt: false,
             response: ['This is a computer simulation.',
                 'It was written in javascript utilizing:',
-                'ember',
-                'canvas',
-                'github',
-                'stack overflow',
-                'surely some other nerdy things, gimme a shout with questions (run contact command)']
+                '  ember',
+                '  canvas',
+                '  github',
+                '  stack overflow',
+                '  appveyor continuous integration into AWS',
+                '  surely some other nerdy things',
+                'gimme a shout with questions (run contact command)']
         });
     }
 });

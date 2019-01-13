@@ -49,6 +49,6 @@ export default Route.extend({
     },
 
     _redirectBrowser(url) {
-        window.location.replace(url);
+        window.open(url);
     }
 });

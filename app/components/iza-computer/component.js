@@ -189,11 +189,16 @@ export default Component.extend({
 
     _drawText(ctx) {
         ctx.font = `${this.FONT_SIZE}px Courier`;
-        ctx.fillStyle = "white";
+        //ctx.fillStyle = "white";
 
         const temp = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
+            if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
+                temp.fillStyle = "yellow";
+            } else {
+                temp.fillStyle = "white";
+            }
             temp.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
