@@ -2,6 +2,12 @@ $borderHeight: 50px;
 $outerColor: #000;
 $borderRadius: 20px;
 
+:focus {    
+    outline-style:none;
+    box-shadow:none;
+    border-color:transparent;
+}
+
 body {
     margin: 0px;
     font-family: 'Courier New', Courier, monospace;
@@ -27,13 +33,17 @@ body {
             margin-top: 0px;
             width: 100%;
         }
+
+        .header-logo {
+            position: absolute;
+            top: 5px;
+            left: calc(50% - 110px);
+        }
     }
     
-    main {
-    
+    main {    
         .route-container {
             position: relative;
-            // left: 50px;
             background-color: rgba(100,100,100,0.75);
             background-size: cover;
             background-repeat: no-repeat;
@@ -60,10 +70,6 @@ body {
                 width: 100%;
             }
         }
-
-        .route-container:focus {
-            outline: none;
-        }
     }
     
     .footer {
@@ -72,12 +78,19 @@ body {
         background-color: $outerColor;
         bottom: 0px;
         position: absolute;
-        width: 100%;        
+        width: 100%;      
+        overflow: hidden;  
         
         .footer-image {
             height: 30px;
             margin-top: 20px;
             width: 100%;
+        }
+
+        .footer-light {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
         }
     }
 }

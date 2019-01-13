@@ -195,7 +195,7 @@ export default Component.extend({
 
         this.visibleDisplayLines.forEach((currLine) => {
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
-                temp.fillStyle = "yellow";
+                temp.fillStyle = "#18fe1c";
             } else {
                 temp.fillStyle = "white";
             }
