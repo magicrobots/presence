@@ -1,3 +1,5 @@
+version: 0.0.1.{build}
+
 # Test against the latest version of this Node.js version
 environment:
   nodejs_version: "8"
@@ -18,5 +20,11 @@ test_script:
   - yarn test
 
 # Don't actually build.
-build: off
+build_script:
   - ember build
+  
+# create artifacts for deployment.
+artifacts:
+  - path: dist/
+    name: fred
+    type: WebDeployPackage
