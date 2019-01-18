@@ -27,4 +27,4 @@ build_script:
 artifacts:
   - path: dist/
     name: fred
-    type: WebDeployPackage
+    type: zip
