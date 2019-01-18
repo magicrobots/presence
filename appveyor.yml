@@ -19,8 +19,12 @@ test_script:
   # run tests
   - yarn test
 
-# Don't actually build.
+# build.
 build_script:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version
+  # install modules
+  - yarn install
   - ember build
   
 # create artifacts for deployment.
