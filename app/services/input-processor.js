@@ -14,6 +14,7 @@ export default Service.extend({
     activeApp: undefined,
     isPromptCursorVisible: true,
     relevantMarkup: undefined,
+    cursorLoopContainer: undefined,
 
     init() {
         this._super(...arguments);
@@ -24,6 +25,11 @@ export default Service.extend({
         set(this, 'previousExecutionBlocks', []),
 
         this._startPromptCursorLoop();
+    },
+    
+    destroy() {
+        clearInterval(this.cursorLoopContainer);
+        this._super(...arguments);
     },
 
     // ------------------- computed properties -------------------
@@ -81,14 +87,14 @@ export default Service.extend({
 
     _startPromptCursorLoop() {
         const scope = this;
-        setInterval(function() {
+        set(this, 'cursorLoopContainer', setInterval(function() {
             // check for focus
             if (scope._getIsKeyboardActive()) {
                 set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
             } else {
                 set(scope, 'isPromptCursorVisible', false);
             }
-        }, 500);
+        }, 500));
     },
 
     _getIsKeyboardActive() {

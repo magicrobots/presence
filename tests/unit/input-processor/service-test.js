@@ -6,7 +6,7 @@ module('Unit | Service | key-handler', function(hooks) {
 
   // Replace this with your real tests.
   test('it exists', function(assert) {
-    let service = this.owner.lookup('service:key-handler');
+    let service = this.owner.lookup('service:input-processor');
     assert.ok(service);
   });
 });

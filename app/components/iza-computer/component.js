@@ -130,8 +130,8 @@ export default Component.extend({
         const ctx2 = canvasAltered.getContext("2d");
 
         const imageObj = new Image();
-        const w = this.canvasWidth;
-        const h = this.canvasHeight;
+        // const w = this.canvasWidth;
+        // const h = this.canvasHeight;
         const scope = this;
 
         // store reference to ctx for render loop access
@@ -203,6 +203,7 @@ export default Component.extend({
         });
     },
 
+    /*
     _deform(ctx, scope, imgData) {
         const noisedImage = scope._noise(ctx, imgData);
 
@@ -222,4 +223,5 @@ export default Component.extend({
 
         return ;
     }
+    */
 });
