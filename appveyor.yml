@@ -21,8 +21,7 @@ test_script:
 
 # build.
 build_script:
-  $ yarn
-  $ ember build -prod
+  - yarn build -prod
   
 # create artifacts for deployment.
 artifacts:
