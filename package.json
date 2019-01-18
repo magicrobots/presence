@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.0.0",
+  "version": "0.0.0.0",
   "private": true,
   "description": "Small description for frontend goes here",
   "repository": "",
@@ -42,7 +42,6 @@
     "ember-resize-observer": "^0.1.0",
     "ember-resolver": "^5.0.1",
     "ember-source": "~3.6.0",
-    "ember-welcome-page": "^3.2.0",
     "eslint-plugin-ember": "^5.2.0",
     "loader.js": "^4.7.0",
     "qunit-dom": "^0.8.0",

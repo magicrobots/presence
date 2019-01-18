@@ -17,6 +17,7 @@ export default Route.extend({
                 '  stack overflow',
                 '  appveyor continuous integration into AWS',
                 '  surely some other nerdy things',
+                '',
                 'gimme a shout with questions (run contact command)']
         });
     }
