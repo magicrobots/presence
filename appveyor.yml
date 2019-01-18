@@ -21,11 +21,8 @@ test_script:
 
 # build.
 build_script:
-  # Get the latest stable version of Node.js or io.js
-  - ps: Install-Product node $env:nodejs_version
-  # install modules
-  - yarn install
-  - ember build
+  $ yarn
+  $ ember build -prod
   
 # create artifacts for deployment.
 artifacts:
