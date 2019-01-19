@@ -7,7 +7,7 @@ import commandRegistry from '../const/command-registry';
 
 export default Service.extend({
 
-    CURSOR_CHAR: '_',
+    CURSOR_CHAR: '█',
 
     currentCommand: '',
     currentArgs: undefined,
@@ -15,6 +15,8 @@ export default Service.extend({
     isPromptCursorVisible: true,
     relevantMarkup: undefined,
     cursorLoopContainer: undefined,
+    cursorPosition: 0,
+    currCommandIndex: -1,
 
     init() {
         this._super(...arguments);
@@ -46,7 +48,7 @@ export default Service.extend({
         }
     }),
 
-    PROMPT_LINE_2: computed('activeApp', {
+    PROMPT_LINE_2: computed('activeApp', 'displayAppNameInPrompt', {
         get() {
             // add name of app if there's an active app
             const timestamp = new Date().getTime().toString().substr(5);
@@ -57,7 +59,9 @@ export default Service.extend({
             // only display context if it's requested
             const displayedContext = this.displayAppNameInPrompt ? context : '';
 
-            return `${timestamp}${displayedContext} $`;
+            const promptEnd = this.displayAppNameInPrompt && isPresent(this.activeApp) ? '>' : '$:';
+
+            return `${timestamp}${displayedContext} ${promptEnd}`;
         }
     }),
 
@@ -65,11 +69,21 @@ export default Service.extend({
         'PROMPT_LINE_2',
         'isPromptCursorVisible',
         'appResponse.[]',
-        'currentCommand', {
+        'currentCommand',
+        'forceDisplayCursor', {
 
         get() {
-            const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
-            const interactiveLine = `${this.PROMPT_LINE_2}:${this.currentCommand}${cursor}`;
+            // duplicate command string
+            let commandDisplay = this.currentCommand.slice(0);
+
+            // display cursor in position
+            if (this.isPromptCursorVisible || this.forceDisplayCursor) {
+                commandDisplay = this.currentCommand.substr(0, this.cursorPosition) +
+                    this.CURSOR_CHAR +
+                    this.currentCommand.substr(this.cursorPosition + 1);
+            }
+
+            const interactiveLine = `${this.PROMPT_LINE_2}${commandDisplay}`;
 
             return this.appResponse.concat(['', this.PROMPT_LINE_1, interactiveLine]);
         }
@@ -91,6 +105,9 @@ export default Service.extend({
             // check for focus
             if (scope._getIsKeyboardActive()) {
                 set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
+                if (scope.isPromptCursorVisible && scope.forceDisplayCursor) {
+                    set(scope, 'forceDisplayCursor', false);
+                }
             } else {
                 set(scope, 'isPromptCursorVisible', false);
             }
@@ -107,11 +124,16 @@ export default Service.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'appResponse', []);
+        set(this, 'cursorPosition', 0);
     },
 
     _execute() {
         // store command in history
-        this.commandHistory.push(this.currentCommand);
+        this.commandHistory.unshift(this.currentCommand);
+
+        // kill cursor
+        set(this, 'forceDisplayCursor', false);
+        set(this, 'isPromptCursorVisible', false);
 
         // store execution block
         set(this, 'previousExecutionBlocks',
@@ -126,7 +148,7 @@ export default Service.extend({
         // unset stuff
         this._resetCommandLine();
 
-
+        // find command
         const commandList = commandRegistry.registry;
         const matchedCommand = commandList.filter((currCmdDef) => {
             if(currCmdDef.commandName.toUpperCase() === appName) {
@@ -134,6 +156,7 @@ export default Service.extend({
             }
         })[0];
 
+        // execute command if it exists
         if (isPresent(matchedCommand)) {
             this._handleCommandExecution(matchedCommand, appName);
         } else {
@@ -150,7 +173,12 @@ export default Service.extend({
     },
 
     _handleInvalidInput(appName) {
-        set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
+        if (isPresent(appName)) {
+            set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
+            return;
+        }
+
+        set(this, 'appResponse', ['enter something']);
     },
 
     // ------------------- public methods -------------------
@@ -171,7 +199,10 @@ export default Service.extend({
 
     processKey(keyEvent) {
         let deleteFromCommand;
-        let appendedCommand;
+        let newCommand;
+        let newCursorIndex;
+        let cursorIndexMax;
+        let newCommandIndex;
 
         switch(keyEvent.key.toUpperCase()) {
             case 'F1':
@@ -188,19 +219,10 @@ export default Service.extend({
             case 'F12':
             case 'SCROLLLOCK':
             case 'PAUSE':
-            case 'PAGEUP':
-            case 'PAGEDOWN':
-            case 'HOME':
-            case 'END':
             case 'CAPSLOCK':
             case 'META':
             case 'TAB':
             case 'ESCAPE':
-            case 'ARROWLEFT':
-            case 'ARROWUP':
-            case 'ARROWRIGHT':
-            case 'ARROWDOWN':
-            case 'DELETE':
             case 'CONTROL':
             case 'SHIFT':
             case 'ALT': 
@@ -209,18 +231,100 @@ export default Service.extend({
             case 'AUDIOVOLUMEMUTE':
                 // ignore the above keystrokes
                 break;
-            case 'BACKSPACE':
+
+            case 'ARROWUP':
+                newCommandIndex = this.currCommandIndex + 1;
+                if (newCommandIndex > this.commandHistory.length - 1) {
+                    newCommandIndex = this.commandHistory.length - 1;
+                }
+
+                set(this, 'currCommandIndex', newCommandIndex);
+                newCommand = this.commandHistory[this.currCommandIndex] || '';
+                set(this, 'currentCommand', newCommand);
+                set(this, 'cursorPosition', this.currentCommand.length);
+                break;
+
+            case 'ARROWDOWN':
+                newCommandIndex = this.currCommandIndex - 1;
+                if (newCommandIndex < -1) {
+                    newCommandIndex = -1;
+                }
+
+                set(this, 'currCommandIndex', newCommandIndex);
+                newCommand = this.commandHistory[this.currCommandIndex] || '';
+                set(this, 'currentCommand', newCommand);
+                set(this, 'cursorPosition', this.currentCommand.length);
+                break;
+
+            case 'PAGEUP':
+            case 'HOME':
+                set(this, 'cursorPosition', 0);
+                set(this, 'forceDisplayCursor', true);
+                break;
+
+            case 'PAGEDOWN':
+            case 'END':
+                set(this, 'cursorPosition', this.currentCommand.length);
+                set(this, 'forceDisplayCursor', true);
+                break;
+
+            case 'ARROWLEFT':
+                newCursorIndex = this.cursorPosition - 1;
+                if (newCursorIndex < 0) {
+                    newCursorIndex = 0;
+                }
+
+                set(this, 'cursorPosition', newCursorIndex);
+                set(this, 'forceDisplayCursor', true);
+                break;
+
+            case 'ARROWRIGHT':
+                newCursorIndex = this.cursorPosition + 1;
+                cursorIndexMax = this.currentCommand.length;
+                if (newCursorIndex > cursorIndexMax) {
+                    newCursorIndex = cursorIndexMax;
+                }
+                
+                set(this, 'cursorPosition', newCursorIndex);
+                set(this, 'forceDisplayCursor', true);
+                break;
+
+            case 'DELETE':
                 // remove char from command
-                deleteFromCommand = this.currentCommand.slice(0, -1);
+                deleteFromCommand = this.currentCommand.substr(0, this.cursorPosition) +
+                    this.currentCommand.substr(this.cursorPosition + 1);
+
+                set(this, 'currentCommand', deleteFromCommand);
+                
+                break;
+
+            case 'BACKSPACE':
+                // remove char from command                
+                newCursorIndex = this.cursorPosition - 1;
+                if (newCursorIndex < 0) {
+                    newCursorIndex = 0;
+                }
+                
+                set(this, 'cursorPosition', newCursorIndex);
+
+                deleteFromCommand = this.currentCommand.substr(0, this.cursorPosition) +
+                    this.currentCommand.substr(this.cursorPosition + 1);
+
                 set(this, 'currentCommand', deleteFromCommand);
                 break;
+
             case 'ENTER':
                 this._execute();
                 break;
+
             default:
-                // add char to command
-                appendedCommand = this.currentCommand.concat(keyEvent.key);
-                set(this, 'currentCommand', appendedCommand);
+                // add char to command from cursorPosition index
+                newCommand = this.currentCommand.substr(0, this.cursorPosition) +
+                    keyEvent.key +
+                    this.currentCommand.substr(this.cursorPosition);
+
+                set(this, 'currentCommand', newCommand);
+                set(this, 'cursorPosition', this.cursorPosition + 1);
                 break;
         }
     }

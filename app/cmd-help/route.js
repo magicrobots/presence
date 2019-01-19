@@ -9,10 +9,10 @@ export default Route.extend({
             activeAppName: this.routeName,
             displayAppNameInPrompt: false,
             interruptPrompt: false,
-            response: ['This is a command line interface.',
-                'Use LS command to view list of available commands.',
+            response: ['I\'m a computer.',
+                'Enter the LS command to view a list of available commands.',
                 'Commands are not case sensitive.',
-                'For help on specific command, type \'help {commandName}\'',
+                'For help on a specific command, type \'help {commandName}\'',
                 'To quit any running application type Q to return to command line interface.']
         });
     }

@@ -184,7 +184,7 @@ export default Component.extend({
                 ctx.drawImage(bgImage, 0, 0, w, h);
                 scope._drawText(ctx);
             }
-        }, 50);
+        }, 30);
     },
 
     _drawText(ctx) {
@@ -195,9 +195,11 @@ export default Component.extend({
 
         this.visibleDisplayLines.forEach((currLine) => {
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
-                temp.fillStyle = "#18fe1c";
+                temp.fillStyle = '#35ff82';
+            } else if (currLine.text === 'robots') {
+                temp.fillStyle = '#80d7f7';
             } else {
-                temp.fillStyle = "white";
+                temp.fillStyle = 'white';
             }
             temp.fillText(currLine.text, currLine.x, currLine.y);
         });
