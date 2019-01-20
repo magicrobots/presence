@@ -3,6 +3,7 @@ import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import commandRegistry from '../const/command-registry';
+import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -32,11 +33,13 @@ export default Route.extend({
     },
 
     afterModel() {
-        this.inputProcessor.setAppEnvironment({
-            activeAppName: this.routeName,
-            displayAppNameInPrompt: false,
-            interruptPrompt: false,
-            response: this._getResponse()
-        });
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
+            this.routeName,
+            false,
+            false,
+            this._getResponse()
+        );
+
+        this.inputProcessor.setAppEnvironment(appEnvironment);
     }
 });
