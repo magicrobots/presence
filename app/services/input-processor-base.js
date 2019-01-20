@@ -20,7 +20,6 @@ export default Service.extend({
         set(this, 'commandHistory', []),
         set(this, 'appResponse', []),
         set(this, 'previousExecutionBlocks', []),
-        console.log('init input processor');
 
         this._startPromptCursorLoop();
     },

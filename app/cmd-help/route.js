@@ -1,7 +1,6 @@
 import Route from '@ember/routing/route';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
-import { getOwner } from '@ember/application';
 
 import commandRegistry from '../const/command-registry';
 
