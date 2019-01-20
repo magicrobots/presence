@@ -3,6 +3,17 @@ const helpText = 'MAN, and ? are proxies to the HELP command. Type either of the
 const helpUsage = 'man contact';
 
 export default {
+
+    getMatchingCommand(command) {
+        const testCommandName = command.toUpperCase();
+
+        return this.registry.filter((currCmdDef) => {
+            if(currCmdDef.commandName.toUpperCase() === testCommandName) {
+                return true;
+            }
+        })[0];
+    },
+
     registry: [
         {commandName: 'about',
         routeName: 'cmd-about',
@@ -20,10 +31,6 @@ export default {
         {commandName: 'clear',
         routeName: 'cmd-clear',
         helpText: 'This command clears the screen of any previous inputs and command responses.'},
-
-        {commandName: 'q',
-        routeName: 'cmd-q',
-        helpText: 'If the user is running an application they can enter the q command at any time to exit the appliction and return to the command line interace.'},
 
         {commandName: 'help',
         routeName: helpRoute,
@@ -43,11 +50,11 @@ export default {
         {commandName: 'robots',
         routeName: 'cmd-robots',
         helpText: 'This application displays still images taken off modern VHS tapes.',
-        useage: 'Use left and right arrows to navigate, and q to exit.'},
+        usage: 'Use left and right arrows to navigate, and q to exit.'},
 
         {commandName: 'settings',
         routeName: 'cmd-settings',
         helpText: 'This application allows the user to save personal settings.',
-        useage: 'set username fred'}
+        usage: 'set username fred'}
     ]
 }
