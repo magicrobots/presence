@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { set, computed } from '@ember/object';
+import { set, computed, observer } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
@@ -120,6 +120,10 @@ export default Component.extend({
 
     // ------------------- private functions -------------------
 
+    backgroundImageChanged: observer('inputProcessor.bgImage', function() {
+        this._setBgImage(this.inputProcessor.bgImage);
+    }),
+
     _setContainerSize() {
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
@@ -129,10 +133,10 @@ export default Component.extend({
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
-        const imageObj = new Image();
+        // const imageObj = new Image();
         // const w = this.canvasWidth;
         // const h = this.canvasHeight;
-        const scope = this;
+        // const scope = this;
 
         // store reference to ctx for render loop access
         set(this, 'ctx', ctx)
@@ -146,24 +150,41 @@ export default Component.extend({
         ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         // load BG image
+        // imageObj.onload = function() {
+        //     // ctx.drawImage(this, 0, 0, w, h);
+        //     set(scope, 'bgImageData', this);
+
+        //     // store canvas image with original pixel objects
+        //     // const imgData = ctx.getImageData(0, 0, w, h);
+        //     // set(scope, 'originalScreenBitmap', imgData);
+
+        //     // scope._drawText(ctx);
+
+        //     // begin animation loop
+        //     // return setInterval(scope._deform,
+        //     //     ctx,
+        //     //     scope,
+        //     //     imgData);
+        // };
+
+        // imageObj.src = 'assets/emptyScreen.jpg';
+
+        this._setBgImage();
+    },
+
+    _setBgImage(imgPath) {
+        const newImage = imgPath || 'emptyScreen.jpg';
+        const scope = this;
+        const imageObj = new Image();
+
+        // load BG image
         imageObj.onload = function() {
             // ctx.drawImage(this, 0, 0, w, h);
             set(scope, 'bgImageData', this);
-
-            // store canvas image with original pixel objects
-            // const imgData = ctx.getImageData(0, 0, w, h);
-            // set(scope, 'originalScreenBitmap', imgData);
-
-            // scope._drawText(ctx);
-
-            // begin animation loop
-            // return setInterval(scope._deform,
-            //     ctx,
-            //     scope,
-            //     imgData);
         };
 
-        imageObj.src = 'assets/emptyScreen.jpg';
+        imageObj.src = `assets/${newImage}`;
+
     },
 
     _setDomFocusToSelf() {

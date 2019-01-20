@@ -2,6 +2,8 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 
+import environmentHelpers from '../utils/environment-helpers';
+
 export default Route.extend({
     inputProcessor: service(),
 
@@ -40,12 +42,14 @@ export default Route.extend({
     },
 
     _sendAppResponse(responseArray) {
-        this.inputProcessor.setAppEnvironment({
-            activeAppName: this.routeName,
-            displayAppNameInPrompt: false,
-            interruptPrompt: false,
-            response: responseArray
-        });
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
+            this.routeName,
+            false,
+            false,
+            responseArray
+        );
+
+        this.inputProcessor.setAppEnvironment(appEnvironment);
     },
 
     _redirectBrowser(url) {

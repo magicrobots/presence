@@ -12,6 +12,7 @@ export default Service.extend({
     cursorLoopContainer: undefined,
     cursorPosition: 0,
     currCommandIndex: -1,
+    bgImage: undefined,
 
     init() {
         this._super(...arguments);

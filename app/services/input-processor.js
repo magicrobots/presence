@@ -4,6 +4,7 @@ import { getOwner } from '@ember/application';
 
 import commandRegistry from '../const/command-registry';
 import keyFunctions from './input-processor-key-functions';
+import environmentHelpers from '../utils/environment-helpers';
 
 export default keyFunctions.extend({
 
@@ -80,11 +81,39 @@ export default keyFunctions.extend({
         set(this, 'appResponse', ['enter something']);
     },
 
+    _handleAppKeyOverrides(entry) {
+        for (let i in this.keyOverrides) {
+            const currOverride = i;
+            if (entry === currOverride) {
+                // execute override
+                this.keyOverrides[currOverride](this.overrideScope);
+
+                // tell key processor to stop
+                return true;
+            }
+        }
+        
+        // no override
+        return false;
+    },
+
     _reset() {
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'cursorPosition', 0);
         getOwner(this).lookup('router:main').transitionTo('index');
+    },
+
+    _quit() {
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
+            'index',
+            false,
+            false,
+            ['']
+        );
+
+        this.clear();
+        this.setAppEnvironment(appEnvironment);
     },
 
     // ------------------- public methods -------------------
@@ -94,6 +123,8 @@ export default keyFunctions.extend({
         set(this, 'appResponse', appEnvironment.response);
         set(this, 'displayAppNameInPrompt', appEnvironment.displayAppNameInPrompt);
         set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
+        set(this, 'keyOverrides', appEnvironment.keyOverrides);
+        set(this, 'overrideScope', appEnvironment.overrideScope);
         this._reset();
     },
 
@@ -101,11 +132,21 @@ export default keyFunctions.extend({
         set(this, 'previousExecutionBlocks', []);
         set(this, 'activeApp', undefined);
         set(this, 'appResponse', []);
+        set(this, 'keyOverrides', undefined);
+        set(this, 'bgImage', undefined);
+        set(this, 'overrideScope', undefined);
         this._reset();
     },
 
     processKey(keyEvent) {
-        switch(keyEvent.key.toUpperCase()) {
+        const entry = keyEvent.key.toUpperCase();
+
+        // check for app based key overrides
+        if (this._handleAppKeyOverrides(entry)) {
+            return;
+        }
+
+        switch(entry) {
             case 'F1':
             case 'F2':
             case 'F3':
@@ -123,7 +164,6 @@ export default keyFunctions.extend({
             case 'CAPSLOCK':
             case 'META':
             case 'TAB':
-            case 'ESCAPE':
             case 'CONTROL':
             case 'SHIFT':
             case 'ALT': 
@@ -172,6 +212,19 @@ export default keyFunctions.extend({
                 break;
 
             default:
+                if (entry === 'Q' ||
+                    entry === 'ESCAPE') {
+                    if (this.interruptPrompt && isPresent(this.activeApp)) {
+                        this._quit();
+                        return;
+                    } else {
+                        // ignore input
+                        if (entry === 'ESCAPE') {
+                            return;
+                        }
+                    }
+                }
+
                 this.addKeyToCommand(keyEvent);
                 break;
         }
