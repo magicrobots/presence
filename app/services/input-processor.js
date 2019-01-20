@@ -4,6 +4,7 @@ import { getOwner } from '@ember/application';
 
 import commandRegistry from '../const/command-registry';
 import keyFunctions from './input-processor-key-functions';
+import environmentHelpers from '../utils/environment-helpers';
 
 export default keyFunctions.extend({
 
@@ -87,6 +88,18 @@ export default keyFunctions.extend({
         getOwner(this).lookup('router:main').transitionTo('index');
     },
 
+    _quit() {
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
+            'index',
+            false,
+            false,
+            ['']
+        );
+
+        this.clear();
+        this.setAppEnvironment(appEnvironment);
+    },
+
     // ------------------- public methods -------------------
 
     setAppEnvironment(appEnvironment) {
@@ -123,7 +136,6 @@ export default keyFunctions.extend({
             case 'CAPSLOCK':
             case 'META':
             case 'TAB':
-            case 'ESCAPE':
             case 'CONTROL':
             case 'SHIFT':
             case 'ALT': 
@@ -172,6 +184,14 @@ export default keyFunctions.extend({
                 break;
 
             default:
+                if (keyEvent.key.toUpperCase() === 'Q' ||
+                    keyEvent.key.toUpperCase() === 'ESCAPE') {
+                    if (this.interruptPrompt && isPresent(this.activeApp)) {
+                        this._quit();
+                        return;
+                    }
+                }
+
                 this.addKeyToCommand(keyEvent);
                 break;
         }

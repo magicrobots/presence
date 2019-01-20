@@ -1,4 +1,5 @@
 export default {
+    
     generateEnvironmentWithDefaults: function(appName, isDisplayInPrompt, isInterruptPrompt, response) {
         return {
             activeAppName: appName || 'index',
