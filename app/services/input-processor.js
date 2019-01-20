@@ -1,87 +1,11 @@
-import Service from '@ember/service';
-import { set, computed } from '@ember/object';
+import { set } from '@ember/object';
 import { isPresent } from '@ember/utils';
 import { getOwner } from '@ember/application';
 
 import commandRegistry from '../const/command-registry';
+import keyFunctions from './input-processor-key-functions';
 
-export default Service.extend({
-
-    CURSOR_CHAR: '_',
-
-    currentCommand: '',
-    currentArgs: undefined,
-    activeApp: undefined,
-    isPromptCursorVisible: true,
-    relevantMarkup: undefined,
-    cursorLoopContainer: undefined,
-
-    init() {
-        this._super(...arguments);
-
-        // set defaults
-        set(this, 'commandHistory', []),
-        set(this, 'appResponse', []),
-        set(this, 'previousExecutionBlocks', []),
-
-        this._startPromptCursorLoop();
-    },
-    
-    destroy() {
-        clearInterval(this.cursorLoopContainer);
-        this._super(...arguments);
-    },
-
-    // ------------------- computed properties -------------------
-    
-    PROMPT_LINE_1: computed({
-        get() {
-            // just some random nerdy stuff
-            const ref = document.referrer.substr(document.referrer.indexOf('/'));
-            const code = navigator.appCodeName;
-            const plat = navigator.platform;
-            const lang = navigator.language;
-
-            return `source[${ref}] ${code} ${plat} ${lang} | magicrobots/ (unknown user)`;
-        }
-    }),
-
-    PROMPT_LINE_2: computed('activeApp', {
-        get() {
-            // add name of app if there's an active app
-            const timestamp = new Date().getTime().toString().substr(5);
-            const context = isPresent(this.activeApp) ?
-                ` ${this.activeApp}` :
-                '';
-
-            // only display context if it's requested
-            const displayedContext = this.displayAppNameInPrompt ? context : '';
-
-            return `${timestamp}${displayedContext} $`;
-        }
-    }),
-
-    currExecutionBlock: computed('PROMPT_LINE_1',
-        'PROMPT_LINE_2',
-        'isPromptCursorVisible',
-        'appResponse.[]',
-        'currentCommand', {
-
-        get() {
-            const cursor = this.isPromptCursorVisible ? this.CURSOR_CHAR : '';
-            const interactiveLine = `${this.PROMPT_LINE_2}:${this.currentCommand}${cursor}`;
-
-            return this.appResponse.concat(['', this.PROMPT_LINE_1, interactiveLine]);
-        }
-    }),
-
-    allDisplayLines: computed('currExecutionBlock', {
-        get() {
-            return isPresent(this.previousExecutionBlocks) ?
-                this.previousExecutionBlocks.concat(this.currExecutionBlock) :
-                this.currExecutionBlock;
-        }
-    }),
+export default keyFunctions.extend({
 
     // ------------------- private methods -------------------
 
@@ -91,6 +15,9 @@ export default Service.extend({
             // check for focus
             if (scope._getIsKeyboardActive()) {
                 set(scope, 'isPromptCursorVisible', !scope.isPromptCursorVisible);
+                if (scope.isPromptCursorVisible && scope.forceDisplayCursor) {
+                    set(scope, 'forceDisplayCursor', false);
+                }
             } else {
                 set(scope, 'isPromptCursorVisible', false);
             }
@@ -107,16 +34,24 @@ export default Service.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'appResponse', []);
+        set(this, 'cursorPosition', 0);
     },
 
     _execute() {
-        // store command in history
-        this.commandHistory.push(this.currentCommand);
+        // store command in history if it's not just whitespace
+        const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
+        if (commandWithNoWhitespace !== '') {
+            this.commandHistory.unshift(this.currentCommand);
+        }
 
-        // store execution block
-        set(this, 'previousExecutionBlocks',
-            this.previousExecutionBlocks.concat(Object.assign([],
-                this.currExecutionBlock)).concat(['']));
+        // kill cursor
+        set(this, 'forceDisplayCursor', false);
+        set(this, 'isPromptCursorVisible', false);
+
+        // store execution block with empty string array for empty line
+        const currBlockCopy = Object.assign([],this.currExecutionBlock);
+        const allBlocks = this.previousExecutionBlocks.concat(currBlockCopy).concat(['']);
+        set(this, 'previousExecutionBlocks', allBlocks);
 
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
@@ -126,7 +61,7 @@ export default Service.extend({
         // unset stuff
         this._resetCommandLine();
 
-
+        // find command
         const commandList = commandRegistry.registry;
         const matchedCommand = commandList.filter((currCmdDef) => {
             if(currCmdDef.commandName.toUpperCase() === appName) {
@@ -134,6 +69,7 @@ export default Service.extend({
             }
         })[0];
 
+        // execute command if it exists
         if (isPresent(matchedCommand)) {
             this._handleCommandExecution(matchedCommand, appName);
         } else {
@@ -150,7 +86,12 @@ export default Service.extend({
     },
 
     _handleInvalidInput(appName) {
-        set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
+        if (isPresent(appName)) {
+            set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
+            return;
+        }
+
+        set(this, 'appResponse', ['enter something']);
     },
 
     // ------------------- public methods -------------------
@@ -170,9 +111,6 @@ export default Service.extend({
     },
 
     processKey(keyEvent) {
-        let deleteFromCommand;
-        let appendedCommand;
-
         switch(keyEvent.key.toUpperCase()) {
             case 'F1':
             case 'F2':
@@ -188,19 +126,10 @@ export default Service.extend({
             case 'F12':
             case 'SCROLLLOCK':
             case 'PAUSE':
-            case 'PAGEUP':
-            case 'PAGEDOWN':
-            case 'HOME':
-            case 'END':
             case 'CAPSLOCK':
             case 'META':
             case 'TAB':
             case 'ESCAPE':
-            case 'ARROWLEFT':
-            case 'ARROWUP':
-            case 'ARROWRIGHT':
-            case 'ARROWDOWN':
-            case 'DELETE':
             case 'CONTROL':
             case 'SHIFT':
             case 'ALT': 
@@ -209,18 +138,47 @@ export default Service.extend({
             case 'AUDIOVOLUMEMUTE':
                 // ignore the above keystrokes
                 break;
-            case 'BACKSPACE':
-                // remove char from command
-                deleteFromCommand = this.currentCommand.slice(0, -1);
-                set(this, 'currentCommand', deleteFromCommand);
+
+            case 'ARROWUP':
+                this.arrowUp();
                 break;
+
+            case 'ARROWDOWN':
+                this.arrowDown();
+                break;
+
+            case 'PAGEUP':
+            case 'HOME':
+                this.toHome();
+                break;
+
+            case 'PAGEDOWN':
+            case 'END':
+                this.toEnd();
+                break;
+
+            case 'ARROWLEFT':
+                this.arrowLeft();
+                break;
+
+            case 'ARROWRIGHT':
+                this.arrowRight();
+                break;
+
+            case 'DELETE':
+                this.delete();                
+                break;
+
+            case 'BACKSPACE':
+                this.backspace();
+                break;
+
             case 'ENTER':
                 this._execute();
                 break;
+
             default:
-                // add char to command
-                appendedCommand = this.currentCommand.concat(keyEvent.key);
-                set(this, 'currentCommand', appendedCommand);
+                this.addKeyToCommand(keyEvent);
                 break;
         }
     }
