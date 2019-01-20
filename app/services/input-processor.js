@@ -30,13 +30,6 @@ export default keyFunctions.extend({
         return isViewerActiveDiv;
     },
 
-    _resetCommandLine() {
-        set(this, 'currentCommand', '');
-        set(this, 'currentArgs', undefined);
-        set(this, 'appResponse', []);
-        set(this, 'cursorPosition', 0);
-    },
-
     _execute() {
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -56,42 +49,42 @@ export default keyFunctions.extend({
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
         const appName = commandComponents[0].toUpperCase();
-        set(this, 'args', commandComponents.splice(1));
-
-        // unset stuff
-        this._resetCommandLine();
+        const args = commandComponents.splice(1);
+        set(this, 'currentArgs', args);
 
         // find command
-        const commandList = commandRegistry.registry;
-        const matchedCommand = commandList.filter((currCmdDef) => {
-            if(currCmdDef.commandName.toUpperCase() === appName) {
-                return true;
-            }
-        })[0];
+        const matchedCommand = commandRegistry.getMatchingCommand(appName);
 
         // execute command if it exists
         if (isPresent(matchedCommand)) {
-            this._handleCommandExecution(matchedCommand, appName);
+            this._handleCommandExecution(matchedCommand);
         } else {
             this._handleInvalidInput(appName);
         }
     },
 
-    _handleCommandExecution(commandDefinition, appName) {
-        if (isPresent(commandDefinition.routeName)) {
-            getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
-        } else {
-            set(this, 'appResponse', [`ERROR: ${appName} route not defined.`]);
-        }
+    _handleCommandExecution(commandDefinition) {
+        // run app route
+        getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
     },
 
     _handleInvalidInput(appName) {
+        set(this, 'currentCommand', '');
+        set(this, 'currentArgs', undefined);
+
         if (isPresent(appName)) {
             set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
             return;
         }
 
         set(this, 'appResponse', ['enter something']);
+    },
+
+    _reset() {
+        set(this, 'currentCommand', '');
+        set(this, 'currentArgs', undefined);
+        set(this, 'cursorPosition', 0);
+        getOwner(this).lookup('router:main').transitionTo('index');
     },
 
     // ------------------- public methods -------------------
@@ -101,13 +94,14 @@ export default keyFunctions.extend({
         set(this, 'appResponse', appEnvironment.response);
         set(this, 'displayAppNameInPrompt', appEnvironment.displayAppNameInPrompt);
         set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
+        this._reset();
     },
 
     clear() {
         set(this, 'previousExecutionBlocks', []);
         set(this, 'activeApp', undefined);
-        this._resetCommandLine();
-        getOwner(this).lookup('router:main').transitionTo('index');
+        set(this, 'appResponse', []);
+        this._reset();
     },
 
     processKey(keyEvent) {

@@ -189,8 +189,6 @@ export default Component.extend({
 
     _drawText(ctx) {
         ctx.font = `${this.FONT_SIZE}px Courier`;
-        //ctx.fillStyle = "white";
-
         const temp = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
