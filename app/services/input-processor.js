@@ -81,6 +81,22 @@ export default keyFunctions.extend({
         set(this, 'appResponse', ['enter something']);
     },
 
+    _handleAppKeyOverrides(entry) {
+        for (let i in this.keyOverrides) {
+            const currOverride = i;
+            if (entry === currOverride) {
+                // execute override
+                this.keyOverrides[currOverride](this.overrideScope);
+
+                // tell key processor to stop
+                return true;
+            }
+        }
+        
+        // no override
+        return false;
+    },
+
     _reset() {
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
@@ -107,6 +123,8 @@ export default keyFunctions.extend({
         set(this, 'appResponse', appEnvironment.response);
         set(this, 'displayAppNameInPrompt', appEnvironment.displayAppNameInPrompt);
         set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
+        set(this, 'keyOverrides', appEnvironment.keyOverrides);
+        set(this, 'overrideScope', appEnvironment.overrideScope);
         this._reset();
     },
 
@@ -114,11 +132,21 @@ export default keyFunctions.extend({
         set(this, 'previousExecutionBlocks', []);
         set(this, 'activeApp', undefined);
         set(this, 'appResponse', []);
+        set(this, 'keyOverrides', undefined);
+        set(this, 'bgImage', undefined);
+        set(this, 'overrideScope', undefined);
         this._reset();
     },
 
     processKey(keyEvent) {
-        switch(keyEvent.key.toUpperCase()) {
+        const entry = keyEvent.key.toUpperCase();
+
+        // check for app based key overrides
+        if (this._handleAppKeyOverrides(entry)) {
+            return;
+        }
+
+        switch(entry) {
             case 'F1':
             case 'F2':
             case 'F3':
@@ -184,11 +212,16 @@ export default keyFunctions.extend({
                 break;
 
             default:
-                if (keyEvent.key.toUpperCase() === 'Q' ||
-                    keyEvent.key.toUpperCase() === 'ESCAPE') {
+                if (entry === 'Q' ||
+                    entry === 'ESCAPE') {
                     if (this.interruptPrompt && isPresent(this.activeApp)) {
                         this._quit();
                         return;
+                    } else {
+                        // ignore input
+                        if (entry === 'ESCAPE') {
+                            return;
+                        }
                     }
                 }
 
