@@ -133,13 +133,9 @@ export default Component.extend({
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
-        // const imageObj = new Image();
-        // const w = this.canvasWidth;
-        // const h = this.canvasHeight;
-        // const scope = this;
-
         // store reference to ctx for render loop access
         set(this, 'ctx', ctx)
+        set(this, 'ctx2', ctx2)
 
         // canvas to put interaction items into
         ctx.fillStyle = "blue";
@@ -148,26 +144,6 @@ export default Component.extend({
         // canvas to put modified image onto
         ctx2.fillStyle = "rgba(0,0,0,0)";
         ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-        // load BG image
-        // imageObj.onload = function() {
-        //     // ctx.drawImage(this, 0, 0, w, h);
-        //     set(scope, 'bgImageData', this);
-
-        //     // store canvas image with original pixel objects
-        //     // const imgData = ctx.getImageData(0, 0, w, h);
-        //     // set(scope, 'originalScreenBitmap', imgData);
-
-        //     // scope._drawText(ctx);
-
-        //     // begin animation loop
-        //     // return setInterval(scope._deform,
-        //     //     ctx,
-        //     //     scope,
-        //     //     imgData);
-        // };
-
-        // imageObj.src = 'assets/emptyScreen.jpg';
 
         this._setBgImage();
     },
@@ -179,7 +155,6 @@ export default Component.extend({
 
         // load BG image
         imageObj.onload = function() {
-            // ctx.drawImage(this, 0, 0, w, h);
             set(scope, 'bgImageData', this);
         };
 
@@ -198,14 +173,20 @@ export default Component.extend({
         setInterval(function() {
             const bgImage = scope.bgImageData;
             const ctx = scope.ctx;
+            const ctx2 = scope.ctx2;
 
             if(isPresent(ctx) && isPresent(bgImage)) {
                 const w = scope.canvasWidth;
                 const h = scope.canvasHeight;
                 ctx.drawImage(bgImage, 0, 0, w, h);
                 scope._drawText(ctx);
+                scope._deform(ctx2);
+
+                // store canvas image data for manipulation
+                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+                set(scope, 'originalScreenBitmap', imgData);
             }
-        }, 30);
+        }, 1000/60);
     },
 
     _drawText(ctx) {
@@ -223,26 +204,31 @@ export default Component.extend({
             temp.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
-
-    /*
-    _deform(ctx, scope, imgData) {
-        const noisedImage = scope._noise(ctx, imgData);
+    
+    _deform(ctx2) {
+        const noisedImage = this._noise();
+        if (!noisedImage) {
+            return;
+        }
 
         // redraw results
-        var newImageData = ctx.createImageData(scope.canvasWidth, scope.canvasHeight);
-        newImageData.data = noisedImage;
-        // ctx.putImageData(newImageData, 0, 0);
+        var newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
+        for(let i = 0; i < newImageData.data.length; i += 1) {
+            newImageData.data[i] = noisedImage[i];
+        }
+        ctx2.putImageData(newImageData, 0, 0);
     },
 
-    _noise(ctx, imgData) {
+    _noise() {
+        if (!this.originalScreenBitmap) {
+            return false;
+        }
+
         // select all values of pixels and adjust them randomly or down a little
-        const noised = imgData.data.map((currValue) => {
-            const maxAdjustment = 20;
+        return this.originalScreenBitmap.data.map((currValue) => {
+            const maxAdjustment = 40;
             const randomAdjustment = Math.random() * maxAdjustment;
             return currValue + randomAdjustment - (maxAdjustment / 2);
         });
-
-        return ;
     }
-    */
 });
