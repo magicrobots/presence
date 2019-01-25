@@ -54,7 +54,7 @@ export default Route.extend({
             this.routeName,
             true,
             true,
-            ['Look!  Robots!'],
+            ['<- use arrows to navigate imagery ->', 'enter q or ESC to quit'],
             {
                 ARROWLEFT: this._arrowLeft,
                 ARROWRIGHT: this._arrowRight,

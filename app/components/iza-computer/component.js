@@ -4,7 +4,9 @@ import { htmlSafe } from '@ember/string';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
-export default Component.extend({
+import Deformers from '../../mixins/deformers';
+
+export default Component.extend(Deformers, {
     inputProcessor: service(),
     classNames: ['iza-computer'],
 
@@ -181,6 +183,7 @@ export default Component.extend({
                 ctx.drawImage(bgImage, 0, 0, w, h);
                 scope._drawText(ctx);
                 scope._deform(ctx2);
+                scope._deform(ctx2);
 
                 // store canvas image data for manipulation
                 const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
@@ -206,7 +209,7 @@ export default Component.extend({
     },
     
     _deform(ctx2) {
-        const noisedImage = this._noise();
+        const noisedImage = this.noise();
         if (!noisedImage) {
             return;
         }
@@ -217,18 +220,5 @@ export default Component.extend({
             newImageData.data[i] = noisedImage[i];
         }
         ctx2.putImageData(newImageData, 0, 0);
-    },
-
-    _noise() {
-        if (!this.originalScreenBitmap) {
-            return false;
-        }
-
-        // select all values of pixels and adjust them randomly or down a little
-        return this.originalScreenBitmap.data.map((currValue) => {
-            const maxAdjustment = 40;
-            const randomAdjustment = Math.random() * maxAdjustment;
-            return currValue + randomAdjustment - (maxAdjustment / 2);
-        });
     }
 });
