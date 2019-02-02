@@ -15,6 +15,7 @@ export default Component.extend(Deformers, {
     FONT_SIZE: 12,
     SPACE_BETWEEN_LINES: 2,
     TEXT_EDGE_BUFFER: 80,
+    FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
 
@@ -135,6 +136,15 @@ export default Component.extend(Deformers, {
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
+        ctx.imageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx2.imageSmoothingEnabled = false;
+        ctx2.mozImageSmoothingEnabled = false;
+        ctx2.webkitImageSmoothingEnabled = false;
+        ctx2.msImageSmoothingEnabled = false;
+
         // store reference to ctx for render loop access
         set(this, 'ctx', ctx)
         set(this, 'ctx2', ctx2)
@@ -189,7 +199,7 @@ export default Component.extend(Deformers, {
                 const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
                 set(scope, 'originalScreenBitmap', imgData);
             }
-        }, 1000/60);
+        }, this.FRAME_RATE);
     },
 
     _drawText(ctx) {
@@ -209,16 +219,22 @@ export default Component.extend(Deformers, {
     },
     
     _deform(ctx2) {
-        const noisedImage = this.noise();
-        if (!noisedImage) {
+
+        if (!this.originalScreenBitmap) {
             return;
         }
 
-        // redraw results
-        var newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
+        let deformedImage = this.noise2(this.originalScreenBitmap, 0);
+        //deformedImage = this.noise(deformedImage, 3);
+        deformedImage = this.glowEdges(deformedImage);
+
+        // make new image for display using contents of deformed image data
+        let newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
         for(let i = 0; i < newImageData.data.length; i += 1) {
-            newImageData.data[i] = noisedImage[i];
+            newImageData.data[i] = deformedImage.data[i];
         }
+
+        // draw deformed image
         ctx2.putImageData(newImageData, 0, 0);
     }
 });
