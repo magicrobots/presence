@@ -219,13 +219,15 @@ export default Component.extend(Deformers, {
     },
     
     _deform(ctx2) {
-
         if (!this.originalScreenBitmap) {
             return;
         }
 
-        let deformedImage = this.noise2(this.originalScreenBitmap, 0);
-        //deformedImage = this.noise(deformedImage, 3);
+        let deformedImage = this.originalScreenBitmap;
+
+        // chain pixel modifications
+        deformedImage = this.pixelize(deformedImage);
+        // deformedImage = this.noise(deformedImage, 0);
         deformedImage = this.glowEdges(deformedImage);
 
         // make new image for display using contents of deformed image data
