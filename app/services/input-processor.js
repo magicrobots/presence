@@ -4,7 +4,6 @@ import { getOwner } from '@ember/application';
 
 import commandRegistry from '../const/command-registry';
 import keyFunctions from './input-processor-key-functions';
-import environmentHelpers from '../utils/environment-helpers';
 
 export default keyFunctions.extend({
 
