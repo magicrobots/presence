@@ -49,18 +49,27 @@ export default keyFunctions.extend({
 
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
-        const appName = commandComponents[0].toUpperCase();
+        const commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
 
         // find command
-        const matchedCommand = commandRegistry.getMatchingCommand(appName);
-
-        // execute command if it exists
-        if (isPresent(matchedCommand)) {
-            this._handleCommandExecution(matchedCommand);
+        if (isPresent(this.overrideScope)) {
+            // if command is at app scope, find it
+            if (isPresent(this.overrideScope[commandName])) {
+                this.overrideScope[commandName]();
+            } else {
+                this._handleInvalidInput(commandName);
+            }
         } else {
-            this._handleInvalidInput(appName);
+            const matchedCommand = commandRegistry.getMatchingCommand(commandName.toUpperCase());
+
+            // execute command if it exists
+            if (isPresent(matchedCommand)) {
+                this._handleCommandExecution(matchedCommand);
+            } else {
+                this._handleInvalidInput(commandName);
+            }
         }
     },
 
@@ -105,10 +114,7 @@ export default keyFunctions.extend({
     },
 
     _quit() {
-        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults();
-
         this.clear();
-        this.setAppEnvironment(appEnvironment);
     },
 
     // ------------------- public methods -------------------
@@ -127,10 +133,18 @@ export default keyFunctions.extend({
         set(this, 'previousExecutionBlocks', []);
         set(this, 'activeApp', undefined);
         set(this, 'appResponse', []);
+        set(this, 'displayAppNameInPrompt', undefined);
+        set(this, 'interruptPrompt', undefined);
         set(this, 'keyOverrides', undefined);
         set(this, 'bgImage', undefined);
         set(this, 'overrideScope', undefined);
         this._reset();
+    },
+
+    handleFunctionFromApp(response) {
+        set(this, 'currentCommand', '');
+        set(this, 'currentArgs', undefined);
+        set(this, 'appResponse', response);
     },
 
     processKey(keyEvent) {
