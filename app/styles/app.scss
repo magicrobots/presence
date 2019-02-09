@@ -33,13 +33,6 @@ body {
             margin-top: 0px;
             width: 100%;
         }
-
-        .header-logo {
-            position: absolute;
-            top: 7px;
-            left: calc(50% - 110px);
-            height: 20px;
-        }
     }
     
     main {    
@@ -92,6 +85,13 @@ body {
             position: absolute;
             bottom: 2px;
             right: 2px;
+        }
+
+        .header-logo {
+            position: absolute;
+            bottom: 7px;
+            left: calc(50% - 29px);
+            height: 20px;
         }
     }
 }

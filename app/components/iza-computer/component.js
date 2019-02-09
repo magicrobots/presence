@@ -4,7 +4,9 @@ import { htmlSafe } from '@ember/string';
 import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
-export default Component.extend({
+import Deformers from '../../mixins/deformers';
+
+export default Component.extend(Deformers, {
     inputProcessor: service(),
     classNames: ['iza-computer'],
 
@@ -12,7 +14,7 @@ export default Component.extend({
 
     FONT_SIZE: 12,
     SPACE_BETWEEN_LINES: 2,
-    TEXT_EDGE_BUFFER: 80,
+    FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
 
@@ -46,17 +48,32 @@ export default Component.extend({
 
     // ------------------- computed properties -------------------
 
-    visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', {
+    textEdgeBuffer: computed('viewportMeasurements{width,height}', {
         get() {
+            return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
+        }
+    }),
+
+    visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', 'viewportMeasurements.height', 'textEdgeBuffer', {
+        get() {
+            const lineHeightInPixels = this.SPACE_BETWEEN_LINES + this.FONT_SIZE;
+            const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
             const allLines = this.inputProcessor.allDisplayLines;
+            const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
+            const initIndex = allLines.length >= maxLines ? allLines.length - maxLines : 0;
             const returnSet = [];
-            for (let i = 0; i < allLines.length; i++) {
+
+            let yCounter = 0;
+            for (let i = initIndex; i < allLines.length; i++) {
                 const currLine = allLines[i];
+                const currY = lineHeightInPixels * yCounter;
+
+                yCounter++;
 
                 returnSet.push({
                     text: currLine,
-                    x: this.TEXT_EDGE_BUFFER,
-                    y: this.TEXT_EDGE_BUFFER + ((this.SPACE_BETWEEN_LINES + this.FONT_SIZE) * i)});
+                    x: this.textEdgeBuffer,
+                    y: this.textEdgeBuffer + currY});
             }
 
             return returnSet;
@@ -133,13 +150,18 @@ export default Component.extend({
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
-        // const imageObj = new Image();
-        // const w = this.canvasWidth;
-        // const h = this.canvasHeight;
-        // const scope = this;
+        ctx.imageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx2.imageSmoothingEnabled = false;
+        ctx2.mozImageSmoothingEnabled = false;
+        ctx2.webkitImageSmoothingEnabled = false;
+        ctx2.msImageSmoothingEnabled = false;
 
         // store reference to ctx for render loop access
         set(this, 'ctx', ctx)
+        set(this, 'ctx2', ctx2)
 
         // canvas to put interaction items into
         ctx.fillStyle = "blue";
@@ -148,26 +170,6 @@ export default Component.extend({
         // canvas to put modified image onto
         ctx2.fillStyle = "rgba(0,0,0,0)";
         ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-        // load BG image
-        // imageObj.onload = function() {
-        //     // ctx.drawImage(this, 0, 0, w, h);
-        //     set(scope, 'bgImageData', this);
-
-        //     // store canvas image with original pixel objects
-        //     // const imgData = ctx.getImageData(0, 0, w, h);
-        //     // set(scope, 'originalScreenBitmap', imgData);
-
-        //     // scope._drawText(ctx);
-
-        //     // begin animation loop
-        //     // return setInterval(scope._deform,
-        //     //     ctx,
-        //     //     scope,
-        //     //     imgData);
-        // };
-
-        // imageObj.src = 'assets/emptyScreen.jpg';
 
         this._setBgImage();
     },
@@ -179,7 +181,6 @@ export default Component.extend({
 
         // load BG image
         imageObj.onload = function() {
-            // ctx.drawImage(this, 0, 0, w, h);
             set(scope, 'bgImageData', this);
         };
 
@@ -198,14 +199,21 @@ export default Component.extend({
         setInterval(function() {
             const bgImage = scope.bgImageData;
             const ctx = scope.ctx;
+            const ctx2 = scope.ctx2;
 
             if(isPresent(ctx) && isPresent(bgImage)) {
                 const w = scope.canvasWidth;
                 const h = scope.canvasHeight;
                 ctx.drawImage(bgImage, 0, 0, w, h);
                 scope._drawText(ctx);
+                scope._deform(ctx2);
+                scope._deform(ctx2);
+
+                // store canvas image data for manipulation
+                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+                set(scope, 'originalScreenBitmap', imgData);
             }
-        }, 30);
+        }, this.FRAME_RATE);
     },
 
     _drawText(ctx) {
@@ -216,33 +224,33 @@ export default Component.extend({
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
                 temp.fillStyle = '#35ff82';
             } else if (currLine.text === 'robots') {
-                temp.fillStyle = '#80d7f7';
+                temp.fillStyle = '#fffa00';
             } else {
                 temp.fillStyle = 'white';
             }
             temp.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
+    
+    _deform(ctx2) {
+        if (!this.originalScreenBitmap) {
+            return;
+        }
 
-    /*
-    _deform(ctx, scope, imgData) {
-        const noisedImage = scope._noise(ctx, imgData);
+        let deformedImage = this.originalScreenBitmap;
 
-        // redraw results
-        var newImageData = ctx.createImageData(scope.canvasWidth, scope.canvasHeight);
-        newImageData.data = noisedImage;
-        // ctx.putImageData(newImageData, 0, 0);
-    },
+        // chain pixel modifications
+        deformedImage = this.pixelize(deformedImage);
+        // deformedImage = this.noise(deformedImage, 0);
+        deformedImage = this.glowEdges(deformedImage);
 
-    _noise(ctx, imgData) {
-        // select all values of pixels and adjust them randomly or down a little
-        const noised = imgData.data.map((currValue) => {
-            const maxAdjustment = 20;
-            const randomAdjustment = Math.random() * maxAdjustment;
-            return currValue + randomAdjustment - (maxAdjustment / 2);
-        });
+        // make new image for display using contents of deformed image data
+        let newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
+        for(let i = 0; i < newImageData.data.length; i += 1) {
+            newImageData.data[i] = deformedImage.data[i];
+        }
 
-        return ;
+        // draw deformed image
+        ctx2.putImageData(newImageData, 0, 0);
     }
-    */
 });
