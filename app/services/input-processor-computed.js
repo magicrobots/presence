@@ -15,20 +15,24 @@ export default processorBase.extend({
         }
     }),
 
-    PROMPT_LINE_2: computed('activeApp', 'displayAppNameInPrompt', {
+    PROMPT_LINE_2: computed('activeApp', 'displayAppNameInPrompt', 'interruptPrompt', {
         get() {
             // add name of app if there's an active app
             const timestamp = new Date().getTime().toString().substr(5);
             const context = isPresent(this.activeApp) ?
-                ` ${this.activeApp}` :
+                `${this.activeApp} ` :
                 '';
 
             // only display context if it's requested
             const displayedContext = this.displayAppNameInPrompt ? context : '';
 
+            // prompt is different based on context
             const promptEnd = this.displayAppNameInPrompt && isPresent(this.activeApp) ? '>' : '$:';
 
-            return `${timestamp}${displayedContext} ${promptEnd}`;
+            // if interrupted, don't show preprompt
+            const prePrompt = isPresent(this.interruptPrompt) ? '' : `${timestamp} `;
+
+            return `${prePrompt}${displayedContext}${promptEnd}`;
         }
     }),
 
@@ -52,11 +56,15 @@ export default processorBase.extend({
 
             const interactiveLine = `${this.PROMPT_LINE_2}${commandDisplay}`;
 
-            return this.appResponse.concat(['', this.PROMPT_LINE_1, interactiveLine]);
+            const fullBlock = isPresent(this.interruptPrompt) ?
+                ['', interactiveLine] :
+                ['', this.PROMPT_LINE_1, interactiveLine];
+
+            return this.appResponse.concat(fullBlock);
         }
     }),
 
-    allDisplayLines: computed('currExecutionBlock', {
+    allDisplayLines: computed('currExecutionBlock', 'previousExecutionBlocks.[]', {
         get() {
             return isPresent(this.previousExecutionBlocks) ?
                 this.previousExecutionBlocks.concat(this.currExecutionBlock) :

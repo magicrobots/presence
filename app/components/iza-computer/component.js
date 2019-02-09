@@ -218,17 +218,17 @@ export default Component.extend(Deformers, {
 
     _drawText(ctx) {
         ctx.font = `${this.FONT_SIZE}px Courier`;
-        const temp = ctx;
+        const scopedContext = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
-                temp.fillStyle = '#35ff82';
+                scopedContext.fillStyle = '#35ff82';
             } else if (currLine.text === 'robots') {
-                temp.fillStyle = '#fffa00';
+                scopedContext.fillStyle = '#fffa00';
             } else {
-                temp.fillStyle = 'white';
+                scopedContext.fillStyle = 'white';
             }
-            temp.fillText(currLine.text, currLine.x, currLine.y);
+            scopedContext.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
     

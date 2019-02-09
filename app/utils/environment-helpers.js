@@ -1,18 +1,13 @@
 export default {
 
-    generateEnvironmentWithDefaults: function(appName,
-        isDisplayInPrompt,
-        isInterruptPrompt,
-        response,
-        keyOverrides,
-        overrideScope) {
+    generateEnvironmentWithDefaults: function(options) {
         return {
-            activeAppName: appName || 'index',
-            displayAppNameInPrompt: isDisplayInPrompt,
-            interruptPrompt: isInterruptPrompt,
-            response: response || [':|'],
-            keyOverrides,
-            overrideScope
+            activeAppName: options.activeAppName || 'index',
+            displayAppNameInPrompt: options.displayAppNameInPrompt,
+            interruptPrompt: options.interruptPrompt,
+            response: options.response || ['no application response provided'],
+            keyOverrides: options.keyOverrides,
+            overrideScope: options.overrideScope
         }
     }
 }

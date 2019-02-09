@@ -5,19 +5,10 @@ import environmentHelpers from '../utils/environment-helpers';
 export default Route.extend({
     inputProcessor: service(),
 
-    testFunc() {
-        this.inputProcessor.handleFunctionFromApp(['it\'s alive']);
-    },
-
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            displayAppNameInPrompt: true,
-            interruptPrompt: true,
-            overrideScope: this,
-            response: ['Available settings:',
-                '  username',
-                '  promptcolor']
+            response: [`CD ${this.inputProcessor.currentArgs[0]} ACCESS DENIED`]
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
