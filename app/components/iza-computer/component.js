@@ -14,7 +14,6 @@ export default Component.extend(Deformers, {
 
     FONT_SIZE: 12,
     SPACE_BETWEEN_LINES: 2,
-    TEXT_EDGE_BUFFER: 80,
     FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
@@ -49,17 +48,32 @@ export default Component.extend(Deformers, {
 
     // ------------------- computed properties -------------------
 
-    visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', {
+    textEdgeBuffer: computed('viewportMeasurements{width,height}', {
         get() {
+            return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
+        }
+    }),
+
+    visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', 'viewportMeasurements.height', 'textEdgeBuffer', {
+        get() {
+            const lineHeightInPixels = this.SPACE_BETWEEN_LINES + this.FONT_SIZE;
+            const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
             const allLines = this.inputProcessor.allDisplayLines;
+            const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
+            const initIndex = allLines.length >= maxLines ? allLines.length - maxLines : 0;
             const returnSet = [];
-            for (let i = 0; i < allLines.length; i++) {
+
+            let yCounter = 0;
+            for (let i = initIndex; i < allLines.length; i++) {
                 const currLine = allLines[i];
+                const currY = lineHeightInPixels * yCounter;
+
+                yCounter++;
 
                 returnSet.push({
                     text: currLine,
-                    x: this.TEXT_EDGE_BUFFER,
-                    y: this.TEXT_EDGE_BUFFER + ((this.SPACE_BETWEEN_LINES + this.FONT_SIZE) * i)});
+                    x: this.textEdgeBuffer,
+                    y: this.textEdgeBuffer + currY});
             }
 
             return returnSet;
@@ -210,7 +224,7 @@ export default Component.extend(Deformers, {
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
                 temp.fillStyle = '#35ff82';
             } else if (currLine.text === 'robots') {
-                temp.fillStyle = '#80d7f7';
+                temp.fillStyle = '#fffa00';
             } else {
                 temp.fillStyle = 'white';
             }

@@ -101,7 +101,7 @@ export default keyFunctions.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'cursorPosition', 0);
-        //getOwner(this).lookup('router:main').transitionTo('index');
+        getOwner(this).lookup('router:main').transitionTo('index');
     },
 
     _quit() {
