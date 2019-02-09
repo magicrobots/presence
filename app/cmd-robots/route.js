@@ -50,17 +50,17 @@ export default Route.extend({
     },
 
     afterModel() {
-        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
-            this.routeName,
-            true,
-            true,
-            ['<- use arrows to navigate imagery ->', 'enter q or ESC to quit'],
-            {
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
+            activeAppName: this.routeName,
+            displayAppNameInPrompt: true,
+            interruptPrompt: true,
+            response: ['<- use arrows to navigate imagery ->', 'enter q or ESC to quit'],
+            keyOverrides: {
                 ARROWLEFT: this._arrowLeft,
                 ARROWRIGHT: this._arrowRight,
             },
-            this
-        );
+            overrideScope: this
+        });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
         this._displayImage();

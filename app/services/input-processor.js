@@ -105,12 +105,7 @@ export default keyFunctions.extend({
     },
 
     _quit() {
-        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
-            'index',
-            false,
-            false,
-            ['']
-        );
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults();
 
         this.clear();
         this.setAppEnvironment(appEnvironment);

@@ -9,11 +9,7 @@ export default Route.extend({
     inputProcessor: service(),
 
     _getResponse() {
-        let response = ['I\'m a computer.',
-            'Enter the LS command to view a list of available commands.',
-            'Commands are not case sensitive.',
-            'For help on a specific command, type \'help {commandName}\'',
-            'To quit any running application type Q to return to command line interface.'];
+        let response = '';
 
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {
@@ -24,21 +20,27 @@ export default Route.extend({
 
                 // append usage if it's there
                 if (isPresent(matchedCommand.usage)) {
-                    response =response.concat([`  usage: ${matchedCommand.usage}`]);
+                    response = response.concat([`  usage: ${matchedCommand.usage}`]);
                 }
+            } else {
+                response = [`  ERROR: no help file found for ${helpAppName.toUpperCase()}`];
             }
+        } else {
+            response = ['HELP:',
+                'Enter the LS command to view a list of available commands.',
+                'Commands are not case sensitive.',
+                'For help on a specific command, type \'help {commandName}\'',
+                'To quit any running application type Q to return to command line interface.'];
         }
 
         return response;
     },
 
     afterModel() {
-        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
-            this.routeName,
-            false,
-            false,
-            this._getResponse()
-        );
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
+            activeAppName: this.routeName,
+            response: this._getResponse()
+        });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
     }

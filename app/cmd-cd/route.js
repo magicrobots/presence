@@ -8,11 +8,7 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            displayAppNameInPrompt: true,
-            interruptPrompt: true,
-            response: ['Available settings:',
-                '  username',
-                '  promptcolor']
+            response: [`CD ${this.inputProcessor.currentArgs[0]} ACCESS DENIED`]
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);

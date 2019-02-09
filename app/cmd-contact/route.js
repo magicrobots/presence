@@ -42,12 +42,10 @@ export default Route.extend({
     },
 
     _sendAppResponse(responseArray) {
-        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults(
-            this.routeName,
-            false,
-            false,
-            responseArray
-        );
+        const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
+            activeAppName: this.routeName,
+            response: responseArray
+        });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
     },

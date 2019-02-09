@@ -8,11 +8,7 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            displayAppNameInPrompt: true,
-            interruptPrompt: true,
-            response: ['Available settings:',
-                '  username',
-                '  promptcolor']
+            response: ['anonymous']
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
