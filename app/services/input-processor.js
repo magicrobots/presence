@@ -220,16 +220,19 @@ export default keyFunctions.extend({
                 break;
 
             default:
-                if (entry === 'Q' ||
-                    entry === 'ESCAPE') {
-                    if (this.interruptPrompt && isPresent(this.activeApp)) {
+                if (this.interruptPrompt && isPresent(this.activeApp)) {
+                    // quit running app
+                    if (entry === 'Q' ||
+                        entry === 'ESCAPE' ||
+                        entry === 'C' && keyEvent.ctrlKey === true) {
                         this._quit();
+
                         return;
-                    } else {
-                        // ignore input
-                        if (entry === 'ESCAPE') {
-                            return;
-                        }
+                    }
+                } else {
+                    // ignore input
+                    if (entry === 'ESCAPE') {
+                        return;
                     }
                 }
 
