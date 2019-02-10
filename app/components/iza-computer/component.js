@@ -11,9 +11,10 @@ export default Component.extend(Deformers, {
     persistenceHandler: service(),
     classNames: ['iza-computer'],
 
-    // ------------------- vars -------------------
+    // ------------------- consts -------------------
 
     FONT_SIZE: 12,
+    FONT_CHARACTER_WIDTH: 7.3,
     SPACE_BETWEEN_LINES: 2,
     FRAME_RATE: 1000/60,
 
@@ -59,14 +60,15 @@ export default Component.extend(Deformers, {
         get() {
             const lineHeightInPixels = this.SPACE_BETWEEN_LINES + this.FONT_SIZE;
             const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
-            const allLines = this.inputProcessor.allDisplayLines;
             const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
-            const initIndex = allLines.length >= maxLines ? allLines.length - maxLines : 0;
             const returnSet = [];
 
+            const allLinesWidthHandled = this._fitDisplayLinesInContainerWidth();
+            const initIndex = allLinesWidthHandled.length >= maxLines ? allLinesWidthHandled.length - maxLines : 0;
+
             let yCounter = 0;
-            for (let i = initIndex; i < allLines.length; i++) {
-                const currLine = allLines[i];
+            for (let i = initIndex; i < allLinesWidthHandled.length; i++) {
+                const currLine = allLinesWidthHandled[i];
                 const currY = lineHeightInPixels * yCounter;
 
                 yCounter++;
@@ -255,5 +257,40 @@ export default Component.extend(Deformers, {
 
         // draw deformed image
         ctx2.putImageData(newImageData, 0, 0);
+    },
+
+    _fitDisplayLinesInContainerWidth() {
+        let modifiedLines = [];
+        const allLines = this.inputProcessor.allDisplayLines;
+        const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
+        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
+
+        allLines.forEach((currLine) => {
+            if (currLine.length > maxCharsPerLine) {
+                // break line into chunks that fit in the width of the viewport
+                const segments = [];
+                let currLastSegment = currLine;
+                while(currLastSegment.length > maxCharsPerLine) {
+                    // find space closest to maxChars
+                    const lastSpace = currLastSegment.lastIndexOf(' ', maxCharsPerLine);
+                    const safeLine = currLastSegment.substring(0, lastSpace);
+                    segments.push(safeLine);
+
+                    // modify target string
+                    currLastSegment = currLastSegment.substring(lastSpace + 1);
+                }
+
+                // add orphan
+                segments.push(currLastSegment);
+
+                // add segments to return set
+                modifiedLines = modifiedLines.concat(segments);
+            } else {
+                // just add the raw line
+                modifiedLines.push(currLine);
+            }
+        });
+
+        return modifiedLines;
     }
 });
