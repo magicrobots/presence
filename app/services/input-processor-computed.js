@@ -5,16 +5,16 @@ import { inject as service } from '@ember/service';
 import processorBase from './input-processor-base';
 
 export default processorBase.extend({
-    cookieHandler: service(),
+    persistenceHandler: service(),
 
-    PROMPT_LINE_1: computed('cookieHandler.updateTrigger', {
+    PROMPT_LINE_1: computed('persistenceHandler.updateTrigger', {
         get() {
             // just some random nerdy stuff
             const ref = document.referrer.substr(document.referrer.indexOf('/'));
             const code = navigator.appCodeName;
             const plat = navigator.platform;
             const lang = navigator.language;
-            const username = this.cookieHandler.getUsername() || 'unknown user';
+            const username = this.persistenceHandler.getUsername() || 'unknown user';
 
             return `source[${ref}] ${code} ${plat} ${lang} | magicrobots/ (${username})`;
         }

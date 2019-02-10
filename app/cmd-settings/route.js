@@ -6,7 +6,7 @@ import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
-    cookieHandler: service(),
+    persistenceHandler: service(),
 
     username() {
         const newName = this.inputProcessor.currentArgs[0];
@@ -17,7 +17,7 @@ export default Route.extend({
             return;
         }
 
-        this.cookieHandler.setUsername(newName);
+        this.persistenceHandler.setUsername(newName);
         this.inputProcessor.handleFunctionFromApp([`username changed to ${newName}.`]);
     },
 
@@ -33,7 +33,7 @@ export default Route.extend({
         // test for color validity
         const isValidHex  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColor);
         if (isValidHex) {
-            this.cookieHandler.setPromptColor(newColor);
+            this.persistenceHandler.setPromptColor(newColor);
             this.inputProcessor.handleFunctionFromApp([`Prompt color changed to ${newColor}`]);
         } else {
             this.inputProcessor.handleFunctionFromApp([`second parameter must be valid hex color - eg: {promptcolor #336699}`]);
