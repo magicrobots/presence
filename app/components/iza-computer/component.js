@@ -16,6 +16,8 @@ export default Component.extend(Deformers, {
     FONT_SIZE: 12,
     FONT_CHARACTER_WIDTH: 7.3,
     SPACE_BETWEEN_LINES: 2,
+    ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
+    MIN_BORDER: 50,
     FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
@@ -86,12 +88,13 @@ export default Component.extend(Deformers, {
     viewportMeasurements: computed('containerHeight', 'containerWidth', {
         get() {
             // make it a 4:3 ratio as big as possible in the viewport
-            const border = 50;
             const outputRatio = 4 / 3;
             const currHeight = this.containerHeight;
-            const currWidth = this.containerWidth;
-            const maxHeight = currHeight - (border * 2);
-            const maxWidth = currWidth - (border * 2);
+            const currWidth = this.containerWidth > this.ABSOLUTE_MAX_VIEWPORT_WIDTH ?
+                this.ABSOLUTE_MAX_VIEWPORT_WIDTH :
+                this.containerWidth;
+            const maxHeight = currHeight - (this.MIN_BORDER * 2);
+            const maxWidth = currWidth - (this.MIN_BORDER * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
 
             let height;
@@ -106,10 +109,10 @@ export default Component.extend(Deformers, {
             } else {
                 width = maxWidth;
                 height = maxWidth * (1 / outputRatio);
-                top = (currHeight - height) / 2 - (border * 1);
+                top = (currHeight - height) / 2 - (this.MIN_BORDER * 1);
             }
 
-            left = (currWidth - width) / 2;
+            left = (this.containerWidth - width) / 2;
 
             return {left, top, width, height};
         }
@@ -270,6 +273,7 @@ export default Component.extend(Deformers, {
                 // break line into chunks that fit in the width of the viewport
                 const segments = [];
                 let currLastSegment = currLine;
+
                 while(currLastSegment.length > maxCharsPerLine) {
                     // find space closest to maxChars
                     const lastSpace = currLastSegment.lastIndexOf(' ', maxCharsPerLine);
