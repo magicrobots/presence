@@ -8,6 +8,7 @@ import Deformers from '../../mixins/deformers';
 
 export default Component.extend(Deformers, {
     inputProcessor: service(),
+    persistenceHandler: service(),
     classNames: ['iza-computer'],
 
     // ------------------- vars -------------------
@@ -221,13 +222,15 @@ export default Component.extend(Deformers, {
         const scopedContext = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
+            const promptColor = this.persistenceHandler.getPromptColor() || '#35ff82';
             if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
-                scopedContext.fillStyle = '#35ff82';
+                scopedContext.fillStyle = promptColor;
             } else if (currLine.text === 'robots') {
                 scopedContext.fillStyle = '#fffa00';
             } else {
                 scopedContext.fillStyle = 'white';
             }
+
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
