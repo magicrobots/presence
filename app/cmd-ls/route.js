@@ -39,6 +39,7 @@ export default Route.extend({
             null;
 
         switch(listArg) {
+            case '-al':
             case '-la':
                 commandList = this._responseTall(true);
                 break;
