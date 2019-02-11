@@ -26,18 +26,18 @@ export default Route.extend({
                     this._redirectBrowser('https://github.com/magicrobots');
                     break;
                 default:
-                    this._sendAppResponse([`Sorry, the contact function doesn\t have a directive for ${locationKey}`]);
+                    this._sendAppResponse([`Sorry, the contact function doesn't have connection type '${locationKey}'`]);
                     return;
             }
         }
 
-        this._sendAppResponse(['Here are my things:',
+        this._sendAppResponse(['Connections available at:',
             '  email: adam@magicrobots.com',
             '  instagram: magicrobots',
             '  twitter: magic_robots',
             '  github: magicrobots',
             '',
-            'if you run the contact command and pass the connection type it will send you there.',
+            'If you run the contact command and pass the connection type it will send you there.',
             'eg: type `contact instagram`']);
     },
 

@@ -26,11 +26,11 @@ export default Route.extend({
                 response = [`  ERROR: no help file found for ${helpAppName.toUpperCase()}`];
             }
         } else {
-            response = ['HELP:',
-                'Enter the LS command to view a list of available commands.',
-                'Commands are not case sensitive.',
-                'For help on a specific command, type \'help {commandName}\'',
-                'To quit any running application type Q to return to command line interface.'];
+            response = ['MAN (Manual):',
+                '  Enter the LS command to view a list of available commands.',
+                '  Commands are not case sensitive.',
+                '  For manual on a specific command, enter \'man {command}\'',
+                '  To quit any running application enter ESC to return to command line interface.'];
         }
 
         return response;
