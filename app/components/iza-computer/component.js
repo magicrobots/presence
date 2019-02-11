@@ -268,6 +268,11 @@ export default Component.extend(Deformers, {
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
         const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
 
+        // prevent inifinite loop?
+        if (maxCharsPerLine < 20) {
+            return ['', 'so smol','  :('];
+        }
+
         allLines.forEach((currLine) => {
             if (currLine.length > maxCharsPerLine) {
                 // break line into chunks that fit in the width of the viewport

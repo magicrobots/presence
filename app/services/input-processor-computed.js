@@ -10,13 +10,12 @@ export default processorBase.extend({
     PROMPT_LINE_1: computed('persistenceHandler.updateTrigger', {
         get() {
             // just some random nerdy stuff
-            const ref = document.referrer.substr(document.referrer.indexOf('/'));
             const code = navigator.appCodeName;
             const plat = navigator.platform;
             const lang = navigator.language;
             const username = this.persistenceHandler.getUsername() || 'unknown user';
 
-            return `source[${ref}] ${code} ${plat} ${lang} | magicrobots/ (${username})`;
+            return `${code} ${plat} ${lang} | magicrobots/ (${username})`;
         }
     }),
 
