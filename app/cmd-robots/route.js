@@ -9,12 +9,12 @@ export default Route.extend({
 
     currentBotIndex: 0,
     robotImages: Object.freeze([
-        'bunny.jpg',
-        'atst.jpg',
         'beach.jpg',
+        'atst.jpg',
         'classic.jpg',
         'hover.jpg',
         'tripod.jpg',
+        'bunny.jpg',
         'wired.jpg']),
 
     _arrowLeft(scope) {

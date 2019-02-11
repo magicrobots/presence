@@ -18,6 +18,7 @@ export default Component.extend(Deformers, {
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,
+    MIN_USEABLE_COLUMNS: 40,
     FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
@@ -52,7 +53,7 @@ export default Component.extend(Deformers, {
 
     // ------------------- computed properties -------------------
 
-    textEdgeBuffer: computed('viewportMeasurements{width,height}', {
+    textEdgeBuffer: computed('viewportMeasurements.{width,height}', {
         get() {
             return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
         }
@@ -269,7 +270,7 @@ export default Component.extend(Deformers, {
         const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
 
         // prevent inifinite loop?
-        if (maxCharsPerLine < 20) {
+        if (maxCharsPerLine < this.MIN_USEABLE_COLUMNS) {
             return ['', 'so smol','  :('];
         }
 
@@ -286,7 +287,9 @@ export default Component.extend(Deformers, {
                     segments.push(safeLine);
 
                     // modify target string
-                    currLastSegment = currLastSegment.substring(lastSpace + 1);
+                    const remainder = currLastSegment.substring(lastSpace);
+                    const firstNonSpaceIndex = remainder.search(/\S|$/);
+                    currLastSegment = remainder.substring(firstNonSpaceIndex);
                 }
 
                 // add orphan

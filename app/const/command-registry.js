@@ -1,5 +1,5 @@
-const helpRoute = 'cmd-help';
-const helpText = 'MAN, and ? are proxies to the HELP command. Type either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
+const helpRoute = 'cmd-man';
+const helpText = 'Help, and ? are proxies to the MAN command. Enter either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
 const helpUsage = 'man contact';
 
 export default {
@@ -17,7 +17,7 @@ export default {
     registry: [
         { commandName: 'about',
         routeName: 'cmd-about',
-        helpText: 'This command tells the user about this computer internet project.',
+        helpText: 'Project description and details.',
         usage: null,
         date: 'Feb  9 14:22',
         size: '       147',
@@ -26,7 +26,7 @@ export default {
 
         { commandName: 'cd',
         routeName: 'cmd-cd',
-        helpText: 'Move withing directory structure.',
+        helpText: 'Move within directory structure.',
         usage: null,
         date: 'Dec 12  4:18',
         size: '    432256',
@@ -53,7 +53,7 @@ export default {
 
         { commandName: 'contact',
         routeName: 'cmd-contact',
-        helpText: 'This command shows the user different ways to see other things the author of this project has created or ways to get in touch with them if the user so chooses.',
+        helpText: 'View additional connection types for ROOT user.',
         usage: 'contact instagram',
         date: 'Feb  7 12:01',
         size: '    651886',
@@ -62,7 +62,7 @@ export default {
 
         { commandName: 'ls',
         routeName: 'cmd-ls',
-        helpText: 'This is a list command which shows the user available commands or applications in the system.',
+        helpText: 'List command shows user available commands or applications in the system.',
         usage: null,
         date: 'Feb  3  7:45',
         size: '    198516',
@@ -71,7 +71,7 @@ export default {
 
         { commandName: 'clear',
         routeName: 'cmd-clear',
-        helpText: 'This command clears the screen of any previous inputs and command responses.',
+        helpText: 'Clears the screen of any previous inputs and command responses.',
         usage: null,
         date: 'Dec 30 18:32',
         size: '      2199',
@@ -107,7 +107,7 @@ export default {
 
         { commandName: 'robots',
         routeName: 'cmd-robots',
-        helpText: 'This application displays still images taken off modern VHS tapes.',
+        helpText: 'Displays still images taken off modern VHS tapes.',
         usage: 'Use left and right arrows to navigate, and q to exit.',
         date: 'Feb  9 16:02',
         size: '9819081510',
@@ -116,8 +116,8 @@ export default {
 
         { commandName: 'settings',
         routeName: 'cmd-settings',
-        helpText: 'This application allows the user to save personal settings.',
-        usage: 'set username fred',
+        helpText: 'Allows user to save personal settings for terminal environment.',
+        usage: 'At settings prompt: `username {name}`',
         date: 'Jan 16  6:05',
         size: '      5191',
         isExec: true,

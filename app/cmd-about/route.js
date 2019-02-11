@@ -9,7 +9,8 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: ['This is a computer simulation.',
+            response: ['This is an ol\' unix style terminal simulation.',
+            '',
             'It was written in javascript utilizing:',
             '  ember',
             '  canvas',
@@ -21,7 +22,7 @@ export default Route.extend({
             '    deployment to AWS S3',
             '  surely some other nerdy things',
             '',
-            'gimme a shout with questions (run contact command)']
+            'gimme a shout with feedback, suggestions or questions (run contact command)']
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
