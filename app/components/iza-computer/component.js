@@ -23,20 +23,6 @@ export default Component.extend(Deformers, {
 
     // ------------------- ember hooks -------------------
 
-    init() {
-        this._super(...arguments);
-    },
-    
-    didInsertElement: function() {
-        this._setDomFocusToSelf();
-        set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
-
-        const scope = this;
-        window.addEventListener('resize', function() {
-            scope._setContainerSize();
-        })
-    },
-
     click() {
         this._setDomFocusToSelf();
     },
@@ -46,9 +32,19 @@ export default Component.extend(Deformers, {
     },
 
     didRender() {
-        this._setContainerSize();
+        // inform input processor of markup
+        set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
 
+        // add resize listener
+        const scope = this;
+        window.addEventListener('resize', function() {
+            scope._setContainerSize();
+        })
+
+        // get everything started
+        this._setContainerSize();
         this._startRenderLoop();
+        this._setDomFocusToSelf();
     },
 
     // ------------------- computed properties -------------------

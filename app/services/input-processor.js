@@ -26,7 +26,6 @@ export default keyFunctions.extend({
     },
 
     _getIsKeyboardActive() {
-        // const ownerContext = getOwner(this);
         const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
         return isViewerActiveDiv;
     },
@@ -37,6 +36,9 @@ export default keyFunctions.extend({
         if (commandWithNoWhitespace !== '') {
             this.commandHistory.unshift(this.currentCommand);
         }
+        
+        // reset cursor position
+        set(this, 'cursorPosition', 0);
 
         // kill cursor
         set(this, 'forceDisplayCursor', false);

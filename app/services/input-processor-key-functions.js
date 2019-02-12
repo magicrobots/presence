@@ -72,7 +72,7 @@ export default inputComputed.extend({
     },
 
     backspace() {
-        // remove char from left                
+        // remove char from left
         newCursorIndex = this.cursorPosition - 1;
         if (newCursorIndex < 0) {
             newCursorIndex = 0;
