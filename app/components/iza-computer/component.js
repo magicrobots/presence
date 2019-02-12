@@ -25,8 +25,6 @@ export default Component.extend(Deformers, {
 
     init() {
         this._super(...arguments);
-
-        this._startRenderLoop();
     },
     
     didInsertElement: function() {
@@ -49,6 +47,8 @@ export default Component.extend(Deformers, {
 
     didRender() {
         this._setContainerSize();
+
+        this._startRenderLoop();
     },
 
     // ------------------- computed properties -------------------
@@ -156,6 +156,7 @@ export default Component.extend(Deformers, {
         const ctx = canvasSource.getContext("2d");
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
+        ctx.font = `${this.FONT_SIZE}px Courier`;
 
         ctx.imageSmoothingEnabled = false;
         ctx.mozImageSmoothingEnabled = false;
@@ -201,30 +202,26 @@ export default Component.extend(Deformers, {
     },
 
     _startRenderLoop() {
-        const scope = this;
+        // cross platform animationFrame handling
+        var myRequestAnimationFrame =  window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            window.oRequestAnimationFrame      ||
+            window.msRequestAnimationFrame     ||
+            function(callback) {
+                window.setTimeout(callback, 10);
+            };
 
-        setInterval(function() {
-            const bgImage = scope.bgImageData;
-            const ctx = scope.ctx;
-            const ctx2 = scope.ctx2;
+        // store local context on window
+        window.recursiveAnimationFunction = this.recursiveAnimationFunction;
+        window.animationScope = this;
+        window.requestAnimationFrame=myRequestAnimationFrame;
 
-            if(isPresent(ctx) && isPresent(bgImage)) {
-                const w = scope.canvasWidth;
-                const h = scope.canvasHeight;
-                ctx.drawImage(bgImage, 0, 0, w, h);
-                scope._drawText(ctx);
-                scope._deform(ctx2);
-                scope._deform(ctx2);
-
-                // store canvas image data for manipulation
-                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
-                set(scope, 'originalScreenBitmap', imgData);
-            }
-        }, this.FRAME_RATE);
+        // get loop started
+        this.recursiveAnimationFunction();
     },
 
     _drawText(ctx) {
-        ctx.font = `${this.FONT_SIZE}px Courier`;
         const scopedContext = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
@@ -250,7 +247,8 @@ export default Component.extend(Deformers, {
 
         // chain pixel modifications
         deformedImage = this.pixelize(deformedImage);
-        // deformedImage = this.noise(deformedImage, 0);
+        deformedImage = this.glowEdges(deformedImage);
+        deformedImage = this.pixelize(deformedImage);
         deformedImage = this.glowEdges(deformedImage);
 
         // make new image for display using contents of deformed image data
@@ -304,5 +302,28 @@ export default Component.extend(Deformers, {
         });
 
         return modifiedLines;
+    },
+
+    // ------------------- public functions -------------------
+
+    recursiveAnimationFunction() {
+        const scope = window.animationScope;
+        const bgImage = scope.bgImageData;
+        const ctx = scope.ctx;
+        const ctx2 = scope.ctx2;
+
+        if(isPresent(ctx) && isPresent(bgImage)) {
+            const w = scope.canvasWidth;
+            const h = scope.canvasHeight;
+            ctx.drawImage(bgImage, 0, 0, w, h);
+            scope._drawText(ctx);
+            scope._deform(ctx2);
+
+            // store canvas image data for manipulation
+            const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+            set(scope, 'originalScreenBitmap', imgData);
+        }
+
+        window.requestAnimationFrame(window.recursiveAnimationFunction);
     }
 });
