@@ -3237,6 +3237,13 @@ ember-inflector@^3.0.0:
   dependencies:
     ember-cli-babel "^6.6.0"
 
+ember-jquery-legacy@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ember-jquery-legacy/-/ember-jquery-legacy-1.0.0.tgz#2a2a29109385dfabe4c626a3ac8d1dd3c6a4b9a3"
+  integrity sha1-KiopEJOF36vkxiajrI0d08akuaM=
+  dependencies:
+    ember-cli-babel "^6.6.0"
+
 ember-load-initializers@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ember-load-initializers/-/ember-load-initializers-1.1.0.tgz#4edacc0f3a14d9f53d241ac3e5561804c8377978"
@@ -3266,16 +3273,6 @@ ember-qunit@^3.4.1:
     ember-cli-babel "^6.8.2"
     ember-cli-test-loader "^2.2.0"
     qunit "~2.6.0"
-
-ember-resize-observer@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/ember-resize-observer/-/ember-resize-observer-0.1.0.tgz#1e874618272828ca0e3c36ad8a0f6859db842e93"
-  integrity sha512-v1a+05IeUMvhS26R2lN3/kH8eq1jygMBVdZLgg2+Es5S6E3S2617NMWg1f0dQZM8P/K4BjFf4RxbP7cggvpx+Q==
-  dependencies:
-    broccoli-funnel "^2.0.1"
-    broccoli-merge-trees "^2.0.0"
-    ember-cli-babel "^6.6.0"
-    resize-observer-polyfill "^1.5.0"
 
 ember-resolver@^5.0.1:
   version "5.0.1"
@@ -6719,11 +6716,6 @@ reselect@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
   integrity sha1-79qpjqdFEyTQkrKyFjpqHXqaIUc=
-
-resize-observer-polyfill@^1.5.0:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
-  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-dir@^1.0.0, resolve-dir@^1.0.1:
   version "1.0.1"

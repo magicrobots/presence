@@ -1,6 +1,7 @@
 import { set } from '@ember/object';
 import { isPresent } from '@ember/utils';
 import { getOwner } from '@ember/application';
+import { normalizeEvent } from 'ember-jquery-legacy';
 
 import commandRegistry from '../const/command-registry';
 import keyFunctions from './input-processor-key-functions';
@@ -25,7 +26,6 @@ export default keyFunctions.extend({
     },
 
     _getIsKeyboardActive() {
-        // const ownerContext = getOwner(this);
         const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
         return isViewerActiveDiv;
     },
@@ -36,6 +36,9 @@ export default keyFunctions.extend({
         if (commandWithNoWhitespace !== '') {
             this.commandHistory.unshift(this.currentCommand);
         }
+        
+        // reset cursor position
+        set(this, 'cursorPosition', 0);
 
         // kill cursor
         set(this, 'forceDisplayCursor', false);
@@ -239,5 +242,8 @@ export default keyFunctions.extend({
                 this.addKeyToCommand(keyEvent);
                 break;
         }
+
+        // kill key event
+        normalizeEvent(keyEvent).preventDefault()
     }
 });

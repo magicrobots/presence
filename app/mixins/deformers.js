@@ -3,12 +3,12 @@ import { set } from '@ember/object';
 
 export default Mixin.create({
 
-    BIT_INCREMENT: 47,
+    BIT_INCREMENT: 13,
 
     initialBit: 0,
     currentChunk: 0,
-    chunkSize: 5000000,
-    noiseSectionIndex: 0,
+    chunkSize: 30000,
+    scanSpeed: 5,
 
     noise(imageData, chunkIncrementer = 0) {
         if (!imageData) {
@@ -20,9 +20,8 @@ export default Mixin.create({
             i += this.BIT_INCREMENT) {
             const originalValue = imageData.data[i];
             const maxAdjustment = 50;
-            // const randomAdjustment = this.bunchaRandoms[i] * maxAdjustment;
             const randomAdjustment = Math.random() * maxAdjustment;
-            imageData.data[i] = originalValue + randomAdjustment;// - (maxAdjustment / 2);
+            imageData.data[i] = originalValue + randomAdjustment;
         }
 
         // cycle initial bit
@@ -33,7 +32,7 @@ export default Mixin.create({
         set(this, 'initialBit', nextInitialBit);
 
         // cycle chunk
-        let nextChunk = this.currentChunk + 1;
+        let nextChunk = this.currentChunk + this.scanSpeed;
         const maxChunk = imageData.data.length / this.chunkSize;
         if (nextChunk >= maxChunk) {
             nextChunk = 0;
