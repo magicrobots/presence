@@ -114,6 +114,15 @@ export default {
         isExec: true,
         hideFromList: false },
 
+        { commandName: 'story',
+        routeName: 'cmd-story',
+        helpText: 'An interactive adventure.',
+        usage: null,
+        date: 'Mar  1 14:41',
+        size: '         0',
+        isExec: true,
+        hideFromList: false },
+
         { commandName: 'settings',
         routeName: 'cmd-settings',
         helpText: 'Allows user to save personal settings for terminal environment.',
