@@ -17,6 +17,7 @@ Router.map(function() {
   this.route('cmd-pwd');
   this.route('cmd-robots');
   this.route('cmd-settings');
+  this.route('cmd-story');
   this.route('cmd-whoami');
 });
 
