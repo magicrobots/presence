@@ -170,17 +170,20 @@ export default keyFunctions.extend({
             case 'F10':
             case 'F11':
             case 'F12':
-            case 'SCROLLLOCK':
-            case 'PAUSE':
-            case 'CAPSLOCK':
-            case 'META':
-            case 'TAB':
-            case 'CONTROL':
-            case 'SHIFT':
-            case 'ALT': 
+            case 'ALT':
             case 'AUDIOVOLUMEUP':
             case 'AUDIOVOLUMEDOWN':
             case 'AUDIOVOLUMEMUTE':
+            case 'CAPSLOCK':
+            case 'CLEAR':
+            case 'CONTROL':
+            case 'INSERT':
+            case 'NUMLOCK':
+            case 'META':
+            case 'PAUSE':
+            case 'SCROLLLOCK':
+            case 'SHIFT':
+            case 'TAB':
                 // ignore the above keystrokes
                 break;
 
