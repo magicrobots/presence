@@ -243,10 +243,10 @@ export default keyFunctions.extend({
                 }
 
                 this.addKeyToCommand(keyEvent);
+
+                // kill key event
+                normalizeEvent(keyEvent).preventDefault()
                 break;
         }
-
-        // kill key event
-        normalizeEvent(keyEvent).preventDefault()
     }
 });

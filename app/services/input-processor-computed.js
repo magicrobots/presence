@@ -7,7 +7,7 @@ import processorBase from './input-processor-base';
 export default processorBase.extend({
     persistenceHandler: service(),
 
-    PROMPT_LINE_1: computed('persistenceHandler.updateTrigger', {
+    PROMPT_LINE_1: computed('persistenceHandler.magicRobotsData.username', {
         get() {
             // just some random nerdy stuff
             const code = navigator.appCodeName;

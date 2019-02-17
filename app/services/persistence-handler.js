@@ -1,33 +1,83 @@
 import Service from '@ember/service';
-import { set } from '@ember/object';
+import { set, get } from '@ember/object';
+import { isPresent } from '@ember/utils';
+
+const KEY_MAGIC_ROBOTS_DATA = 'magic-robots-data';
+
+// app level
+const KEY_USERNAME = 'username';
+const KEY_PROMPT_COLOR = 'prompt-color';
+
+// game level
+const KEY_GAME_POS_X = 'game-pos-x';
+const KEY_GAME_POS_Y = 'game-pos-y';
+const KEY_GAME_XP = 'game-xp';
 
 export default Service.extend({
-
-    KEY_USERNAME: 'username',
-    KEY_PROMPT_COLOR: 'prompt-color',
-    updateTrigger: 0,
-
     init() {
         this._super(...arguments);
 
-        set(this, 'storage', window.localStorage);
+        // initialize appData object
+        set(this, 'magicRobotsData', this._getStorageObject());
     },
+
+    _getStorageObject() {
+        const dataAsString = window.localStorage.getItem(KEY_MAGIC_ROBOTS_DATA);
+
+        return isPresent(dataAsString) ? JSON.parse(dataAsString) : {};
+    },
+
+    _setStorageObject() {
+        const dataAsString = JSON.stringify(this.magicRobotsData);
+        window.localStorage.setItem(KEY_MAGIC_ROBOTS_DATA, dataAsString);
+    },
+
+    // --------------------- app vars ------------------------
     
     setUsername(newName) {
-        this.storage.setItem(this.KEY_USERNAME, newName);
-        set(this, 'updateTrigger', Math.random());
+        set(this, `magicRobotsData.${KEY_USERNAME}`, newName);
+        this._setStorageObject();
     },
 
     getUsername() {
-        return this.storage.getItem(this.KEY_USERNAME);
+        return get(this._getStorageObject(), KEY_USERNAME);
     },
     
     setPromptColor(newColor) {
-        this.storage.setItem(this.KEY_PROMPT_COLOR, newColor);
-        set(this, 'updateTrigger', Math.random());
+        set(this, `magicRobotsData.${KEY_PROMPT_COLOR}`, newColor);
+        this._setStorageObject();
     },
 
     getPromptColor() {
-        return this.storage.getItem(this.KEY_PROMPT_COLOR);
+        return get(this._getStorageObject(), KEY_PROMPT_COLOR);
+    },
+
+    // --------------------- game vars ------------------------
+    
+    setGamePosX(newX) {
+        set(this, `magicRobotsData.${KEY_GAME_POS_X}`, newX);
+        this._setStorageObject();
+    },
+
+    getGamePosX() {
+        return get(this._getStorageObject(), KEY_GAME_POS_X);
+    },
+    
+    setGamePosY(newY) {
+        set(this, `magicRobotsData.${KEY_GAME_POS_Y}`, newY);
+        this._setStorageObject();
+    },
+
+    getGamePosY() {
+        return get(this._getStorageObject(), KEY_GAME_POS_Y);
+    },
+    
+    setGameXP(newXP) {
+        set(this, `magicRobotsData.${KEY_GAME_XP}`, newXP);
+        this._setStorageObject();
+    },
+
+    getGameXP() {
+        return get(this._getStorageObject(), KEY_GAME_XP);
     }
 });
