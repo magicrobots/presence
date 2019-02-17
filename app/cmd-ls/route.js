@@ -90,7 +90,7 @@ export default Route.extend({
 
     _createDetailedLine(appConfigObject) {
         const itemPrefix = '-rw-r--r--';
-        const itemPrefixExec = 'drwxr-xr-x';
+        const itemPrefixExec = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
         const prefix = appConfigObject.isExec ? itemPrefixExec : itemPrefix;
 
         return prefix.

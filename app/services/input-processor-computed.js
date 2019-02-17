@@ -59,10 +59,12 @@ export default processorBase.extend({
             }
 
             const interactiveLine = `${this.PROMPT_LINE_2}${commandDisplay}`;
+            const promptColor = this.persistenceHandler.getPromptColor() || this.DEFAULT_PROMPT_COLOR;
 
             const fullBlock = isPresent(this.interruptPrompt) ?
-                ['', interactiveLine] :
-                ['', this.PROMPT_LINE_1, interactiveLine];
+                ['', `${this.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`] :
+                ['', `${this.COLORIZE_LINE_PREFIX}${this.STATIC_PROMPT_COLOR}${this.PROMPT_LINE_1}`,
+                    `${this.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`];
 
             return this.appResponse.concat(fullBlock);
         }

@@ -70,12 +70,26 @@ export default Component.extend(Deformers, {
                 const currLine = allLinesWidthHandled[i];
                 const currY = lineHeightInPixels * yCounter;
 
+                // handle colorizing of each line
+                let workingLine = currLine;
+                let customColor = null;
+                const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
+                const colorCodeLength = this.inputProcessor.COLORIZE_COLOR_LENGTH;
+                const isColorizedLine = currLine.substr(0, colorizePrefix.length) === colorizePrefix;
+
+                if (isColorizedLine) {
+                    const extractColorIndex = colorizePrefix.length + colorCodeLength;
+                    customColor = currLine.substr(colorizePrefix.length, colorCodeLength);
+                    workingLine = currLine.substr(extractColorIndex);
+                }
+
                 yCounter++;
 
                 returnSet.push({
-                    text: currLine,
+                    text: workingLine,
                     x: this.textEdgeBuffer,
-                    y: this.textEdgeBuffer + currY});
+                    y: this.textEdgeBuffer + currY,
+                    customColor});
             }
 
             return returnSet;
@@ -221,11 +235,9 @@ export default Component.extend(Deformers, {
         const scopedContext = ctx;
 
         this.visibleDisplayLines.forEach((currLine) => {
-            const promptColor = this.persistenceHandler.getPromptColor() || '#35ff82';
-            if (currLine.text === this.inputProcessor.PROMPT_LINE_1) {
-                scopedContext.fillStyle = promptColor;
-            } else if (currLine.text === 'robots') {
-                scopedContext.fillStyle = '#fffa00';
+            
+            if (isPresent(currLine.customColor)) {
+                scopedContext.fillStyle = currLine.customColor;
             } else {
                 scopedContext.fillStyle = 'white';
             }
@@ -269,10 +281,22 @@ export default Component.extend(Deformers, {
         }
 
         allLines.forEach((currLine) => {
-            if (currLine.length > maxCharsPerLine) {
+            const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
+            const isColorizedLine = currLine.substr(0, colorizePrefix.length) === colorizePrefix;
+            let savedLineColor = '';
+            let workingLine = currLine;
+
+            // remove color tag
+            if (isColorizedLine) {
+                const extractColorIndex = colorizePrefix.length + this.inputProcessor.COLORIZE_COLOR_LENGTH;
+                savedLineColor = currLine.substr(0, extractColorIndex);
+                workingLine = currLine.substr(extractColorIndex);
+            }
+
+            if (workingLine.length > maxCharsPerLine) {
                 // break line into chunks that fit in the width of the viewport
-                const segments = [];
-                let currLastSegment = currLine;
+                let segments = [];
+                let currLastSegment = workingLine;
 
                 while(currLastSegment.length > maxCharsPerLine) {
                     // find space closest to maxChars
@@ -289,11 +313,18 @@ export default Component.extend(Deformers, {
                 // add orphan
                 segments.push(currLastSegment);
 
+                // if it's a colorized line, add colorizor to each line
+                if (isColorizedLine) {
+                    segments = segments.map((currSubLine) => {
+                        return savedLineColor.concat(currSubLine);
+                    });
+                }
+
                 // add segments to return set
                 modifiedLines = modifiedLines.concat(segments);
             } else {
                 // just add the raw line
-                modifiedLines.push(currLine);
+                modifiedLines.push(savedLineColor.concat(workingLine));
             }
         });
 
