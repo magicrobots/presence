@@ -22,17 +22,17 @@ export default Service.extend({
     // ------------------- private methods -------------------
 
     _increaseXP(amount) {
-        const oldXP = this.persistenceHandler.getGameXP();
+        const oldXP = this.persistenceHandler.getStoryXP();
         const newXP = oldXP + amount;
-        this.persistenceHandler.setGameXP(newXP);
+        this.persistenceHandler.setStoryXP(newXP);
     },
 
     // ------------------- computed properties -------------------
 
-    currentRoom: computed('persistenceHandler.magicRobotsData.{game-pos-x,game-pos-y}', {
+    currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
         get() {
-            const posX = this.persistenceHandler.getGamePosX() || HOME_COORD_X;
-            const posY = this.persistenceHandler.getGamePosY() || HOME_COORD_Y;
+            const posX = this.persistenceHandler.getStoryPosX() || HOME_COORD_X;
+            const posY = this.persistenceHandler.getStoryPosY() || HOME_COORD_Y;
 
             return rooms.getRoom({x: posX, y: posY});
         }
@@ -40,18 +40,21 @@ export default Service.extend({
 
     // ------------------- public methods -------------------
 
-    reportGameData() {
-        const posX = this.persistenceHandler.getGamePosX();
-        const posY = this.persistenceHandler.getGamePosY();
-        const xp = this.persistenceHandler.getGameXP();
-        console.log(`Position: (${posX}, ${posY}), XP: ${xp}`);
+    reportStoryData() {
+        const posX = this.persistenceHandler.getStoryPosX();
+        const posY = this.persistenceHandler.getStoryPosY();
+        const xp = this.persistenceHandler.getStoryXP();
+        const visited = this.persistenceHandler.getStoryVisitedRooms();
+
+        console.log(`Position: (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}]`);
     },
 
-    formatGameData() {
+    formatStoryData() {
         // start over
-        this.persistenceHandler.setGameXP(0);
-        this.persistenceHandler.setGamePosX(HOME_COORD_X);
-        this.persistenceHandler.setGamePosY(HOME_COORD_Y);
+        this.persistenceHandler.setStoryXP(0);
+        this.persistenceHandler.setStoryPosX(HOME_COORD_X);
+        this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
+        this.persistenceHandler.setStoryVisitedRooms([]);
     },
 
     isValidDirection(enteredDirection) {
@@ -63,8 +66,8 @@ export default Service.extend({
     },
 
     handlePositionChange(enteredDirection) {
-        const positionFunctionNameGet = `getGamePos${enteredDirection.coordModifier.direction}`;
-        const positionFunctionNameSet = `setGamePos${enteredDirection.coordModifier.direction}`;
+        const positionFunctionNameGet = `getStoryPos${enteredDirection.coordModifier.direction}`;
+        const positionFunctionNameSet = `setStoryPos${enteredDirection.coordModifier.direction}`;
         const defaultCoord = enteredDirection.coordModifier.direction === 'X' ? HOME_COORD_X : HOME_COORD_Y;
         const currentCoordValue = this.persistenceHandler[positionFunctionNameGet]() || defaultCoord;
         const newCoord = currentCoordValue + enteredDirection.coordModifier.amount;
@@ -76,6 +79,9 @@ export default Service.extend({
 
     getCurrentRoomDescription() {
         let roomDesc = this.currentRoom.description;
+
+        // store room as visited
+        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
 
         // add present items
         if (this.currentRoom.inventory.length > 0) {

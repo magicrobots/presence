@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { computed, aliasMethod } from '@ember/object';
+import { isNone } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
@@ -9,13 +10,23 @@ export default Route.extend({
     persistenceHandler: service(),
     storyCore: service(),
 
+    // ------------------- computed properties -------------------
+
     welcomeMessage: computed('storyCore.XP', {
         get() {
-            return this.persistenceHandler.getGameXP() > 0 ?
-                'Welcome back.' :
-                'Welcome to story.';
+            return this.isNewStory ?
+                'Welcome to story.' :
+                'Welcome back.';
         }
     }),
+
+    isNewStory: computed('persistenceHandler.magicRobotsData.story-xp', {
+        get() {
+            return isNone(this.persistenceHandler.getStoryXP());
+        }
+    }),
+
+    // ------------------- public methods -------------------
 
     walk: aliasMethod('go'),
 
@@ -44,7 +55,7 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp(['you can\'t go that way.']);
         }
 
-        this.storyCore.reportGameData();
+        this.storyCore.reportStoryData();
     },
 
     afterModel() {
@@ -56,14 +67,20 @@ export default Route.extend({
             response: [this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription())
         });
 
+        // handle initialization of story data if it doesn't exist yet
+        if (this.isNewStory) {
+            this.formatStoryData();
+        }
+
+        // init story in shell
         this.inputProcessor.setAppEnvironment(appEnvironment);
-        this.storyCore.reportGameData();
+        this.storyCore.reportStoryData();
     },
 
-    formatGameData() {
-        // resets game
-        this.storyCore.formatGameData();
+    formatStoryData() {
+        // resets story
+        this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription()));
-        this.storyCore.reportGameData();
+        this.storyCore.reportStoryData();
     }
 });

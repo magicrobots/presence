@@ -8,10 +8,11 @@ const KEY_MAGIC_ROBOTS_DATA = 'magic-robots-data';
 const KEY_USERNAME = 'username';
 const KEY_PROMPT_COLOR = 'prompt-color';
 
-// game level
-const KEY_GAME_POS_X = 'game-pos-x';
-const KEY_GAME_POS_Y = 'game-pos-y';
-const KEY_GAME_XP = 'game-xp';
+// story level
+const KEY_STORY_POS_X = 'story-pos-x';
+const KEY_STORY_POS_Y = 'story-pos-y';
+const KEY_STORY_XP = 'story-xp';
+const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
 
 export default Service.extend({
     init() {
@@ -52,32 +53,55 @@ export default Service.extend({
         return get(this._getStorageObject(), KEY_PROMPT_COLOR);
     },
 
-    // --------------------- game vars ------------------------
+    // --------------------- story vars ------------------------
     
-    setGamePosX(newX) {
-        set(this, `magicRobotsData.${KEY_GAME_POS_X}`, newX);
+    setStoryPosX(newX) {
+        set(this, `magicRobotsData.${KEY_STORY_POS_X}`, newX);
         this._setStorageObject();
     },
 
-    getGamePosX() {
-        return get(this._getStorageObject(), KEY_GAME_POS_X);
+    getStoryPosX() {
+        return get(this._getStorageObject(), KEY_STORY_POS_X);
     },
     
-    setGamePosY(newY) {
-        set(this, `magicRobotsData.${KEY_GAME_POS_Y}`, newY);
+    setStoryPosY(newY) {
+        set(this, `magicRobotsData.${KEY_STORY_POS_Y}`, newY);
         this._setStorageObject();
     },
 
-    getGamePosY() {
-        return get(this._getStorageObject(), KEY_GAME_POS_Y);
+    getStoryPosY() {
+        return get(this._getStorageObject(), KEY_STORY_POS_Y);
     },
     
-    setGameXP(newXP) {
-        set(this, `magicRobotsData.${KEY_GAME_XP}`, newXP);
+    setStoryXP(newXP) {
+        set(this, `magicRobotsData.${KEY_STORY_XP}`, newXP);
         this._setStorageObject();
     },
 
-    getGameXP() {
-        return get(this._getStorageObject(), KEY_GAME_XP);
+    getStoryXP() {
+        return get(this._getStorageObject(), KEY_STORY_XP);
+    },
+    
+    addStoryVisitedRoom(newRoom) {
+        let currRooms = this.getStoryVisitedRooms();
+        if (isPresent(currRooms)) {
+            if (!currRooms.includes(newRoom)) {
+                currRooms.push(newRoom);
+            }
+        } else {
+            currRooms = [newRoom];
+        }
+
+        // set updated value
+        this.setStoryVisitedRooms(currRooms);
+    },
+    
+    setStoryVisitedRooms(newRooms) {
+        set(this, `magicRobotsData.${KEY_STORY_VISITED_ROOMS}`, newRooms);
+        this._setStorageObject();
+    },
+
+    getStoryVisitedRooms() {
+        return get(this._getStorageObject(), KEY_STORY_VISITED_ROOMS);
     }
 });
