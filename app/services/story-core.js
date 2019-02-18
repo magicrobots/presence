@@ -1,12 +1,13 @@
 import Service from '@ember/service';
 import { computed } from '@ember/object';
-import { isPresent } from '@ember/utils';
+import { isPresent, isNone } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import rooms from '../const/story-rooms';
 import items from '../const/story-items';
 
 const XP_PER_MOVE = 1;
+const WEIGHT_CAPACITY = 50;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
 const EXIT_POSSIBILITIES = [
@@ -45,8 +46,9 @@ export default Service.extend({
         const posY = this.persistenceHandler.getStoryPosY();
         const xp = this.persistenceHandler.getStoryXP();
         const visited = this.persistenceHandler.getStoryVisitedRooms();
+        const inventory = this.persistenceHandler.getStoryInventoryItems();
 
-        console.log(`Position: (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}]`);
+        console.log(`Position: (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: ${inventory}`);
     },
 
     formatStoryData() {
@@ -67,14 +69,33 @@ export default Service.extend({
     },
 
     handlePositionChange(enteredDirection) {
-        const positionFunctionNameGet = `getStoryPos${enteredDirection.coordModifier.direction}`;
-        const positionFunctionNameSet = `setStoryPos${enteredDirection.coordModifier.direction}`;
-        const defaultCoord = enteredDirection.coordModifier.direction === 'X' ? HOME_COORD_X : HOME_COORD_Y;
-        const currentCoordValue = this.persistenceHandler[positionFunctionNameGet]() || defaultCoord;
+        const changeAxis = enteredDirection.coordModifier.direction;
+        const positionFunctionNameGet = `getStoryPos${changeAxis}`;
+        const positionFunctionNameSet = `setStoryPos${changeAxis}`;
+        // const defaultCoord = enteredDirection.coordModifier.direction === 'X' ? HOME_COORD_X : HOME_COORD_Y;
+        const currentCoordValue = this.persistenceHandler[positionFunctionNameGet]();// || defaultCoord;
         const newCoord = currentCoordValue + enteredDirection.coordModifier.amount;
 
-        // set new value
-        this._increaseXP(XP_PER_MOVE);
+        // add XP if you're going to a new location.
+        const nextX = changeAxis === 'X' ?
+            this.currentRoom.x + enteredDirection.coordModifier.amount :
+            this.currentRoom.x;
+        const nextY = changeAxis === 'Y' ?
+            this.currentRoom.y + enteredDirection.coordModifier.amount :
+            this.currentRoom.y;
+        const nextRoom = rooms.getRoom({x:nextX, y:nextY});
+
+        if (isNone(nextRoom)) {
+            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextX}, y:${nextY}}`);
+            return false;
+        }
+
+        const nextRoomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(nextRoom.id);
+        if (nextRoomIsNew) {
+            this._increaseXP(XP_PER_MOVE);
+        }
+
+        // go
         this.persistenceHandler[positionFunctionNameSet](newCoord);
     },
 
@@ -128,6 +149,24 @@ export default Service.extend({
         return fullDesc;
     },
 
+    getWeightOfUserInventory() {
+        const userInventory = this.persistenceHandler.getStoryInventoryItems();
+        let totalWeight = 0;
+
+        userInventory.forEach((currItemId) => {
+            const currItemWeight = items.getItemById(currItemId).weight;
+            totalWeight += currItemWeight;
+        });
+
+        return totalWeight;
+    },
+
+    canTakeItem(targetItemId) {
+        const targetItem = items.getItemById(targetItemId);
+
+        return targetItem.weight + this.getWeightOfUserInventory() < WEIGHT_CAPACITY;
+    },
+
     getRoomInventory() {
         return this.currentRoom.inventory;
     },
@@ -135,19 +174,19 @@ export default Service.extend({
     getItemNameById(searchId) {
         const item = items.getItemById(searchId);
 
-        return item.name || null;
+        return isPresent(item) ? item.name : null;
     },
 
     getItemIdByName(itemName) {
         const item = items.getItemByName(itemName);
 
-        return item.id || null;
+        return isPresent(item) ? item.id : null;
     },
 
-    getItemDescriptionById(searchId) {
+    getItemDetailsById(searchId) {
         const item = items.getItemById(searchId);
 
-        return item.description || null;
+        return isPresent(item) ? item.details : null;
     },
     
     getExitPossibilities() {

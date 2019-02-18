@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { computed, aliasMethod } from '@ember/object';
-import { isNone, isPresent } from '@ember/utils';
+import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
@@ -33,7 +33,7 @@ export default Route.extend({
 
     // ------------------- computed properties -------------------
 
-    welcomeMessage: computed('storyCore.XP', {
+    welcomeMessage: computed('persistenceHandler.magicRobotsData.story-xp', {
         get() {
             return this.isNewStory ?
                 'Welcome to story.' :
@@ -43,7 +43,7 @@ export default Route.extend({
 
     isNewStory: computed('persistenceHandler.magicRobotsData.story-xp', {
         get() {
-            return isNone(this.persistenceHandler.getStoryXP());
+            return this.persistenceHandler.getStoryXP() === 0;
         }
     }),
 
@@ -67,6 +67,12 @@ export default Route.extend({
         return chosenDirection;
     },
 
+    _getRandomResponseFromList(list) {
+        const randomResponseIndex = Math.floor(Math.random() * list.length);
+
+        return list[randomResponseIndex];
+    },
+
     /* ----------------------- public methods --------------------
        ------ these are also the commands the user can type ----- */
 
@@ -81,8 +87,7 @@ export default Route.extend({
             'Why hello there.',
             'Oh hai.'
         ];
-        const randomResponseIndex = Math.round(Math.random() * helloResponses.length);
-        this.inputProcessor.handleFunctionFromApp([helloResponses[randomResponseIndex]]);
+        this.inputProcessor.handleFunctionFromApp([this._getRandomResponseFromList(helloResponses)]);
     },
 
     walk: aliasMethod('go'),
@@ -118,6 +123,34 @@ export default Route.extend({
         this.inputProcessor.handleFunctionFromApp(inventoryResponse);
     },
 
+    get: aliasMethod('take'),
+    take() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+
+        // find matching item if it exists in either your or the rooms' inventories
+        const roomItems = this.storyCore.getRoomInventory();
+
+        // if it's in the room, and it's not too heavy, get it
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+
+        if (isPresent(targetItemId) && roomItems.includes(targetItemId)) {
+            
+            if(this.storyCore.canTakeItem(targetItemId)) {
+                // remove from room
+                // add to user inventory
+                // report to user
+                this.inputProcessor.handleFunctionFromApp([`You take the ${targetItemName}`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp(['You can\'t take that.']);
+            }
+        } else {
+            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+        }
+    },
+
     examine(passedObjectName) {
         const objectName = passedObjectName || this.inputProcessor.currentArgs[0];
 
@@ -128,12 +161,11 @@ export default Route.extend({
         const objectId = this.storyCore.getItemIdByName(objectName);
 
         if (isPresent(objectId) && localInventories.includes(objectId)) {
-            const itemDescription = this.storyCore.getItemDescriptionById(objectId);
+            const itemDescription = this.storyCore.getItemDetailsById(objectId);
             this.inputProcessor.handleFunctionFromApp([itemDescription]);
         } else {
-            this.inputProcessor.handleFunctionFromApp([`I don\'t know what a ${passedObjectName} is.`]);
+            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${passedObjectName} is.`]);
         }
-
     },
 
     look() {
