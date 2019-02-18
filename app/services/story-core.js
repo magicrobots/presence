@@ -48,16 +48,33 @@ export default Service.extend({
         const visited = this.persistenceHandler.getStoryVisitedRooms();
         const inventory = this.persistenceHandler.getStoryInventoryItems();
 
-        console.log(`Position: (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: ${inventory}`);
+        // handle room inventories
+        const roomInventories = this.persistenceHandler.getStoryRoomInventories();
+        let roomInventoriesReport = '';
+        roomInventories.forEach((currRoom, i, roomInventories) => {
+            const roomString = `{roomId: ${currRoom.roomId}, inventory: [${currRoom.inventory}]}`;
+            roomInventoriesReport = roomInventoriesReport.concat(roomString);
+
+            // add commas and separators
+            if (i < roomInventories.length - 1) {
+                roomInventoriesReport = roomInventoriesReport.concat(', ');
+            }
+        });
+
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}].`);
     },
 
     formatStoryData() {
-        // start over
+        // initialize defaults / start over
         this.persistenceHandler.setStoryXP(0);
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
         this.persistenceHandler.setStoryInventoryItems([3]);
+        this.persistenceHandler.setStoryRoomInventories([
+            {roomId: 1, inventory: [1]},
+            {roomId: 2, inventory: [2]}
+        ]);
     },
 
     isValidDirection(enteredDirection) {
@@ -107,6 +124,10 @@ export default Service.extend({
         } else {
             return [`You are ${this.currentRoom.summary}.`];
         }
+    },
+
+    getCurrentRoomId() {
+        return this.currentRoom.id;
     },
 
     getDescriptionInDirection(lookDirection) {
@@ -168,7 +189,7 @@ export default Service.extend({
     },
 
     getRoomInventory() {
-        return this.currentRoom.inventory;
+        return this.persistenceHandler.getStoryRoomInventoryById(this.currentRoom.id);
     },
 
     getItemNameById(searchId) {
@@ -196,17 +217,26 @@ export default Service.extend({
     // ------------------- private methods -------------------
 
     _getItemDescriptions() {
-        if (this.currentRoom.inventory.length > 0) {
-            if (this.currentRoom.inventory.length > 1) {
+        const roomInventory = this.getRoomInventory();
+        
+        if (roomInventory.length > 0) {
+            if (roomInventory.length > 10) {
                 // too many things to show descriptions
 
-                return 'There is stuff.';
+                return 'There is a bunch of stuff.';
             } else {
-                // there's just one thing
-                const roomInventoryItemId = this.currentRoom.inventory[0];
-                const item = items.getItemById(roomInventoryItemId);
+                let itemDescriptions = '';
+                roomInventory.forEach((currItem, i, roomInventory) => {
+                    const item = items.getItemById(currItem);
+                    itemDescriptions = itemDescriptions.concat(item.description);
 
-                return item.description;
+                    // add space if it's not that last one
+                    if (i < roomInventory.length - 1) {
+                        itemDescriptions = itemDescriptions.concat(' ');
+                    }
+                });
+
+                return itemDescriptions;
             }
         }
 

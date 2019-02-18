@@ -114,6 +114,12 @@ export default Route.extend({
     inventory: aliasMethod('list'),
     list() {
         const yourItems = this.persistenceHandler.getStoryInventoryItems();
+
+        if (yourItems.length === 0) {
+            this.inputProcessor.handleFunctionFromApp(['You don\'t have anything.']);
+            return;
+        }
+
         const inventoryResponse = ['You\'ve got:'];
 
         yourItems.forEach((currItem) => {
@@ -130,7 +136,7 @@ export default Route.extend({
         // remove 'the' if it's in there
         const targetItemName = args[0] === 'the' ? args[1] : args[0];
 
-        // find matching item if it exists in either your or the rooms' inventories
+        // find matching item if it exists in the rooms' inventories
         const roomItems = this.storyCore.getRoomInventory();
 
         // if it's in the room, and it's not too heavy, get it
@@ -140,14 +146,40 @@ export default Route.extend({
             
             if(this.storyCore.canTakeItem(targetItemId)) {
                 // remove from room
+                this.persistenceHandler.removeItemFromRoom(this.storyCore.getCurrentRoomId(), targetItemId);
                 // add to user inventory
+                this.persistenceHandler.addStoryInventoryItem(targetItemId);
                 // report to user
                 this.inputProcessor.handleFunctionFromApp([`You take the ${targetItemName}`]);
+                this.storyCore.reportStoryData();
             } else {
                 this.inputProcessor.handleFunctionFromApp(['You can\'t take that.']);
             }
         } else {
             this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+        }
+    },
+
+    drop() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+
+        // find matching item if it exists in your inventory
+        const userInventory = this.persistenceHandler.getStoryInventoryItems();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+
+        if (userInventory.includes(targetItemId)) {
+            // add item to room
+            this.persistenceHandler.addItemToRoom(this.storyCore.getCurrentRoomId(), targetItemId);
+            // remove item from user inventory
+            this.persistenceHandler.removeStoryInventoryItem(targetItemId);
+            // report to user
+            this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
+            this.storyCore.reportStoryData();
+        } else {
+            this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
         }
     },
 

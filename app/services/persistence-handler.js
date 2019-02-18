@@ -14,6 +14,7 @@ const KEY_STORY_POS_Y = 'story-pos-y';
 const KEY_STORY_XP = 'story-xp';
 const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
 const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
+const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
 
 export default Service.extend({
     init() {
@@ -119,6 +120,20 @@ export default Service.extend({
         // set updated value
         this.setStoryInventoryItems(currItems);
     },
+
+    removeStoryInventoryItem(dropItem) {
+        let currItems = this.getStoryInventoryItems();
+        if (isPresent(currItems)) {
+            if (currItems.includes(dropItem)) {
+                const itemsLessDroppedItem = currItems.filter((currItem) => {
+                    return currItem !== dropItem;
+                });
+
+                // write new set minus dropped item
+                this.setStoryInventoryItems(itemsLessDroppedItem);
+            }
+        }
+    },
     
     setStoryInventoryItems(newItems) {
         set(this, `magicRobotsData.${KEY_STORY_INVENTORY_ITEMS}`, newItems);
@@ -127,5 +142,41 @@ export default Service.extend({
 
     getStoryInventoryItems() {
         return get(this._getStorageObject(), KEY_STORY_INVENTORY_ITEMS);
+    },
+
+    setStoryRoomInventories(newInventories) {
+        set(this, `magicRobotsData.${KEY_STORY_ROOM_INVENTORIES}`, newInventories);
+        this._setStorageObject();
+    },
+
+    getStoryRoomInventories() {
+        return get(this._getStorageObject(), KEY_STORY_ROOM_INVENTORIES);
+    },
+
+    getStoryRoomInventoryById(targetRoomId) {
+        const currRoomInventories = this.getStoryRoomInventories();
+        const targetRoomObject = currRoomInventories.findBy('roomId', targetRoomId);
+
+        return targetRoomObject.inventory;
+    },
+
+    addItemToRoom(targetRoomId, item) {
+        const currRoomInventories = this.getStoryRoomInventories();
+        const currRoomObject = currRoomInventories.findBy('roomId', targetRoomId);
+        currRoomObject.inventory.push(item);
+
+        // store modified set
+        this.setStoryRoomInventories(currRoomInventories);
+    },
+
+    removeItemFromRoom(targetRoomId, item) {
+        const currRoomInventories = this.getStoryRoomInventories();
+        let currRoomObject = currRoomInventories.findBy('roomId', targetRoomId);
+        currRoomObject.inventory = currRoomObject.inventory.filter((currItem) => {
+            return currItem !== item;
+        });
+
+        // store modified set
+        this.setStoryRoomInventories(currRoomInventories);
     }
 });
