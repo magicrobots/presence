@@ -61,10 +61,10 @@ export default keyFunctions.extend({
             if (isPresent(this.overrideScope[commandName])) {
                 this.overrideScope[commandName]();
             } else {
-                this._handleInvalidInput(commandName);
+                this._handleInvalidInput(commandName.toUpperCase());
             }
         } else {
-            const matchedCommand = commandRegistry.getMatchingCommand(commandName.toUpperCase());
+            const matchedCommand = commandRegistry.getMatchingCommand(commandName);
 
             // execute command if it exists
             if (isPresent(matchedCommand)) {
@@ -228,8 +228,7 @@ export default keyFunctions.extend({
             default:
                 if (this.interruptPrompt && isPresent(this.activeApp)) {
                     // quit running app
-                    if (entry === 'Q' ||
-                        entry === 'ESCAPE' ||
+                    if (entry === 'ESCAPE' ||
                         entry === 'C' && keyEvent.ctrlKey === true) {
                         this._quit();
 

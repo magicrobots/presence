@@ -13,6 +13,7 @@ const KEY_STORY_POS_X = 'story-pos-x';
 const KEY_STORY_POS_Y = 'story-pos-y';
 const KEY_STORY_XP = 'story-xp';
 const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
+const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
 
 export default Service.extend({
     init() {
@@ -103,5 +104,28 @@ export default Service.extend({
 
     getStoryVisitedRooms() {
         return get(this._getStorageObject(), KEY_STORY_VISITED_ROOMS);
+    },
+    
+    addStoryInventoryItem(newItem) {
+        let currItems = this.getStoryInventoryItems();
+        if (isPresent(currItems)) {
+            if (!currItems.includes(newItem)) {
+                currItems.push(newItem);
+            }
+        } else {
+            currItems = [newItem];
+        }
+
+        // set updated value
+        this.setStoryInventoryItems(currItems);
+    },
+    
+    setStoryInventoryItems(newItems) {
+        set(this, `magicRobotsData.${KEY_STORY_INVENTORY_ITEMS}`, newItems);
+        this._setStorageObject();
+    },
+
+    getStoryInventoryItems() {
+        return get(this._getStorageObject(), KEY_STORY_INVENTORY_ITEMS);
     }
 });

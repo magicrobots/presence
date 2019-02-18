@@ -55,6 +55,7 @@ export default Service.extend({
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
+        this.persistenceHandler.setStoryInventoryItems([3]);
     },
 
     isValidDirection(enteredDirection) {
@@ -78,26 +79,25 @@ export default Service.extend({
     },
 
     getCurrentRoomDescription() {
-        let roomDesc = this.currentRoom.description;
+        const roomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(this.currentRoom.id);
 
-        // store room as visited
-        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
-
-        // add present items
-        if (this.currentRoom.inventory.length > 0) {
-            if (this.currentRoom.inventory.length > 1) {
-                roomDesc = roomDesc.concat('There is stuff.');
-            } else {
-                // there's just one thing
-                const inventoryItemName = this.currentRoom.inventory[0];
-                const item = items.getItem(inventoryItemName);
-                roomDesc = roomDesc.concat(` ${item.description}`);
-            }
+        if (roomIsNew) {
+            return this.getFullRoomDescription();
+        } else {
+            return [`You are ${this.currentRoom.summary}.`];
         }
+    },
 
-        const fullDesc = [roomDesc].concat(['']);
+    getDescriptionInDirection(lookDirection) {
+        const exitInDirection = this.currentRoom.exits[lookDirection.abbr];
+        if (isPresent(exitInDirection)) {
+            return [exitInDirection];
+        } else {
+            return [`There is nothing of interest to the ${lookDirection.word.toLowerCase()}`];
+        }
+    },
 
-        // add exits
+    getExitDescriptions() {
         let exitDescs = '';
         const scope = this;
         EXIT_POSSIBILITIES.forEach((currPossibility) => {
@@ -107,12 +107,70 @@ export default Service.extend({
             }
         });
 
-        fullDesc.push(exitDescs);
+        return exitDescs;
+    },
+
+    getFullRoomDescription() {
+        let roomDesc = this.currentRoom.description;
+
+        // store room as visited
+        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
+
+        // add any present items to paragraph
+        roomDesc = roomDesc.concat(` ${this._getItemDescriptions()}`);
+
+        // add empty line
+        const fullDesc = [roomDesc].concat(['']);
+
+        // add exits
+        fullDesc.push(this.getExitDescriptions());
 
         return fullDesc;
+    },
+
+    getRoomInventory() {
+        return this.currentRoom.inventory;
+    },
+
+    getItemNameById(searchId) {
+        const item = items.getItemById(searchId);
+
+        return item.name || null;
+    },
+
+    getItemIdByName(itemName) {
+        const item = items.getItemByName(itemName);
+
+        return item.id || null;
+    },
+
+    getItemDescriptionById(searchId) {
+        const item = items.getItemById(searchId);
+
+        return item.description || null;
     },
     
     getExitPossibilities() {
         return EXIT_POSSIBILITIES;
+    },
+
+    // ------------------- private methods -------------------
+
+    _getItemDescriptions() {
+        if (this.currentRoom.inventory.length > 0) {
+            if (this.currentRoom.inventory.length > 1) {
+                // too many things to show descriptions
+
+                return 'There is stuff.';
+            } else {
+                // there's just one thing
+                const roomInventoryItemId = this.currentRoom.inventory[0];
+                const item = items.getItemById(roomInventoryItemId);
+
+                return item.description;
+            }
+        }
+
+        return '';
     }
 });
