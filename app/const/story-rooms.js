@@ -21,7 +21,6 @@ export default {
                 W: 'A bright hallway stretches westward, artwork illuminated along the walls.',
                 S: null
             },
-            inventory: [1],
             roomState: 0
         },
         {
@@ -36,7 +35,6 @@ export default {
                 W: null,
                 S: 'Next to the pond heading south there is a walkway with benches.  It has recently been swept.'
             },
-            inventory: [2],
             roomState: 0
         }
     ]
