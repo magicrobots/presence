@@ -3,6 +3,11 @@ import { set } from '@ember/object';
 
 export default Service.extend({
     CURSOR_CHAR: '█',
+    COLORIZE_LINE_PREFIX: '<colorize>',
+    COLORIZE_COLOR_LENGTH: 7,
+    DEFAULT_PROMPT_COLOR: '#35dd59',
+    STATIC_PROMPT_COLOR: '#e3ff16',
+    DIRECTORY_LIST_COLOR: '#18def4',
 
     currentCommand: '',
     currentArgs: undefined,

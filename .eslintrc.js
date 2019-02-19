@@ -15,7 +15,8 @@ module.exports = {
     browser: true
   },
   rules: {
-    'block-indentation': 4
+    'block-indentation': 4,
+    'no-console': 1
   },
   overrides: [
     // node files
