@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { computed, aliasMethod } from '@ember/object';
-import { isPresent, isNone } from '@ember/utils';
+import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
