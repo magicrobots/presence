@@ -9,5 +9,11 @@ export default {
             keyOverrides: options.keyOverrides,
             overrideScope: options.overrideScope
         }
+    },
+
+    getRandomResponseFromList(list) {
+        const randomResponseIndex = Math.floor(Math.random() * list.length);
+
+        return list[randomResponseIndex];
     }
 }

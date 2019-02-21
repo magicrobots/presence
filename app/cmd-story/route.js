@@ -68,12 +68,6 @@ export default Route.extend({
         return chosenDirection;
     },
 
-    _getRandomResponseFromList(list) {
-        const randomResponseIndex = Math.floor(Math.random() * list.length);
-
-        return list[randomResponseIndex];
-    },
-
     /* ----------------------- public methods --------------------
        ------ these are also the commands the user can type ----- */
 
@@ -88,7 +82,7 @@ export default Route.extend({
             'Why hello there.',
             'Oh hai.'
         ];
-        this.inputProcessor.handleFunctionFromApp([this._getRandomResponseFromList(helloResponses)]);
+        this.inputProcessor.handleFunctionFromApp([environmentHelpers.getRandomResponseFromList(helloResponses)]);
     },
 
     walk: aliasMethod('go'),
