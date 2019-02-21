@@ -12,6 +12,7 @@ Router.map(function() {
   this.route('cmd-cd');
   this.route('cmd-clear');
   this.route('cmd-contact');
+  this.route('cmd-hello');
   this.route('cmd-man');
   this.route('cmd-ls');
   this.route('cmd-pwd');

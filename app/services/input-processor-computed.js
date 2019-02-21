@@ -13,7 +13,7 @@ export default processorBase.extend({
             const code = navigator.appCodeName;
             const plat = navigator.platform;
             const lang = navigator.language;
-            const username = this.persistenceHandler.getUsername() || 'unknown user';
+            const username = this.persistenceHandler.getUsername();
 
             return `${code} ${plat} ${lang} | magicrobots/ (${username})`;
         }

@@ -3,34 +3,11 @@ import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 
 import commandRegistry from '../const/command-registry';
+import hiddenItems from '../const/hidden-items';
 import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
-
-    // extra fun stuff for -a
-    hiddenItems: Object.freeze([
-        { commandName: './',
-            date: 'Jan  2  3:42',
-            size: '         0',
-            isExec: true },
-        { commandName: '../',
-            date: 'Jan 16 23:18',
-            size: '         0',
-            isExec: true },
-        { commandName: '.config',
-            date: 'Dec 18  1:17',
-            size: '      6581',
-            isExec: false },
-        { commandName: '.mainframe.key',
-            date: 'Feb 19 10:47',
-            size: '  65815239',
-            isExec: false },
-        { commandName: '.core-dump',
-            date: 'Nov 13 21:33',
-            size: '         0',
-            isExec: true }
-        ]),
 
     _getCommandList() {
         let commandList = [];
@@ -58,7 +35,7 @@ export default Route.extend({
     },
 
     _responseWide(addHiddenItems) {
-        const responseItems = isPresent(addHiddenItems) ? this.hiddenItems.map((currHiddenItem) => {
+        const responseItems = isPresent(addHiddenItems) ? hiddenItems.commands.map((currHiddenItem) => {
             return currHiddenItem.commandName;
         }) : [];
 
@@ -92,12 +69,13 @@ export default Route.extend({
         const itemPrefix = '-rw-r--r--';
         const itemPrefixExec = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
         const prefix = appConfigObject.isExec ? itemPrefixExec : itemPrefix;
+        const suffix = appConfigObject.isExec ? '/' : '';
 
         return prefix.
             concat(' 1 magicrobots ').
             concat(`${appConfigObject.size} `).
             concat(`${appConfigObject.date} `).
-            concat(appConfigObject.commandName);
+            concat(appConfigObject.commandName.concat(suffix));
 
     },
 
@@ -106,7 +84,7 @@ export default Route.extend({
         const scope = this;
 
         if (isPresent(addHiddenItems)) {
-            response = this.hiddenItems.map((currHiddenItem) => {
+            response = hiddenItems.commands.map((currHiddenItem) => {
                 return scope._createDetailedLine(currHiddenItem);
             });            
         }

@@ -43,7 +43,7 @@ export default Service.extend({
     },
 
     getUsername() {
-        return get(this._getStorageObject(), KEY_USERNAME);
+        return get(this._getStorageObject(), KEY_USERNAME) || 'unknown user';
     },
     
     setPromptColor(newColor) {
