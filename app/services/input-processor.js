@@ -4,6 +4,8 @@ import { getOwner } from '@ember/application';
 import { normalizeEvent } from 'ember-jquery-legacy';
 
 import commandRegistry from '../const/command-registry';
+import environmentHelpers from '../utils/environment-helpers';
+import environmentValues from '../const/environment-values';
 import keyFunctions from './input-processor-key-functions';
 
 export default keyFunctions.extend({
@@ -51,9 +53,15 @@ export default keyFunctions.extend({
 
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
+        const enteredWords = commandComponents.concat();
         const commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
+
+        if (this._commandHasSwears(enteredWords)) {
+            this._handleFilthyInput();
+            return;
+        }
 
         // find command
         if (isPresent(this.overrideScope)) {
@@ -75,9 +83,36 @@ export default keyFunctions.extend({
         }
     },
 
+    _commandHasSwears(enteredWords) {
+        for (let i = 0; i < enteredWords.length; i++) {
+            const currEnteredWord = enteredWords[i];
+            if (environmentValues.badWords.includes(currEnteredWord)) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
     _handleCommandExecution(commandDefinition) {
         // run app route
         getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
+    },
+
+    _handleFilthyInput() {
+        set(this, 'currentCommand', '');
+        set(this, 'currentArgs', undefined);
+        
+        const responsesToFilth = [
+            'I may be software, but that\'s no excuse to be rude.',
+            'Profanity overheats my CPU. Please be cool.',
+            'Potty fingers.',
+            'There\'s just no need for such language.',
+            'Your word choice has been recorded in my personality profile processor.',
+            'Keep talking like that and I\'ll disconnect.'
+        ];
+
+        set(this, 'appResponse', [environmentHelpers.getRandomResponseFromList(responsesToFilth)]);
     },
 
     _handleInvalidInput(appName) {
