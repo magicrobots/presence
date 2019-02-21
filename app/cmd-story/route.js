@@ -13,6 +13,11 @@ export default Route.extend({
     // ------------------- ember hooks -------------------
 
     afterModel() {
+        // handle initialization of story data if it doesn't exist yet
+        if (this.isNewStory) {
+            this.storyCore.formatStoryData();
+        }
+
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
             displayAppNameInPrompt: true,
@@ -20,11 +25,6 @@ export default Route.extend({
             overrideScope: this,
             response: [this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription())
         });
-
-        // handle initialization of story data if it doesn't exist yet
-        if (this.isNewStory) {
-            this.formatStoryData();
-        }
 
         // init story in shell
         this.inputProcessor.setAppEnvironment(appEnvironment);
@@ -43,7 +43,8 @@ export default Route.extend({
 
     isNewStory: computed('persistenceHandler.magicRobotsData.story-xp', {
         get() {
-            return this.persistenceHandler.getStoryXP() === 0;
+            const xp = this.persistenceHandler.getStoryXP();
+            return xp === undefined || xp === 0;
         }
     }),
 

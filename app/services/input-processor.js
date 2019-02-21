@@ -85,7 +85,7 @@ export default keyFunctions.extend({
         set(this, 'currentArgs', undefined);
 
         if (isPresent(appName)) {
-            set(this, 'appResponse', [`ERROR: ${appName} is not a recognized directive.`]);
+            set(this, 'appResponse', [`ERROR: ${appName}: command not found.`]);
             return;
         }
 

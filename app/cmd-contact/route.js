@@ -37,7 +37,7 @@ export default Route.extend({
             '  twitter: magic_robots',
             '  github: magicrobots',
             '',
-            'If you run the contact command and pass the connection type it will send you there.',
+            'If you run the contact command and pass the connection type it will send you there in a new browser window.',
             'eg: type `contact instagram`']);
     },
 
