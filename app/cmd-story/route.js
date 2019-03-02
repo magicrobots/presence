@@ -4,6 +4,7 @@ import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
+import environmentValues from '../const/environment-values';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -56,8 +57,8 @@ export default Route.extend({
         // find direction user requests
         for (let i = 0; i < entries.length; i++ ) {
             const currArg = entries[i];
-            for (let j = 0; j < this.storyCore.getExitPossibilities().length; j++ ) {
-                const currExit = this.storyCore.getExitPossibilities()[j];
+            for (let j = 0; j < environmentValues.exitPossibilities.length; j++ ) {
+                const currExit = environmentValues.exitPossibilities[j];
                 if (currArg.toUpperCase() === currExit.abbr ||
                     currArg.toUpperCase() === currExit.word ) {
                         chosenDirection = currExit;

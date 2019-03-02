@@ -5,17 +5,13 @@ import { inject as service } from '@ember/service';
 
 import rooms from '../const/story-rooms';
 import items from '../const/story-items';
+import environmentValues from '../const/environment-values';
 
 const XP_PER_MOVE = 1;
 const WEIGHT_CAPACITY = 50;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
-const EXIT_POSSIBILITIES = [
-        {abbr:'N', word: 'NORTH', coordModifier: {direction: 'Y', amount: -1}},
-        {abbr:'E', word: 'EAST', coordModifier: {direction: 'X', amount: 1}},
-        {abbr:'W', word: 'WEST', coordModifier: {direction: 'X', amount: -1}},
-        {abbr:'S', word: 'SOUTH', coordModifier: {direction: 'Y', amount: 1}}
-    ];
+const MAX_THINGS_TO_LIST = 10;
 
 export default Service.extend({
     persistenceHandler: service(),
@@ -61,10 +57,13 @@ export default Service.extend({
             }
         });
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}].`);
+        const unlockedExits = this.persistenceHandler.getAllUnlockedExits();
+
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExits}]`);
     },
 
     formatStoryData() {
+        // TODO: find a better way to store init values for everything
         // initialize defaults / start over
         this.persistenceHandler.setStoryXP(0);
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
@@ -75,11 +74,12 @@ export default Service.extend({
             {roomId: 1, inventory: [1]},
             {roomId: 2, inventory: [2]}
         ]);
+        this.persistenceHandler.clearAllUnlockedDirections();
     },
 
     isValidDirection(enteredDirection) {
         if (isPresent(this.currentRoom.exits[enteredDirection.abbr])) {
-            return true;
+            return this.getIsExitUnlocked(this.currentRoom, enteredDirection.abbr);
         }
 
         return false;
@@ -89,11 +89,10 @@ export default Service.extend({
         const changeAxis = enteredDirection.coordModifier.direction;
         const positionFunctionNameGet = `getStoryPos${changeAxis}`;
         const positionFunctionNameSet = `setStoryPos${changeAxis}`;
-        // const defaultCoord = enteredDirection.coordModifier.direction === 'X' ? HOME_COORD_X : HOME_COORD_Y;
-        const currentCoordValue = this.persistenceHandler[positionFunctionNameGet]();// || defaultCoord;
+        const currentCoordValue = this.persistenceHandler[positionFunctionNameGet]();
         const newCoord = currentCoordValue + enteredDirection.coordModifier.amount;
 
-        // add XP if you're going to a new location.
+        // get coordinates in movement direction, find destination room
         const nextX = changeAxis === 'X' ?
             this.currentRoom.x + enteredDirection.coordModifier.amount :
             this.currentRoom.x;
@@ -102,11 +101,13 @@ export default Service.extend({
             this.currentRoom.y;
         const nextRoom = rooms.getRoom({x:nextX, y:nextY});
 
+        // warn if room is under construction
         if (isNone(nextRoom)) {
             console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextX}, y:${nextY}}`);
             return false;
         }
 
+        // reward user for exploring
         const nextRoomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(nextRoom.id);
         if (nextRoomIsNew) {
             this._increaseXP(XP_PER_MOVE);
@@ -142,14 +143,43 @@ export default Service.extend({
     getExitDescriptions() {
         let exitDescs = '';
         const scope = this;
-        EXIT_POSSIBILITIES.forEach((currPossibility) => {
-            const currExitPossibility = scope.currentRoom.exits[currPossibility.abbr];
-            if(isPresent(currExitPossibility)) {
-                exitDescs = exitDescs.concat(`${currExitPossibility} `);
+        environmentValues.exitPossibilities.forEach((currPossibility) => {
+            const currExitDescription = this.getExitDescription(scope.currentRoom.id, currPossibility.abbr);
+            if(isPresent(currExitDescription)) {
+                exitDescs = exitDescs.concat(`${currExitDescription} `);
             }
         });
 
         return exitDescs;
+    },
+
+    getExitDescription(roomId, exitOrientation) {
+        const room = rooms.getRoomById(roomId);
+        const exitObject = room.exits[exitOrientation];
+
+        if (isPresent(exitObject)) {
+            if (this.getIsExitUnlocked(room, exitOrientation)) {
+                return exitObject.opened;
+            } else {
+                return exitObject.closed;
+            }
+        }
+
+        return null;
+    },
+
+    getIsExitUnlocked(room, exitOrientation) {
+        const targetOrientation = room.exits[exitOrientation];
+
+        if(isPresent(targetOrientation)) {
+            if(isPresent(targetOrientation.closed)) {
+                return this.persistenceHandler.getIsUnlockedDirectionFromRoom(room.id, exitOrientation);
+            }
+
+            return true;
+        }
+
+        return false;
     },
 
     getFullRoomDescription() {
@@ -209,10 +239,6 @@ export default Service.extend({
 
         return isPresent(item) ? item.details : null;
     },
-    
-    getExitPossibilities() {
-        return EXIT_POSSIBILITIES;
-    },
 
     // ------------------- private methods -------------------
 
@@ -220,7 +246,7 @@ export default Service.extend({
         const roomInventory = this.getRoomInventory();
         
         if (roomInventory.length > 0) {
-            if (roomInventory.length > 10) {
+            if (roomInventory.length > MAX_THINGS_TO_LIST) {
                 // too many things to show descriptions
 
                 return 'There is a bunch of stuff.';
