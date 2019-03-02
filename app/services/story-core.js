@@ -240,6 +240,18 @@ export default Service.extend({
         return isPresent(item) ? item.details : null;
     },
 
+    useItem(targetItemId) {
+        const item = items.getItemById(targetItemId);
+
+        if (isPresent(item.use)) {
+            // TODO: unlock door specified in item
+
+            return [item.use.response];
+        }
+
+        return [`${item.name} is not a useable item.`];
+    },
+
     // ------------------- private methods -------------------
 
     _getItemDescriptions() {

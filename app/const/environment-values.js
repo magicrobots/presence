@@ -1,3 +1,5 @@
+import { computed } from '@ember/object';
+
 export default {
     badWords: [
         'shit',
@@ -8,7 +10,10 @@ export default {
         'fuck',
         'fucked',
         'motherfucker',
+        'motherfuckin',
+        'motherfucking',
         'bitch',
+        'bitches',
         'cunt',
         'twat',
         'pussy',
@@ -16,6 +21,30 @@ export default {
         'dick',
         'cock'
     ],
+
+    DIRECTION_N: computed({
+        get() {
+            return this.exitPossibilities[0].abbr;
+        }
+    }),
+
+    DIRECTION_E: computed({
+        get() {
+            return this.exitPossibilities[1].abbr;
+        }
+    }),
+
+    DIRECTION_W: computed({
+        get() {
+            return this.exitPossibilities[2].abbr;
+        }
+    }),
+
+    DIRECTION_S: computed({
+        get() {
+            return this.exitPossibilities[3].abbr;
+        }
+    }),
 
     exitPossibilities: [
         {abbr:'N', word: 'NORTH', coordModifier: {direction: 'Y', amount: -1}},

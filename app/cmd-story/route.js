@@ -69,6 +69,13 @@ export default Route.extend({
         return chosenDirection;
     },
 
+    _getLocalAndPersonalInventories() {
+        const yourItems = this.persistenceHandler.getStoryInventoryItems();
+        const roomItems = this.storyCore.getRoomInventory();
+
+        return yourItems.concat(roomItems);
+    },
+
     /* ----------------------- public methods --------------------
        ------ these are also the commands the user can type ----- */
 
@@ -152,7 +159,11 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp(['You can\'t take that.']);
             }
         } else {
-            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to take?`]);
+            }
         }
     },
 
@@ -175,24 +186,49 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
             this.storyCore.reportStoryData();
         } else {
-            this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to drop?`]);
+            }
         }
     },
 
-    examine(passedObjectName) {
-        const objectName = passedObjectName || this.inputProcessor.currentArgs[0];
-
-        // find matching item if it exists in either your or the rooms' inventories
-        const yourItems = this.persistenceHandler.getStoryInventoryItems();
-        const roomItems = this.storyCore.getRoomInventory();
-        const localInventories = yourItems.concat(roomItems);
+    examine(passedArgs) {
+        const theArgs = passedArgs || this.inputProcessor.currentArgs;
+        const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
+        const localInventories = this._getLocalAndPersonalInventories();
         const objectId = this.storyCore.getItemIdByName(objectName);
 
         if (isPresent(objectId) && localInventories.includes(objectId)) {
             const itemDescription = this.storyCore.getItemDetailsById(objectId);
             this.inputProcessor.handleFunctionFromApp([itemDescription]);
         } else {
-            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${passedObjectName} is.`]);
+            if(isPresent(objectName)) {
+                this.inputProcessor.handleFunctionFromApp([`You can't learn anything more about ${objectName} by examining it.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to examine?`]);
+            }
+        }
+    },
+
+    use() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+
+        // use it
+        if (localInventories.includes(targetItemId)) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.useItem(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`You don't know how to use the ${targetItemName}.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to use?`]);
+            }
         }
     },
 
@@ -203,7 +239,7 @@ export default Route.extend({
             if (args[0] === 'at') {
 
                 // user is looking at something
-                this.examine(args[1]);
+                this.examine(args.slice(1));
             } else if (isPresent(chosenDirection)) {
 
                 // user is looking in a direction

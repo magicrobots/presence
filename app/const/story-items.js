@@ -1,3 +1,5 @@
+import environmentValues from '../const/environment-values';
+
 export default {
 
     getItemById(itemId) {
@@ -16,9 +18,12 @@ export default {
         {
             id: 1,
             name: 'computer',
-            description: 'On a nearby table sits a bulky CRT monitor.',
-            details: 'Its screen is dark, save for a single blinking cursor in the corner. A tangle of wires snakes behind the desk and collects in a dusty old CPU case on the floor. Its green LED glows steadily.',
-            state: {hacked: false},
+            description: 'On a nearby table sits an old computer.',
+            details: 'Its bulky CRT monitor is dark, save for a single blinking cursor in the corner. A tangle of wires snakes behind the desk and collects in a dusty old CPU case on the floor. Its green LED glows steadily.',
+            use: {
+                unlocks: {room: 1, direction: environmentValues.DIRECTION_E },
+                response: 'You hack the mainframe.'
+            },
             weight: 100
         },
         {
@@ -26,7 +31,7 @@ export default {
             name: 'sandwich',
             description: 'There\'s a sandwich on the ground.',
             details: 'It\'s half eaten.  There is some unidentifiable meat, or meat substitute along with some wilted undescernible vegetables.  The paper plate it sits on is transparent with grease.',
-            state: null,
+            use: null,
             weight: 3
         },
         {
@@ -34,7 +39,7 @@ export default {
             name: 'pencil',
             description: 'Hey look a pencil!',
             details: 'An old number 2 pencil that could use sharpening but is still useable.  It has that sour painted wood smell that pencils have.  The eraser is missing.',
-            state: null,
+            use: null,
             weight: 1
         }
     ]
