@@ -1,9 +1,10 @@
 import Route from '@ember/routing/route';
 import { computed, aliasMethod } from '@ember/object';
-import { isPresent } from '@ember/utils';
+import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
+import environmentValues from '../const/environment-values';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -56,8 +57,8 @@ export default Route.extend({
         // find direction user requests
         for (let i = 0; i < entries.length; i++ ) {
             const currArg = entries[i];
-            for (let j = 0; j < this.storyCore.getExitPossibilities().length; j++ ) {
-                const currExit = this.storyCore.getExitPossibilities()[j];
+            for (let j = 0; j < environmentValues.exitPossibilities.length; j++ ) {
+                const currExit = environmentValues.exitPossibilities[j];
                 if (currArg.toUpperCase() === currExit.abbr ||
                     currArg.toUpperCase() === currExit.word ) {
                         chosenDirection = currExit;
@@ -66,6 +67,13 @@ export default Route.extend({
         }
 
         return chosenDirection;
+    },
+
+    _getLocalAndPersonalInventories() {
+        const yourItems = this.persistenceHandler.getStoryInventoryItems();
+        const roomItems = this.storyCore.getRoomInventory();
+
+        return yourItems.concat(roomItems);
     },
 
     /* ----------------------- public methods --------------------
@@ -88,6 +96,12 @@ export default Route.extend({
     walk: aliasMethod('go'),
     move: aliasMethod('go'),
     go() {
+        // handle no params
+        if (isEmpty(this.inputProcessor.currentArgs)) {
+            this.inputProcessor.handleFunctionFromApp(['Which way do you want to go?']);
+            return;
+        }
+
         // see if user entered a direction
         const chosenDirection = this._parseDirectionFromEntries(this.inputProcessor.currentArgs);
 
@@ -148,10 +162,14 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp([`You take the ${targetItemName}`]);
                 this.storyCore.reportStoryData();
             } else {
-                this.inputProcessor.handleFunctionFromApp(['You can\'t take that.']);
+                this.inputProcessor.handleFunctionFromApp([`The ${targetItemName} is too heavy.`]);
             }
         } else {
-            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to take?`]);
+            }
         }
     },
 
@@ -174,24 +192,49 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
             this.storyCore.reportStoryData();
         } else {
-            this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to drop?`]);
+            }
         }
     },
 
-    examine(passedObjectName) {
-        const objectName = passedObjectName || this.inputProcessor.currentArgs[0];
-
-        // find matching item if it exists in either your or the rooms' inventories
-        const yourItems = this.persistenceHandler.getStoryInventoryItems();
-        const roomItems = this.storyCore.getRoomInventory();
-        const localInventories = yourItems.concat(roomItems);
+    examine(passedArgs) {
+        const theArgs = passedArgs || this.inputProcessor.currentArgs;
+        const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
+        const localInventories = this._getLocalAndPersonalInventories();
         const objectId = this.storyCore.getItemIdByName(objectName);
 
         if (isPresent(objectId) && localInventories.includes(objectId)) {
             const itemDescription = this.storyCore.getItemDetailsById(objectId);
             this.inputProcessor.handleFunctionFromApp([itemDescription]);
         } else {
-            this.inputProcessor.handleFunctionFromApp([`I don't know what a ${passedObjectName} is.`]);
+            if(isPresent(objectName)) {
+                this.inputProcessor.handleFunctionFromApp([`You can't learn anything more about ${objectName} by examining it.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to examine?`]);
+            }
+        }
+    },
+
+    use() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+
+        // use it
+        if (localInventories.includes(targetItemId)) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.useItem(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`You don't know how to use the ${targetItemName}.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to use?`]);
+            }
         }
     },
 
@@ -202,7 +245,7 @@ export default Route.extend({
             if (args[0] === 'at') {
 
                 // user is looking at something
-                this.examine(args[1]);
+                this.examine(args.slice(1));
             } else if (isPresent(chosenDirection)) {
 
                 // user is looking in a direction
@@ -218,6 +261,15 @@ export default Route.extend({
 
     save() {
         this.inputProcessor.handleFunctionFromApp(['Story progress is auto-saved to local client, no need to manually save.  But I like that you care.']);
+    },
+
+    xp() {
+        this.inputProcessor.handleFunctionFromApp([`User XP: ${this.persistenceHandler.getStoryXP()}`]);
+    },
+
+    report() {
+        this.storyCore.reportStoryData();
+        this.inputProcessor.handleFunctionFromApp(['processing report...']);
     },
 
     formatStoryData() {

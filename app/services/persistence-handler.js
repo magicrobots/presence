@@ -15,6 +15,7 @@ const KEY_STORY_XP = 'story-xp';
 const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
 const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
 const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
+const KEY_STORY_ROOM_UNLOCKED_DIRECTIONS = 'story-room-unlocked-directions';
 
 export default Service.extend({
     init() {
@@ -178,5 +179,45 @@ export default Service.extend({
 
         // store modified set
         this.setStoryRoomInventories(currRoomInventories);
+    },
+
+    clearAllUnlockedDirections() {
+        set(this, `magicRobotsData.${KEY_STORY_ROOM_UNLOCKED_DIRECTIONS}`, []);
+        this._setStorageObject();
+    },
+
+    getAllUnlockedExits() {
+        return get(this._getStorageObject(), KEY_STORY_ROOM_UNLOCKED_DIRECTIONS);
+    },
+
+    setIsUnlockedDirectionInRoom(roomId, direction) {
+        const unlockedPairs = this.getAllUnlockedExits();
+        let currRoomObject = unlockedPairs.findBy('roomId', roomId);
+
+        if (isPresent(currRoomObject)) {
+            currRoomObject.unlocked.push(direction);
+        } else {
+            currRoomObject = {
+                roomId: roomId,
+                unlocked: [direction]
+            };
+            unlockedPairs.push(currRoomObject);
+        }
+
+        set(this, `magicRobotsData.${KEY_STORY_ROOM_UNLOCKED_DIRECTIONS}`, unlockedPairs);
+        this._setStorageObject();
+    },
+
+    getIsUnlockedDirectionFromRoom(roomId, direction) {
+        const unlockedPairs = this.getAllUnlockedExits();
+        let currRoomObject = unlockedPairs.findBy('roomId', roomId);
+
+        if (isPresent(currRoomObject)) {
+            if(currRoomObject.unlocked.includes(direction)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 });
