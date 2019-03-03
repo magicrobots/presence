@@ -24,6 +24,15 @@ export default {
         isExec: false,
         hideFromList: false },
 
+        { commandName: 'beep',
+        routeName: 'cmd-beep',
+        helpText: 'Communicate with robots using their own language.',
+        usage: null,
+        date: 'Oct 18 22:04',
+        size: '   3332656',
+        isExec: false,
+        hideFromList: true },
+
         { commandName: 'cd',
         routeName: 'cmd-cd',
         helpText: 'Move within directory structure.',
