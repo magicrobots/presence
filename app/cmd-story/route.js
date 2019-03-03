@@ -29,7 +29,6 @@ export default Route.extend({
 
         // init story in shell
         this.inputProcessor.setAppEnvironment(appEnvironment);
-        this.storyCore.reportStoryData();
     },
 
     // ------------------- computed properties -------------------
@@ -112,8 +111,6 @@ export default Route.extend({
         } else {
             this.inputProcessor.handleFunctionFromApp(['you can\'t go that way.']);
         }
-
-        this.storyCore.reportStoryData();
     },
 
     exits() {
@@ -160,7 +157,6 @@ export default Route.extend({
                 this.persistenceHandler.addStoryInventoryItem(targetItemId);
                 // report to user
                 this.inputProcessor.handleFunctionFromApp([`You take the ${targetItemName}`]);
-                this.storyCore.reportStoryData();
             } else {
                 this.inputProcessor.handleFunctionFromApp([`The ${targetItemName} is too heavy.`]);
             }
@@ -190,7 +186,6 @@ export default Route.extend({
             this.persistenceHandler.removeStoryInventoryItem(targetItemId);
             // report to user
             this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
-            this.storyCore.reportStoryData();
         } else {
             if(isPresent(targetItemName)) {
                 this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
@@ -269,13 +264,12 @@ export default Route.extend({
 
     report() {
         this.storyCore.reportStoryData();
-        this.inputProcessor.handleFunctionFromApp(['processing report...']);
+        this.inputProcessor.handleFunctionFromApp(['Processing report...', 'Done.', '', 'See console.']);
     },
 
     formatStoryData() {
         // resets story
         this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription()));
-        this.storyCore.reportStoryData();
     }
 });

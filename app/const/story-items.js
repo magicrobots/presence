@@ -20,9 +20,13 @@ export default {
             name: 'computer',
             description: 'On a nearby table sits an old computer.',
             details: 'Its bulky CRT monitor is dark, save for a single blinking cursor in the corner. A tangle of wires snakes behind the desk and collects in a dusty old CPU case on the floor. Its green LED glows steadily.',
+            detailsUsed: 'The monitor glows green with the stack of commands you entered.  You\'re fairly sure what you did wasn\'t illegal.',
             use: {
                 unlocks: {room: 1, direction: environmentValues.DIRECTION_E()},
-                response: {first: 'You hack the mainframe.', subsequent: 'You play tetris.'}
+                response: {
+                    first: 'You are familiar with this system. You find the security settings and out of pure curiosity, you set everything to off. After the walls stop echoing with the sounds of the clicking keyboard, you hear an electronic hum, and a distant hollow click that seems to come from the HVAC vents. The light that was red on the door to the east now glows green.',
+                    subsequent: 'You open up lynx and browse reddit for a few minutes.'
+                }
             },
             weight: 100
         },
