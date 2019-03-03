@@ -21,8 +21,8 @@ export default {
             description: 'On a nearby table sits an old computer.',
             details: 'Its bulky CRT monitor is dark, save for a single blinking cursor in the corner. A tangle of wires snakes behind the desk and collects in a dusty old CPU case on the floor. Its green LED glows steadily.',
             use: {
-                unlocks: {room: 1, direction: environmentValues.DIRECTION_E },
-                response: 'You hack the mainframe.'
+                unlocks: {room: 1, direction: environmentValues.DIRECTION_E()},
+                response: {first: 'You hack the mainframe.', subsequent: 'You play tetris.'}
             },
             weight: 100
         },

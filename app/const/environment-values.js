@@ -1,5 +1,3 @@
-import { computed } from '@ember/object';
-
 export default {
     badWords: [
         'shit',
@@ -22,29 +20,21 @@ export default {
         'cock'
     ],
 
-    DIRECTION_N: computed({
-        get() {
-            return this.exitPossibilities[0].abbr;
-        }
-    }),
+    DIRECTION_N() {
+        return this.exitPossibilities[0].abbr;
+    },
 
-    DIRECTION_E: computed({
-        get() {
-            return this.exitPossibilities[1].abbr;
-        }
-    }),
+    DIRECTION_E() {
+        return this.exitPossibilities[1].abbr;
+    },
 
-    DIRECTION_W: computed({
-        get() {
-            return this.exitPossibilities[2].abbr;
-        }
-    }),
+    DIRECTION_W() {
+        return this.exitPossibilities[2].abbr;
+    },
 
-    DIRECTION_S: computed({
-        get() {
-            return this.exitPossibilities[3].abbr;
-        }
-    }),
+    DIRECTION_S() {
+        return this.exitPossibilities[3].abbr;
+    },
 
     exitPossibilities: [
         {abbr:'N', word: 'NORTH', coordModifier: {direction: 'Y', amount: -1}},

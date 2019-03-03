@@ -183,7 +183,7 @@ export default Service.extend({
 
     clearAllUnlockedDirections() {
         set(this, `magicRobotsData.${KEY_STORY_ROOM_UNLOCKED_DIRECTIONS}`, []);
-        this._setStorageObject();        
+        this._setStorageObject();
     },
 
     getAllUnlockedExits() {
@@ -197,7 +197,11 @@ export default Service.extend({
         if (isPresent(currRoomObject)) {
             currRoomObject.unlocked.push(direction);
         } else {
-            currRoomObject.unlocked = [direction];
+            currRoomObject = {
+                roomId: roomId,
+                unlocked: [direction]
+            };
+            unlockedPairs.push(currRoomObject);
         }
 
         set(this, `magicRobotsData.${KEY_STORY_ROOM_UNLOCKED_DIRECTIONS}`, unlockedPairs);

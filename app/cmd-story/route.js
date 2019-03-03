@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { computed, aliasMethod } from '@ember/object';
-import { isPresent } from '@ember/utils';
+import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
@@ -96,6 +96,12 @@ export default Route.extend({
     walk: aliasMethod('go'),
     move: aliasMethod('go'),
     go() {
+        // handle no params
+        if (isEmpty(this.inputProcessor.currentArgs)) {
+            this.inputProcessor.handleFunctionFromApp(['Which way do you want to go?']);
+            return;
+        }
+
         // see if user entered a direction
         const chosenDirection = this._parseDirectionFromEntries(this.inputProcessor.currentArgs);
 
@@ -156,7 +162,7 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp([`You take the ${targetItemName}`]);
                 this.storyCore.reportStoryData();
             } else {
-                this.inputProcessor.handleFunctionFromApp(['You can\'t take that.']);
+                this.inputProcessor.handleFunctionFromApp([`The ${targetItemName} is too heavy.`]);
             }
         } else {
             if(isPresent(targetItemName)) {
@@ -255,6 +261,15 @@ export default Route.extend({
 
     save() {
         this.inputProcessor.handleFunctionFromApp(['Story progress is auto-saved to local client, no need to manually save.  But I like that you care.']);
+    },
+
+    xp() {
+        this.inputProcessor.handleFunctionFromApp([`User XP: ${this.persistenceHandler.getStoryXP()}`]);
+    },
+
+    report() {
+        this.storyCore.reportStoryData();
+        this.inputProcessor.handleFunctionFromApp(['processing report...']);
     },
 
     formatStoryData() {

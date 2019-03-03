@@ -8,6 +8,7 @@ import items from '../const/story-items';
 import environmentValues from '../const/environment-values';
 
 const XP_PER_MOVE = 1;
+const XP_PER_UNLOCK = 2;
 const WEIGHT_CAPACITY = 50;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
@@ -58,8 +59,18 @@ export default Service.extend({
         });
 
         const unlockedExits = this.persistenceHandler.getAllUnlockedExits();
+        let unlockedExitsString = '';
+        unlockedExits.forEach((currRoom, i, unlockedExits) => {
+            const roomString = `{roomId: ${currRoom.roomId}, unlocked: [${currRoom.unlocked}]}`;
+            unlockedExitsString = unlockedExitsString.concat(roomString);
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExits}]`);
+            // add commas and separators
+            if (i < unlockedExits.length - 1) {
+                unlockedExitsString = unlockedExitsString.concat(', ');
+            }
+        });
+
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}]`);
     },
 
     formatStoryData() {
@@ -134,7 +145,7 @@ export default Service.extend({
     getDescriptionInDirection(lookDirection) {
         const exitInDirection = this.currentRoom.exits[lookDirection.abbr];
         if (isPresent(exitInDirection)) {
-            return [exitInDirection];
+            return [this.getExitDescription(this.currentRoom.id, lookDirection.abbr)];
         } else {
             return [`There is nothing of interest to the ${lookDirection.word.toLowerCase()}`];
         }
@@ -244,9 +255,20 @@ export default Service.extend({
         const item = items.getItemById(targetItemId);
 
         if (isPresent(item.use)) {
-            // TODO: unlock door specified in item
+            // increase XP if they haven't done this before
+            const isNewUnlock = !this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction);
+            if (isNewUnlock) {
+                this._increaseXP(XP_PER_UNLOCK);
 
-            return [item.use.response];
+                // store unlock change
+                this.persistenceHandler.setIsUnlockedDirectionInRoom(item.use.unlocks.room, item.use.unlocks.direction);
+
+                // user feedback
+                return [item.use.response.first];
+            }
+
+            // tell user something happened
+            return [item.use.response.subsequent];
         }
 
         return [`${item.name} is not a useable item.`];
