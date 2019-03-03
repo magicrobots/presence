@@ -9,6 +9,7 @@ const Router = EmberRouter.extend({
 // about images help | search?
 Router.map(function() {
   this.route('cmd-about');
+  this.route('cmd-beep');
   this.route('cmd-cd');
   this.route('cmd-clear');
   this.route('cmd-contact');
