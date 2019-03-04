@@ -53,6 +53,23 @@ export default {
                    }
             },
             roomState: 0
+        },
+        {
+            id: 3,
+            x: 46,
+            y: 48,
+            summary: 'in the forest',
+            description: 'Deep creaks resonate around you as the breeze gently bends the network of branches sprawling above you. Moss clings to the rolling earth in every direction, softening every sound and beckoning your touch.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'There is a gently worn track to the north that dissolves into the mossy forest floor around you.'
+                   },
+                E: null,
+                W: null,
+                S: null
+            },
+            roomState: 0
         }
     ]
 }

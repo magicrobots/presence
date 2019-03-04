@@ -83,12 +83,18 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
-            {roomId: 2, inventory: [2]}
+            {roomId: 2, inventory: [2]},
+            {roomId: 3, inventory: [4]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
     },
 
     isValidDirection(enteredDirection) {
+
+        if (isNone(enteredDirection)) {
+            return false;
+        }
+
         if (isPresent(this.currentRoom.exits[enteredDirection.abbr])) {
             return this.getIsExitUnlocked(this.currentRoom, enteredDirection.abbr);
         }
@@ -249,6 +255,18 @@ export default Service.extend({
         const item = items.getItemById(searchId);
 
         return isPresent(item) ? item.details : null;
+    },
+
+    getItemTypeById(searchId) {
+        const item = items.getItemById(searchId);
+
+        return isPresent(item) ? item.type : null;
+    },
+
+    readDocument(targetItemId) {
+        const currDoc = items.getItemById(targetItemId);
+
+        return [currDoc.use.response.first];
     },
 
     useItem(targetItemId) {

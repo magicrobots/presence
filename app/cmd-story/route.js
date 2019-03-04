@@ -169,6 +169,7 @@ export default Route.extend({
         }
     },
 
+    discard: aliasMethod('drop'),
     drop() {
         const args = this.inputProcessor.currentArgs;
 
@@ -220,15 +221,39 @@ export default Route.extend({
         const targetItemName = args[0] === 'the' ? args[1] : args[0];
         const localInventories = this._getLocalAndPersonalInventories();
         const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const itemType = this.storyCore.getItemTypeById(targetItemId);
 
         // use it
-        if (localInventories.includes(targetItemId)) {
+        if (localInventories.includes(targetItemId) &&
+            itemType === environmentValues.ITEM_TYPE_THING) {
             this.inputProcessor.handleFunctionFromApp(this.storyCore.useItem(targetItemId));
         } else {
             if(isPresent(targetItemName)) {
                 this.inputProcessor.handleFunctionFromApp([`You don't know how to use the ${targetItemName}.`]);
             } else {
                 this.inputProcessor.handleFunctionFromApp([`What do you want to use?`]);
+            }
+        }
+    },
+
+    read() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const itemType = this.storyCore.getItemTypeById(targetItemId);
+
+        // read it
+        if (localInventories.includes(targetItemId) &&
+            itemType === environmentValues.ITEM_TYPE_DOC) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.readDocument(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`The ${targetItemName} isn't a thing that you read.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to read?`]);
             }
         }
     },

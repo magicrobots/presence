@@ -41,5 +41,8 @@ export default {
         {abbr:'E', word: 'EAST', coordModifier: {direction: 'X', amount: 1}},
         {abbr:'W', word: 'WEST', coordModifier: {direction: 'X', amount: -1}},
         {abbr:'S', word: 'SOUTH', coordModifier: {direction: 'Y', amount: 1}}
-    ]
+    ],
+
+    ITEM_TYPE_THING: 'thing',
+    ITEM_TYPE_DOC: 'document'
 }
