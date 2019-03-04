@@ -19,12 +19,12 @@ export default {
             x: 47,
             y: 47,
             summary: 'in the library',
-            description: 'Smells like books.  You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity. You realize It\'s quite late.',
+            description: 'Smells like books.  You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
             exits: {
                 N: null,
                 E: {
-                    closed: 'There is a closed industrial doorway leading to the east.',
-                    opened: 'There is an open industrial doorway leading to the east.'
+                    closed: 'There is a locked industrial doorway leading to the east. Looks like you need an RFID badge or something to gain access.',
+                    opened: 'There is an industrial doorway leading to the east.'
                     },
                 W: {
                     closed: null,

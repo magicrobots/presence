@@ -274,6 +274,20 @@ export default Service.extend({
         return [`${item.name} is not a useable item.`];
     },
 
+    getMaxPossibleXp() {
+        // minus 1 here because initial room gives zero XP
+        const roomXp = (rooms.rooms.length - 1) * XP_PER_MOVE;
+        let useXp = 0;
+
+        items.items.forEach((currItem) => {
+            if (isPresent(currItem.use)) {
+                useXp += XP_PER_UNLOCK;
+            }
+        });
+
+        return roomXp + useXp;
+    },
+
     // ------------------- private methods -------------------
 
     _getItemDescriptions() {

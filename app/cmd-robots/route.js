@@ -54,7 +54,7 @@ export default Route.extend({
             activeAppName: this.routeName,
             displayAppNameInPrompt: true,
             interruptPrompt: true,
-            response: ['<- use arrows to navigate imagery ->', 'enter q or ESC to quit'],
+            response: ['<- use arrows to navigate imagery ->', 'ESC to quit'],
             keyOverrides: {
                 ARROWLEFT: this._arrowLeft,
                 ARROWRIGHT: this._arrowRight,

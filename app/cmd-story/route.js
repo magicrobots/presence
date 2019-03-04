@@ -267,6 +267,28 @@ export default Route.extend({
         this.inputProcessor.handleFunctionFromApp(['Processing report...', 'Done.', '', 'See console.']);
     },
 
+    progress: aliasMethod('status'),
+    status() {
+        // get max XP:
+        const maxXp = this.storyCore.getMaxPossibleXp();
+        const currXp = this.persistenceHandler.getStoryXP();
+        const completionRatio = currXp / maxXp;
+
+        // -2 here for initial and end pipes
+        const maxChars = this.inputProcessor.maxCharsPerLine - 2;
+        const completedChars = Math.floor(completionRatio * maxChars);
+
+        // create ASCII graph
+        let returnString = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
+
+        // result
+        const result = [`XP: ${currXp}`, returnString];
+        if (completionRatio === 1) {
+            result.push('You are the Champion of the Universe!');
+        }
+        this.inputProcessor.handleFunctionFromApp(result);
+    },
+
     formatStoryData() {
         // resets story
         this.storyCore.formatStoryData();

@@ -25,7 +25,7 @@ export default {
                 unlocks: {room: 1, direction: environmentValues.DIRECTION_E()},
                 response: {
                     first: 'You are familiar with this system. You find the security settings and out of pure curiosity, you set everything to off. After the walls stop echoing with the sounds of the clicking keyboard, you hear an electronic hum, and a distant hollow click that seems to come from the HVAC vents. The light that was red on the door to the east now glows green.',
-                    subsequent: 'You open up lynx and browse reddit for a few minutes.'
+                    subsequent: 'You open up lynx and browse reddit for a few minutes. Nothing holds your interest.'
                 }
             },
             weight: 100
