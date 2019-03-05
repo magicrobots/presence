@@ -70,7 +70,9 @@ export default Service.extend({
             }
         });
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}]`);
+        const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
+
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);
     },
 
     formatStoryData() {
@@ -87,6 +89,7 @@ export default Service.extend({
             {roomId: 3, inventory: [4]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
+        this.persistenceHandler.setAllUnlockedItems([]);
     },
 
     isValidDirection(enteredDirection) {
@@ -266,11 +269,62 @@ export default Service.extend({
     readDocument(targetItemId) {
         const currDoc = items.getItemById(targetItemId);
 
-        return [currDoc.use.response.first];
+        if (isPresent(currDoc.use)) {
+            const unlockItemId = currDoc.use.unlocks.item;
+            const isNewDoc = !this.persistenceHandler.getAllUnlockedItems().includes(unlockItemId);
+            if (isNewDoc) {
+                // increase XP
+                this._increaseXP(XP_PER_UNLOCK);
+
+                // store unlock
+                this.persistenceHandler.unlockItem(unlockItemId);
+
+                // user feedback
+                return [currDoc.use.response.first];
+            } else {
+                // user feedback
+                return [currDoc.use.response.subsequent];
+            }
+        }
+
+        return [`You can't read ${currDoc.name}`];
+    },
+
+    getItemIsLocked(item) {
+        const lockList = [];
+        items.items.forEach((currItem) => {
+            if (currItem.type === environmentValues.ITEM_TYPE_DOC) {
+                if (isPresent(currItem.use)) {
+                    if (isPresent(currItem.use.unlocks)) {
+                        if (isPresent(currItem.use.unlocks.item)) {
+                            lockList.push(currItem.use.unlocks.item);
+                        }
+                    }
+                }
+            }
+        });
+
+        const isLockable = lockList.includes(item.id);
+
+        if (isLockable) {
+            const isUnlocked = this.persistenceHandler.getAllUnlockedItems().includes(item.id);
+            if (isUnlocked) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     },
 
     useItem(targetItemId) {
         const item = items.getItemById(targetItemId);
+
+        // reject usage of locked item
+        if (this.getItemIsLocked(item)) {
+            return [`You can't figure out how to use the ${item.name}.`];
+        }
 
         if (isPresent(item.use)) {
             // increase XP if they haven't done this before

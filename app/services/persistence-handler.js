@@ -16,6 +16,7 @@ const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
 const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
 const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
 const KEY_STORY_ROOM_UNLOCKED_DIRECTIONS = 'story-room-unlocked-directions';
+const KEY_STORY_UNLOCKED_ITEMS = 'story-unlocked-items';
 
 export default Service.extend({
     init() {
@@ -219,5 +220,28 @@ export default Service.extend({
         }
 
         return false;
+    },
+
+    setAllUnlockedItems(newItems) {
+        set(this, `magicRobotsData.${KEY_STORY_UNLOCKED_ITEMS}`, newItems);
+        this._setStorageObject();
+    },
+
+    getAllUnlockedItems() {
+        return get(this._getStorageObject(), KEY_STORY_UNLOCKED_ITEMS);
+    },
+
+    unlockItem(itemId) {
+        let currUnlockedItems = this.getAllUnlockedItems();
+        if (isPresent(currUnlockedItems)) {
+            if (!currUnlockedItems.includes(itemId)) {
+                currUnlockedItems.push(itemId);
+            }
+        } else {
+            currUnlockedItems = [itemId];
+        }
+
+        // set updated value
+        this.setAllUnlockedItems(currUnlockedItems);
     }
 });
