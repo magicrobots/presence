@@ -9,9 +9,14 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: ['This is an ol\' unix style terminal simulation.',
+            response: ['I had a the following goals for this website:',
+            ' - Create a command-line interface',
+            ' - Use canvas to create a crappy old CRT monitor effect',
+            ' - Create a Zork style text adventure game',
             '',
-            'It was written in javascript utilizing:',
+            'I architected the faux-unix interface as well as the adventure command logic without doing any research, so I\'m sure there is plenty I could do to make it more efficient.  Full disclosure: I did google a Zork command list for ideas.',
+            '',
+            'Site was written in javascript utilizing:',
             '  ember',
             '  canvas',
             '  stack overflow',

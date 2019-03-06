@@ -70,6 +70,29 @@ export default {
                 S: null
             },
             roomState: 0
+        },
+        {
+            id: 4,
+            x: 48,
+            y: 47,
+            summary: 'in the reception area',
+            description: 'You are in what looks like a reception area for a long defunct corporation.  There is an empty desk in the center with a shadow where the logo signage used to be.  Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'Double swinging doors with circular windows hint at a bright hallway leading north.'
+                   },
+                E: null,
+                W: {
+                    closed: null,
+                    opened: 'A heavy industrial doorway leads to the west.'
+                   },
+                S: {
+                    closed: null,
+                    opened: 'To the south is a half open door showing a bold red lettered sign: \'No Admittance\'.'
+                   }
+            },
+            roomState: 0
         }
     ]
 }

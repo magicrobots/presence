@@ -86,7 +86,8 @@ export default Service.extend({
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
             {roomId: 2, inventory: [2]},
-            {roomId: 3, inventory: [4]}
+            {roomId: 3, inventory: [4]},
+            {roomId: 4, inventory: [5, 6]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -257,7 +258,26 @@ export default Service.extend({
     getItemDetailsById(searchId) {
         const item = items.getItemById(searchId);
 
-        return isPresent(item) ? item.details : null;
+        // if it's a useable item, return details based on whether or not it's used
+        let isUsed = false;
+        if (isPresent(item.use)) {
+            // if it's a document check used items for item id
+            if (item.type === environmentValues.ITEM_TYPE_DOC) {
+                const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
+                if (unlockedItems.includes(item.use.unlocks.item)) {
+                    isUsed = true;
+                }
+            } else {
+                // if it's a thing check unlocked rooms for use unlock room id
+                if (this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction) ) {
+                    isUsed = true;
+                }
+            }
+        }
+
+        const detailsResponse = isUsed ? item.detailsUsed : item.details;
+
+        return isPresent(item) ? detailsResponse : null;
     },
 
     getItemTypeById(searchId) {
