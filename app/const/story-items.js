@@ -64,6 +64,24 @@ export default {
                 }
             },
             weight: 12
+        },
+        {
+            id: 5,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'money',
+            description: 'Looks like someone dropped a ten dollar bill.',
+            details: 'There doesn\'t seem to be anything special about this ten dollar bill.  ',
+            use: null,
+            weight: 1
+        },
+        {
+            id: 6,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'vending-machine',
+            description: 'There\'s a vending-machine humming in the corner.',
+            details: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars.',
+            use: null,
+            weight: 100
         }
     ]
 }

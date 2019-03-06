@@ -80,7 +80,7 @@ export default {
 
         { commandName: 'ls',
         routeName: 'cmd-ls',
-        helpText: 'List command shows user available commands or applications in the system.',
+        helpText: 'List command shows user available commands in the system.',
         usage: null,
         date: 'Feb  3  7:45',
         size: '    198516',
@@ -125,7 +125,7 @@ export default {
 
         { commandName: 'story',
         routeName: 'cmd-story',
-        helpText: 'An interactive adventure.',
+        helpText: 'A text based interactive adventure.',
         usage: null,
         date: 'Mar  1 14:41',
         size: '         0',
