@@ -19,12 +19,12 @@ export default {
             x: 47,
             y: 47,
             summary: 'in the library',
-            description: 'Smells like books.  You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity. You realize It\'s quite late.',
+            description: 'Smells like books.  You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
             exits: {
                 N: null,
                 E: {
-                    closed: 'There is a closed industrial doorway leading to the east.',
-                    opened: 'There is an open industrial doorway leading to the east.'
+                    closed: 'There is a locked industrial doorway leading to the east. Looks like you need an RFID badge or something to gain access.',
+                    opened: 'There is an industrial doorway leading to the east.'
                     },
                 W: {
                     closed: null,
@@ -51,6 +51,23 @@ export default {
                     closed: null,
                     opened: 'Next to the pond heading south there is a walkway with benches.  It has recently been swept.'
                    }
+            },
+            roomState: 0
+        },
+        {
+            id: 3,
+            x: 46,
+            y: 48,
+            summary: 'in the forest',
+            description: 'Deep creaks resonate around you as the breeze gently bends the network of branches sprawling above you. Moss clings to the rolling earth in every direction, softening every sound and beckoning your touch.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'There is a gently worn track to the north that dissolves into the mossy forest floor around you.'
+                   },
+                E: null,
+                W: null,
+                S: null
             },
             roomState: 0
         }

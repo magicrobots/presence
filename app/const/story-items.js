@@ -17,6 +17,7 @@ export default {
     items: [
         {
             id: 1,
+            type: environmentValues.ITEM_TYPE_THING,
             name: 'computer',
             description: 'On a nearby table sits an old computer.',
             details: 'Its bulky CRT monitor is dark, save for a single blinking cursor in the corner. A tangle of wires snakes behind the desk and collects in a dusty old CPU case on the floor. Its green LED glows steadily.',
@@ -25,13 +26,14 @@ export default {
                 unlocks: {room: 1, direction: environmentValues.DIRECTION_E()},
                 response: {
                     first: 'You are familiar with this system. You find the security settings and out of pure curiosity, you set everything to off. After the walls stop echoing with the sounds of the clicking keyboard, you hear an electronic hum, and a distant hollow click that seems to come from the HVAC vents. The light that was red on the door to the east now glows green.',
-                    subsequent: 'You open up lynx and browse reddit for a few minutes.'
+                    subsequent: 'You open up lynx and browse reddit for a few minutes. Nothing holds your interest.'
                 }
             },
             weight: 100
         },
         {
             id: 2,
+            type: environmentValues.ITEM_TYPE_THING,
             name: 'sandwich',
             description: 'There\'s a sandwich on the ground.',
             details: 'It\'s half eaten.  There is some unidentifiable meat, or meat substitute along with some wilted undescernible vegetables.  The paper plate it sits on is transparent with grease.',
@@ -40,11 +42,28 @@ export default {
         },
         {
             id: 3,
+            type: environmentValues.ITEM_TYPE_THING,
             name: 'pencil',
             description: 'Hey look a pencil!',
             details: 'An old number 2 pencil that could use sharpening but is still useable.  It has that sour painted wood smell that pencils have.  The eraser is missing.',
             use: null,
             weight: 1
+        },
+        {
+            id: 4,
+            type: environmentValues.ITEM_TYPE_DOC,
+            name: 'papers',
+            description: 'You almost step on some papers.',
+            details: 'The loose stack of papers is stapled together at the corner, the first page curled over itself.  Written there is the title: "A HACKER\'S MANUAL"',
+            detailsUsed: 'The manual flops over in your hand like a Dali painting.  Seems like there was way more information in there than there are pages.',
+            use: {
+                unlocks: {item: 1},
+                response: {
+                    first: 'As you turn the pages, you can feel your mind expanding.  You are engrossed.  You begin not to need the reference section in the back as you absorb the terms and details.  You almost feel like a physical gust of wind spirals around you as your understanding clicks into place.  You are a hacker now.',
+                    subsequent: 'You thumb through the pages again, but no further knowledge is found there.'
+                }
+            },
+            weight: 12
         }
     ]
 }

@@ -70,7 +70,9 @@ export default Service.extend({
             }
         });
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}]`);
+        const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
+
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);
     },
 
     formatStoryData() {
@@ -83,12 +85,19 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
-            {roomId: 2, inventory: [2]}
+            {roomId: 2, inventory: [2]},
+            {roomId: 3, inventory: [4]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
+        this.persistenceHandler.setAllUnlockedItems([]);
     },
 
     isValidDirection(enteredDirection) {
+
+        if (isNone(enteredDirection)) {
+            return false;
+        }
+
         if (isPresent(this.currentRoom.exits[enteredDirection.abbr])) {
             return this.getIsExitUnlocked(this.currentRoom, enteredDirection.abbr);
         }
@@ -251,8 +260,71 @@ export default Service.extend({
         return isPresent(item) ? item.details : null;
     },
 
+    getItemTypeById(searchId) {
+        const item = items.getItemById(searchId);
+
+        return isPresent(item) ? item.type : null;
+    },
+
+    readDocument(targetItemId) {
+        const currDoc = items.getItemById(targetItemId);
+
+        if (isPresent(currDoc.use)) {
+            const unlockItemId = currDoc.use.unlocks.item;
+            const isNewDoc = !this.persistenceHandler.getAllUnlockedItems().includes(unlockItemId);
+            if (isNewDoc) {
+                // increase XP
+                this._increaseXP(XP_PER_UNLOCK);
+
+                // store unlock
+                this.persistenceHandler.unlockItem(unlockItemId);
+
+                // user feedback
+                return [currDoc.use.response.first];
+            } else {
+                // user feedback
+                return [currDoc.use.response.subsequent];
+            }
+        }
+
+        return [`You can't read ${currDoc.name}`];
+    },
+
+    getItemIsLocked(item) {
+        const lockList = [];
+        items.items.forEach((currItem) => {
+            if (currItem.type === environmentValues.ITEM_TYPE_DOC) {
+                if (isPresent(currItem.use)) {
+                    if (isPresent(currItem.use.unlocks)) {
+                        if (isPresent(currItem.use.unlocks.item)) {
+                            lockList.push(currItem.use.unlocks.item);
+                        }
+                    }
+                }
+            }
+        });
+
+        const isLockable = lockList.includes(item.id);
+
+        if (isLockable) {
+            const isUnlocked = this.persistenceHandler.getAllUnlockedItems().includes(item.id);
+            if (isUnlocked) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    },
+
     useItem(targetItemId) {
         const item = items.getItemById(targetItemId);
+
+        // reject usage of locked item
+        if (this.getItemIsLocked(item)) {
+            return [`You can't figure out how to use the ${item.name}.`];
+        }
 
         if (isPresent(item.use)) {
             // increase XP if they haven't done this before
@@ -272,6 +344,20 @@ export default Service.extend({
         }
 
         return [`${item.name} is not a useable item.`];
+    },
+
+    getMaxPossibleXp() {
+        // minus 1 here because initial room gives zero XP
+        const roomXp = (rooms.rooms.length - 1) * XP_PER_MOVE;
+        let useXp = 0;
+
+        items.items.forEach((currItem) => {
+            if (isPresent(currItem.use)) {
+                useXp += XP_PER_UNLOCK;
+            }
+        });
+
+        return roomXp + useXp;
     },
 
     // ------------------- private methods -------------------

@@ -35,10 +35,16 @@ export default Component.extend(Deformers, {
         // inform input processor of markup
         set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
 
+        // store max chars per line
+        const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
+        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
+        set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
+
         // add resize listener
         const scope = this;
         window.addEventListener('resize', function() {
-            scope._setContainerSize();
+            set(scope, 'containerHeight', window.innerHeight);
+            set(scope, 'containerWidth', window.innerWidth);
         })
 
         // get everything started
@@ -272,8 +278,7 @@ export default Component.extend(Deformers, {
     _fitDisplayLinesInContainerWidth() {
         let modifiedLines = [];
         const allLines = this.inputProcessor.allDisplayLines;
-        const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
-        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
+        const maxCharsPerLine = this.inputProcessor.maxCharsPerLine;
 
         // prevent inifinite loop?
         if (maxCharsPerLine < this.MIN_USEABLE_COLUMNS) {
@@ -299,8 +304,22 @@ export default Component.extend(Deformers, {
                 let currLastSegment = workingLine;
 
                 while(currLastSegment.length > maxCharsPerLine) {
+                    // if there are no spaces it's either a graph or user wrote something with no spaces.
+                    if (currLastSegment.indexOf(' ') === -1) {
+                        const safeLine = currLastSegment.substring(0, maxCharsPerLine);
+                        currLastSegment = currLastSegment.substring(maxCharsPerLine - 1);
+                        segments.push(safeLine);
+                        break;
+                    }
+
                     // find space closest to maxChars
-                    const lastSpace = currLastSegment.lastIndexOf(' ', maxCharsPerLine);
+                    let lastSpace = currLastSegment.lastIndexOf(' ', maxCharsPerLine);
+
+                    if (lastSpace === -1) {
+                        // then it's a command that's longer than max chars
+                        lastSpace = maxCharsPerLine;
+                    }
+
                     const safeLine = currLastSegment.substring(0, lastSpace);
                     segments.push(safeLine);
 
