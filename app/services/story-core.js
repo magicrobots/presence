@@ -87,7 +87,11 @@ export default Service.extend({
             {roomId: 1, inventory: [1]},
             {roomId: 2, inventory: [2]},
             {roomId: 3, inventory: [4]},
-            {roomId: 4, inventory: [5, 6]}
+            {roomId: 4, inventory: [5, 6]},
+            {roomId: 5, inventory: [7, 8]},
+            {roomId: 6, inventory: []},
+            {roomId: 7, inventory: []},
+            {roomId: 8, inventory: []}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -194,7 +198,28 @@ export default Service.extend({
 
         if(isPresent(targetOrientation)) {
             if(isPresent(targetOrientation.closed)) {
-                return this.persistenceHandler.getIsUnlockedDirectionFromRoom(room.id, exitOrientation);
+                // either unlocked by using item
+                const isUnlockedByUse = this.persistenceHandler.getIsUnlockedDirectionFromRoom(room.id, exitOrientation);
+                if (isUnlockedByUse) {
+                    return true;
+                }
+
+                // or is unlocked by having key in inventory
+                const inventory = this.persistenceHandler.getStoryInventoryItems();
+                let hasKey = false;
+                inventory.forEach((currInventoryItemId) => {
+                    const currItem = items.getItemById(currInventoryItemId);
+                    if (isPresent(currItem.isKey)) {
+                        if (isPresent(currItem.isKey.room)) {
+                            if (currItem.isKey.room === room.id &&
+                                currItem.isKey.direction === exitOrientation) {
+                                hasKey = true;
+                            }
+                        }
+                    }
+                });
+
+                return hasKey;
             }
 
             return true;
@@ -312,7 +337,10 @@ export default Service.extend({
 
     getItemIsLocked(item) {
         const lockList = [];
+        const passiveKeyItems = [];
+        const passiveKeyIds = [];
         items.items.forEach((currItem) => {
+            // list of things unlocked by using an item
             if (currItem.type === environmentValues.ITEM_TYPE_DOC) {
                 if (isPresent(currItem.use)) {
                     if (isPresent(currItem.use.unlocks)) {
@@ -321,10 +349,20 @@ export default Service.extend({
                         }
                     }
                 }
+            } else {
+                // list of things unlocked by having an item in your inventory
+                if (currItem.type === environmentValues.ITEM_TYPE_THING) {
+                    if (isPresent(currItem.isKey)) {
+                        if (isPresent(currItem.isKey.item)) {
+                            passiveKeyIds.push(currItem.isKey.item);
+                            passiveKeyItems.push(currItem);
+                        }
+                    }
+                }
             }
         });
 
-        const isLockable = lockList.includes(item.id);
+        const isLockable = lockList.includes(item.id) || passiveKeyIds.includes(item.id);
 
         if (isLockable) {
             const isUnlocked = this.persistenceHandler.getAllUnlockedItems().includes(item.id);
@@ -332,7 +370,16 @@ export default Service.extend({
                 return false;
             }
 
-            return true;
+            // check if item is unlocked passively by having a key item
+            const userInventory = this.persistenceHandler.getStoryInventoryItems();
+            let isUnlockedPassively = false;
+            passiveKeyItems.forEach((currPassiveKeyItem) => {
+                if (userInventory.includes(currPassiveKeyItem.id)) {
+                    isUnlockedPassively = true;
+                }
+            });
+
+            return !isUnlockedPassively;
         }
 
         return false;
@@ -343,7 +390,7 @@ export default Service.extend({
 
         // reject usage of locked item
         if (this.getItemIsLocked(item)) {
-            return [`You can't figure out how to use the ${item.name}.`];
+            return [`You can't figure out how to use the ${item.name}. You feel like you're missing something.`];
         }
 
         if (isPresent(item.use)) {

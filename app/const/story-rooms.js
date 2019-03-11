@@ -31,8 +31,7 @@ export default {
                     opened: 'A bright hallway stretches westward, artwork illuminated along the walls.'
                     },
                 S: null
-            },
-            roomState: 0
+            }
         },
         {
             id: 2,
@@ -51,8 +50,7 @@ export default {
                     closed: null,
                     opened: 'Next to the pond heading south there is a walkway with benches.  It has recently been swept.'
                    }
-            },
-            roomState: 0
+            }
         },
         {
             id: 3,
@@ -68,8 +66,7 @@ export default {
                 E: null,
                 W: null,
                 S: null
-            },
-            roomState: 0
+            }
         },
         {
             id: 4,
@@ -91,8 +88,89 @@ export default {
                     closed: null,
                     opened: 'To the south is a half open door showing a bold red lettered sign: \'No Admittance\'.'
                    }
-            },
-            roomState: 0
+            }
+        },
+        {
+            id: 5,
+            x: 48,
+            y: 48,
+            summary: 'inside a server room',
+            description: 'Columns of floor to ceiling rack servers surround you.  Dense clusters of tiny blinking lights busy the space like an active beehive.  Most towers have well routed cables, organized in careful angled tributaries flowing into large gathered bundles that disappear into the ceiling.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'There is a single windowless access door to the north.'
+                   },
+                E: {
+                    closed: null,
+                    opened: 'A floor level vent cover looks like it has been unscrewed.  Beyond is a narrow downward sloping tunnel, stretching eastward into blackness.'
+                   },
+                W: null,
+                S: null
+            }
+        },
+        {
+            id: 6,
+            x: 48,
+            y: 46,
+            summary: 'in a kitchen',
+            description: 'industrial kitchen, lots of steel, blah blah. Starting to hear weird noises.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'A service doorway leading east.'
+                   },
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'Double swinging doors with circular windows open to the south.'
+                   }
+            }
+        },
+        {
+            id: 7,
+            x: 49,
+            y: 46,
+            summary: 'in a covered bridge',
+            description: 'Street below you, not sure you should keep going.',
+            exits: {
+                N: null,
+                E: {
+                    closed: 'To the east is a solid metal door with a red light glowing above it.',
+                    opened: 'A solid metal door on the east side of the bridge.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'A service doorway to the west.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 8,
+            x: 50,
+            y: 46,
+            summary: 'among a sea of dusty computer stations',
+            description: 'So many computers, all off.  Lots of empty cans of tab soda and 1.25" floppy disks lying around. Scary noises.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'helipad access?!'
+                   },
+                E: {
+                    closed: null,
+                    opened: 'Clean room access to lab.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'A doorway to the bridge.'
+                   },
+                S: {
+                    closed: null,
+                    opened: 'Massive steel sliding door.'
+                   }
+            }
         }
     ]
 }

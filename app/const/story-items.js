@@ -29,6 +29,7 @@ export default {
                     subsequent: 'You open up lynx and browse reddit for a few minutes. Nothing holds your interest.'
                 }
             },
+            isKey: null,
             weight: 100
         },
         {
@@ -38,6 +39,7 @@ export default {
             description: 'There\'s a sandwich on the ground.',
             details: 'It\'s half eaten.  There is some unidentifiable meat, or meat substitute along with some wilted undescernible vegetables.  The paper plate it sits on is transparent with grease.',
             use: null,
+            isKey: null,
             weight: 3
         },
         {
@@ -47,6 +49,7 @@ export default {
             description: 'Hey look a pencil!',
             details: 'An old number 2 pencil that could use sharpening but is still useable.  It has that sour painted wood smell that pencils have.  The eraser is missing.',
             use: null,
+            isKey: null,
             weight: 1
         },
         {
@@ -55,7 +58,7 @@ export default {
             name: 'papers',
             description: 'You almost step on some papers.',
             details: 'The loose stack of papers is stapled together at the corner, the first page curled over itself.  Written there is the title: "A HACKER\'S MANUAL"',
-            detailsUsed: 'The manual flops over in your hand like a Dali painting.  Seems like there was way more information in there than there are pages.',
+            detailsUsed: 'The manual flops over in your hand like a Dali painting.  Seemed like there was way more information in there than there are pages.',
             use: {
                 unlocks: {item: 1},
                 response: {
@@ -63,15 +66,17 @@ export default {
                     subsequent: 'You thumb through the pages again, but no further knowledge is found there.'
                 }
             },
+            isKey: null,
             weight: 12
         },
         {
             id: 5,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'money',
-            description: 'Looks like someone dropped a ten dollar bill.',
-            details: 'There doesn\'t seem to be anything special about this ten dollar bill.  ',
+            description: 'Looks like someone dropped a dollar bill.',
+            details: 'There doesn\'t seem to be anything special about this dollar bill.',
             use: null,
+            isKey: {item: 6},
             weight: 1
         },
         {
@@ -80,8 +85,35 @@ export default {
             name: 'vending-machine',
             description: 'There\'s a vending-machine humming in the corner.',
             details: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars.',
-            use: null,
+            use: {
+                unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
+                response: {
+                    first: 'You insert the dollar bill into the tray and mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration and you clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
+                    subsequent: 'You feed the bill into the tray again.  Zeep zoop.  Annoyed.'
+                }
+            },
+            isKey: null,
             weight: 100
+        },
+        {
+            id: 7,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'flashlight',
+            description: 'It is a flashlight.',
+            details: 'Looks like a flashlight.',
+            use: null,
+            isKey: null,
+            weight: 10
+        },
+        {
+            id: 8,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'badge',
+            description: 'An employees RFID badge.',
+            details: 'It is flat and rectangular.',
+            use: null,
+            isKey: {room: 7, direction: environmentValues.DIRECTION_E()},
+            weight: 1
         }
     ]
 }
