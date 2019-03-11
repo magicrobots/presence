@@ -72,9 +72,9 @@ export default {
         {
             id: 5,
             type: environmentValues.ITEM_TYPE_THING,
-            name: 'money',
-            description: 'Looks like someone dropped a dollar bill.',
-            details: 'There doesn\'t seem to be anything special about this dollar bill.',
+            name: 'dollar',
+            description: 'Looks like someone dropped a dollar.',
+            details: 'There doesn\'t seem to be anything special about this dollar bill. It\'s creased down the middle and wrinkled and soft from years of circulation.  Serial Number F42748580A.',
             use: null,
             isKey: {item: 6},
             weight: 1
@@ -99,18 +99,18 @@ export default {
             id: 7,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'flashlight',
-            description: 'It is a flashlight.',
-            details: 'Looks like a flashlight.',
+            description: 'Standing on it\'s lens like a miniature steel totem is a large flashlight.',
+            details: 'It\'s a fist thick police style black knurled metal flashlight.  Probably powered by a box full of D cell batteries, this thing looks like it could weather the apocalypse. It is heavy.',
             use: null,
             isKey: null,
-            weight: 10
+            weight: 15
         },
         {
             id: 8,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'badge',
-            description: 'An employees RFID badge.',
-            details: 'It is flat and rectangular.',
+            description: 'In the corner, face down on the floor is what looks like an employee\'s ID badge.',
+            details: 'It has no photo but it says "LAB" on it in big black letters, beneath which stretches a broad barcode.  The card itself is thick and plastic, probably containing an RFID antennae.',
             use: null,
             isKey: {room: 7, direction: environmentValues.DIRECTION_E()},
             weight: 1

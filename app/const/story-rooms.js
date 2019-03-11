@@ -113,13 +113,13 @@ export default {
             id: 6,
             x: 48,
             y: 46,
-            summary: 'in a kitchen',
-            description: 'industrial kitchen, lots of steel, blah blah. Starting to hear weird noises.',
+            summary: 'in a large kitchen',
+            description: 'Clearly a catering or restaurant kitchen, the room is large enough to accommodate dozens of preparation stations at rows of steel tables. To the north through the windows you recognize your city\'s skyline but something is different. Through the floor you feel occasional deep rumbling noises that rattle the stacked pots like a jazz percussionists brush on a snare drum.  Maybe it\'s the subway.',
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'A service doorway leading east.'
+                    opened: 'There is a large service doorway leading east.'
                    },
                 W: null,
                 S: {
@@ -132,17 +132,17 @@ export default {
             id: 7,
             x: 49,
             y: 46,
-            summary: 'in a covered bridge',
-            description: 'Street below you, not sure you should keep going.',
+            summary: 'three stories up in a covered connection between two buildings',
+            description: 'You are in an enclosed, raised walkway connecting two buildings. The street far below you is empty. To the south you see through the windows the building eastward is billowing smoke from a number of large chinmneys. Some of the smoke is thicker and darker than the rest. To the north there are unnaturally growing shadows darkening your view of the area. You hear thunder, but you see no clouds.',
             exits: {
                 N: null,
                 E: {
                     closed: 'To the east is a solid metal door with a red light glowing above it.',
-                    opened: 'A solid metal door on the east side of the bridge.'
+                    opened: 'There is a metal door connecting the bridge to the eastern building.'
                    },
                 W: {
                     closed: null,
-                    opened: 'A service doorway to the west.'
+                    opened: 'A plain service doorway is open to the west.'
                    },
                 S: null
             }
@@ -151,8 +151,8 @@ export default {
             id: 8,
             x: 50,
             y: 46,
-            summary: 'among a sea of dusty computer stations',
-            description: 'So many computers, all off.  Lots of empty cans of tab soda and 1.25" floppy disks lying around. Scary noises.',
+            summary: 'among a sea of dusty computer workstations',
+            description: 'In every direction stretches an endless grid of computer monitors on small desks - each paired with a thick tan keyboard.  Not a single screen is on, everything is dusty and dark. The room is not quiet, however. There is a pulsing rhythmic industrial pounding the source of which you cannot identify accompanied by an electrical whining hum that seems to have the resonant frequency of your brain.',
             exits: {
                 N: {
                     closed: null,
