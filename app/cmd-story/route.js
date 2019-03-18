@@ -217,16 +217,18 @@ export default Route.extend({
     talk() {
         const args = this.inputProcessor.currentArgs;
 
+        let responseObjectName = 'that';
+
         if (args[0] === 'to') {
-            const targetItemName = args[1] === 'the' ? args[2] : args[1];
-            if (targetItemName === 'robot') {
+            responseObjectName = args[1] === 'the' ? args[2] : args[1];
+            if (responseObjectName === 'robot') {
                 this.inputProcessor.overrideArgs(['robot']);
                 this.use();
                 return;
             }
         }
 
-        this.inputProcessor.handleFunctionFromApp([`I don't understand.`]);
+        this.inputProcessor.handleFunctionFromApp([`You don't know how to talk to ${responseObjectName}.`]);
     },
 
     use() {
@@ -273,6 +275,7 @@ export default Route.extend({
         }
     },
 
+    where: aliasMethod('look'),
     look() {
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {

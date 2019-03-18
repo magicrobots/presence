@@ -38,7 +38,7 @@ export default {
             x: 46,
             y: 47,
             summary: 'next to the pond outside the library',
-            description: 'The sun warms your face as your foot falls softly on the cut grass outside the entrance to the library.  The street runs north south beyond the lawn.  There is a mailbox on the corner.',
+            description: 'The sun warms your face as your foot falls softly on the cut grass outside the entrance to the library.  The street runs east west beyond the lawn.',
             exits: {
                 N: null,
                 E: {
@@ -136,12 +136,12 @@ export default {
             x: 49,
             y: 46,
             summary: 'three stories up in a covered connection between two buildings',
-            description: 'You are in an enclosed, raised walkway connecting two buildings. The street far below you is empty. To the south you see through the windows the building eastward is billowing smoke from a number of large chinmneys. Some of the smoke is thicker and darker than the rest. To the north there are unnaturally growing shadows darkening your view of the area. You hear thunder, but you see no clouds.',
+            description: 'You are in an enclosed, raised walkway connecting two buildings. The street far below you is empty. To the south you see through the windows the building eastward is billowing smoke from a number of large chimneys. Some of the smoke is thicker and darker than the rest. To the north there are unnaturally growing shadows darkening your view of the area. You hear thunder, but you see no clouds.',
             exits: {
                 N: null,
                 E: {
                     closed: 'To the east is a solid metal door with a red light glowing above it.',
-                    opened: 'There is a metal door connecting the bridge to the eastern building.'
+                    opened: 'There is a door connecting the bridge to the eastern building.'
                    },
                 W: {
                     closed: null,
@@ -159,7 +159,7 @@ export default {
             exits: {
                 N: {
                     closed: null,
-                    opened: 'To the north is a set of double doors flanked by fake plants, each door marked with a big H.'
+                    opened: 'To the north is a set of double doors flanked by fake plants, each door marked with a big blue H.'
                    },
                 E: {
                     closed: null,
@@ -167,7 +167,7 @@ export default {
                    },
                 W: {
                     closed: 'To the west is a solid metal door with a red light glowing above it.',
-                    opened: 'To the west there is a metal door to the bridge.'
+                    opened: 'To the west there is a door to the bridge.'
                    },
                 S: {
                     closed: null,
@@ -206,7 +206,7 @@ export default {
                 W: null,
                 S: {
                     closed: null,
-                    opened: 'To the south is the only safety, the door you came out through.'
+                    opened: 'To the south is the only safety, the doorway through which you emerged.'
                    }
             }
         },
@@ -220,11 +220,11 @@ export default {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'To the east the drain tunnel snakes up into the darkness.'
+                    opened: 'The eastern wall is old hand stacked stone. Embedded awkwardly is a more modern doorway marked "MAINTENANCE".'
                    },
                 W: {
                     closed: null,
-                    opened: 'The western wall is old hand stacked stone. Embedded awkwardly is a more modern doorway marked "MAINTENANCE".'
+                    opened: 'To the west the drain tunnel snakes up into the darkness.'
                    },
                 S: null,
             }
@@ -239,11 +239,11 @@ export default {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'The "MAINTENANCE" door to the east marks the beginning of the tracks\' turn.'
+                    opened: 'To the east, the rail stretches into darkness, the lights failing less than fifty meters away.'
                    },
                 W: {
                     closed: null,
-                    opened: 'To the west, the rail stretches into darkness, the lights failing less than fifty meters away.'
+                    opened: 'The "MAINTENANCE" door to the west marks the beginning of the tracks\' turn.'
                    },
                 S: {
                     closed: null,
@@ -279,6 +279,26 @@ export default {
                 W: null,
                 S: null
             }
+        },
+        {
+            id: 15,
+            x: 51,
+            y: 48,
+            summary: 'at the crash site',
+            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater.  Sunlight beams down fighting through the billowing smoke and rent steel girders and rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. It\'s impossible to know how long it has been here.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'To the east the subway has been blocked completely by debris.  However you notice some of the rubble has been organized into a sort of doorway, with more symbols you can\'t identify scratched into the rock.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'The subway tunnel yawns to the west, the twisted track unfurling like a tongue into the crash zone.'
+                   },
+                S: null
+            }
         }
+
     ]
 }

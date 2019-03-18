@@ -85,10 +85,11 @@ export default {
             name: 'vending-machine',
             description: 'There\'s a vending-machine humming in the corner.',
             details: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars.',
+            detailsUsed: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars. They are taunting you.',
             use: {
                 unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
                 response: {
-                    first: 'You insert the dollar bill into the tray and mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration and you clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
+                    first: 'You insert the dollar bill into the tray and the mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration and you clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
                     subsequent: 'You feed the bill into the tray again.  Zeep zoop.  Annoyed.'
                 }
             },
@@ -132,15 +133,36 @@ export default {
             name: 'robot',
             description: 'Towering high above you is what can only be described as a giant robot.  It turns and stares at you with an unearthly whine, leaning heavy against a building.  It beeps, a deep physical tone like a fog horn but digital. ¯|_|¯|_|¯|_|¯|_|¯|_',
             details: 'The machine is almost humanoid in form, broad steel chest and arms like enormous bright excavators. It doesn\'t have a head but one broad glowing rectangular eye on the top half of its body. You can feel its gaze analyzing your very being.',
+            detailsUsed: 'The hulking machine looks very old. No rust or flaking paint, but toothed edges and shallow scrapes everywhere scarring its solid surfaces. It also seems tired, despite clearly being enormously powerful.',
             use: {
                 unlocks: {room: 10, direction: environmentValues.DIRECTION_S()},
                 response: {
-                    first: 'With a series of syncopated mechanical crunches, a door opens from the robots side.  A segmented arm extends with snake like precision and reaches out to you.  You hold out the matrix and it grasps it clumsily. You are surprised when it drops a device at your feet. You don\'t know why but you know it\'s a translator.',
+                    first: 'With a series of syncopated grinding noises, a door opens from the robots side. A segmented arm extends with snake like precision and reaches out to you.  You hold out the device you found and it absorbs itself into the robots appendage like mercury. Another arm delivers to you a freshly printed book at your feet. Resonating inside your mind, the voice of the robot somehow speaks: "I need your help. And trust me, you need my help as well. Bring me three stolen components so I can mend myself and rid your planet of these destructive monsters. A Nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!"',
                     subsequent: 'The robot stares through you, waiting. It beeps.'
                 }
             },
             isKey: null,
-            weight: 10000
+            weight: 100000
+        },
+        {
+            id: 11,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'device',
+            description: 'Hovering a few inches above the ground nearby is some sort of mechanical device.',
+            details: 'You\'ve never seen a device like this. It pulses gently with desaturated internal lights, and rotates slowly in mid air. You poke it, and it responds inanimately. You don\'t think it\'s alive.',
+            use: null,
+            isKey: {item: 10},
+            weight: 6
+        },
+        {
+            id: 12,
+            type: environmentValues.ITEM_TYPE_DOC,
+            name: 'dictionary',
+            description: 'A dictionary.',
+            details: 'Clearly the robot printed this somehow inside itself just for you.  It translates alien runes into english. You are excited and scared.',
+            use: null,
+            isKey: {room: 16, direction: environmentValues.DIRECTION_S()},
+            weight: 4
         }
     ]
 }

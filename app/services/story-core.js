@@ -86,9 +86,9 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
-            {roomId: 2, inventory: [2]},
+            {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
-            {roomId: 4, inventory: [5, 6]},
+            {roomId: 4, inventory: [6]},
             {roomId: 5, inventory: [7, 8]},
             {roomId: 6, inventory: []},
             {roomId: 7, inventory: []},
@@ -98,7 +98,8 @@ export default Service.extend({
             {roomId: 11, inventory: []},
             {roomId: 12, inventory: []},
             {roomId: 13, inventory: []},
-            {roomId: 14, inventory: []}
+            {roomId: 14, inventory: []},
+            {roomId: 15, inventory: [11]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -177,6 +178,12 @@ export default Service.extend({
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
         this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);        
+    },
+
+    handleRobotAttack() {
+        this.handleDeath();
+
+        return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
     getCurrentRoomDescription() {
@@ -440,6 +447,12 @@ export default Service.extend({
 
         // reject usage of locked item
         if (this.getItemIsLocked(item)) {
+
+            // if it's the robot it kills you.
+            if (item.id === 10) {
+                return this.handleRobotAttack();
+            }
+
             return [`You can't figure out how to use the ${item.name}. You feel like you're missing something.`];
         }
 
