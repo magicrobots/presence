@@ -109,11 +109,38 @@ export default {
             id: 8,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'badge',
-            description: 'In the corner, face down on the floor is what looks like an employee\'s ID badge.',
+            description: 'In the corner, face down on the floor is what looks like an employee\'s badge.',
             details: 'It has no photo but it says "LAB" on it in big black letters, beneath which stretches a broad barcode.  The card itself is thick and plastic, probably containing an RFID antennae.',
             use: null,
-            isKey: {room: 7, direction: environmentValues.DIRECTION_E()},
+            isKey: [{room: 7, direction: environmentValues.DIRECTION_E()},
+                    {room: 8, direction: environmentValues.DIRECTION_W()}],
             weight: 1
+        },
+        {
+            id: 9,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'wrench',
+            description: 'Leaning against the wall is a massive wrench.',
+            details: 'It tells its age in years and use through its worn edges and surface patina. There are wear marks that make you think it was used in ways a wrench is not necessarily intended.',
+            use: null,
+            isKey: null,
+            weight: 10
+        },
+        {
+            id: 10,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'robot',
+            description: 'Towering high above you is what can only be described as a giant robot.  It turns and stares at you with an unearthly whine, leaning heavy against a building.  It beeps, a deep physical tone like a fog horn but digital. ¯|_|¯|_|¯|_|¯|_|¯|_',
+            details: 'The machine is almost humanoid in form, broad steel chest and arms like enormous bright excavators. It doesn\'t have a head but one broad glowing rectangular eye on the top half of its body. You can feel its gaze analyzing your very being.',
+            use: {
+                unlocks: {room: 10, direction: environmentValues.DIRECTION_S()},
+                response: {
+                    first: 'With a series of syncopated mechanical crunches, a door opens from the robots side.  A segmented arm extends with snake like precision and reaches out to you.  You hold out the matrix and it grasps it clumsily. You are surprised when it drops a device at your feet. You don\'t know why but you know it\'s a translator.',
+                    subsequent: 'The robot stares through you, waiting. It beeps.'
+                }
+            },
+            isKey: null,
+            weight: 10000
         }
     ]
 }

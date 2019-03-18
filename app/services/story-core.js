@@ -79,6 +79,7 @@ export default Service.extend({
         // TODO: find a better way to store init values for everything
         // initialize defaults / start over
         this.persistenceHandler.setStoryXP(0);
+        this.persistenceHandler.setStoryDeaths(0);
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
@@ -91,7 +92,13 @@ export default Service.extend({
             {roomId: 5, inventory: [7, 8]},
             {roomId: 6, inventory: []},
             {roomId: 7, inventory: []},
-            {roomId: 8, inventory: []}
+            {roomId: 8, inventory: []},
+            {roomId: 9, inventory: [9]},
+            {roomId: 10, inventory: [10]},
+            {roomId: 11, inventory: []},
+            {roomId: 12, inventory: []},
+            {roomId: 13, inventory: []},
+            {roomId: 14, inventory: []}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -142,7 +149,43 @@ export default Service.extend({
         this.persistenceHandler[positionFunctionNameSet](newCoord);
     },
 
+    getIsRoomTrap() {
+        if (isNone(this.currentRoom.exits[environmentValues.DIRECTION_N()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_E()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_W()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_S()])) {
+            return true;
+        }
+
+        return false;
+    },
+
+    handleTrap() {
+        const trapDescription = this.currentRoom.description;
+        this.handleDeath();
+
+        return [trapDescription];
+    },
+
+    handleDeath() {
+        // increment deaths
+        const currDeaths = this.persistenceHandler.getStoryDeaths();
+        this.persistenceHandler.setStoryDeaths(currDeaths + 1);
+
+        // reset items?
+
+        // respawn
+        this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
+        this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);        
+    },
+
     getCurrentRoomDescription() {
+        // are you dead?
+        if (this.getIsRoomTrap()) {
+            return this.handleTrap();
+        }
+
+        // have you been here before?
         const roomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(this.currentRoom.id);
 
         if (roomIsNew) {
@@ -215,6 +258,13 @@ export default Service.extend({
                                 currItem.isKey.direction === exitOrientation) {
                                 hasKey = true;
                             }
+                        } else if (isPresent(currItem.isKey.length)) {
+                            currItem.isKey.forEach((currKeyObject) => {
+                                if (currKeyObject.room === room.id &&
+                                    currKeyObject.direction === exitOrientation) {
+                                    hasKey = true;
+                                }
+                            });
                         }
                     }
                 });

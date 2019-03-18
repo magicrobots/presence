@@ -214,6 +214,21 @@ export default Route.extend({
         }
     },
 
+    talk() {
+        const args = this.inputProcessor.currentArgs;
+
+        if (args[0] === 'to') {
+            const targetItemName = args[1] === 'the' ? args[2] : args[1];
+            if (targetItemName === 'robot') {
+                this.inputProcessor.overrideArgs(['robot']);
+                this.use();
+                return;
+            }
+        }
+
+        this.inputProcessor.handleFunctionFromApp([`I don't understand.`]);
+    },
+
     use() {
         const args = this.inputProcessor.currentArgs;
 
@@ -299,6 +314,9 @@ export default Route.extend({
         const currXp = this.persistenceHandler.getStoryXP();
         const completionRatio = currXp / maxXp;
 
+        // deaths:
+        const deathCount = this.persistenceHandler.getStoryDeaths();
+
         // -2 here for initial and end pipes
         const maxChars = this.inputProcessor.maxCharsPerLine - 2;
         const completedChars = Math.floor(completionRatio * maxChars);
@@ -307,7 +325,7 @@ export default Route.extend({
         let returnString = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
 
         // result
-        const result = [`XP: ${currXp}`, returnString];
+        const result = [`XP: ${currXp}`, returnString, `Deaths: ${deathCount}`];
         if (completionRatio === 1) {
             result.push('You are the Champion of the Universe!');
         }

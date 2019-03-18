@@ -64,7 +64,10 @@ export default {
                     opened: 'There is a gently worn track to the north that dissolves into the mossy forest floor around you.'
                    },
                 E: null,
-                W: null,
+                W: {
+                    closed: null,
+                    opened: 'Weaving through the trees is a dirt path heading west towards a break in the trees.'
+                   },
                 S: null
             }
         },
@@ -156,20 +159,125 @@ export default {
             exits: {
                 N: {
                     closed: null,
-                    opened: 'helipad access?!'
+                    opened: 'To the north is a set of double doors flanked by fake plants, each door marked with a big H.'
                    },
                 E: {
                     closed: null,
-                    opened: 'Clean room access to lab.'
+                    opened: 'Eastward is an open security door.  To the right of the door on the wall is a small corporate identifier that reads "LABORATORY".'
                    },
                 W: {
-                    closed: null,
-                    opened: 'A doorway to the bridge.'
+                    closed: 'To the west is a solid metal door with a red light glowing above it.',
+                    opened: 'To the west there is a metal door to the bridge.'
                    },
                 S: {
                     closed: null,
-                    opened: 'Massive steel sliding door.'
+                    opened: 'The southern face of the room is a massive floor to ceiling sliding wall set on heavy duty steel tracks in the floor. There is a sliver of darknes at its edge, the space beyond an inky void.'
                    }
+            }
+        },
+        {
+            id: 9,
+            x: 50,
+            y: 47,
+            summary: 'in a giant machine room.  Maybe a factory',
+            description: 'You are on a network of steel catwalks suspended above massive unidentifiable machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'The northern sliding wall is cracked open. You notice that its mobile bulk goes far below you, each floor supporting a railed extension. This thing is no joke.'
+                   },
+                E: {
+                    closed: 'The catwalk leads east and terminates at what looks like a bank vault.',
+                    opened: 'The catwalk leads east and terminates at an open bank vault.'
+                   },
+                W: null,
+                S: null
+            }
+        },
+        {
+            id: 10,
+            x: 50,
+            y: 45,
+            summary: 'on the helipad.  The robot stares at you expectantly',
+            description: 'The cold wind rips through you as you step out onto a helipad.  Mind crushing sounds you have never heard reverberate off the nearby building roof structures and unsettle your stance.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'To the south is the only safety, the door you came out through.'
+                   }
+            }
+        },
+        {
+            id: 11,
+            x: 49,
+            y: 48,
+            summary: 'in the sewers',
+            description: 'The first thing you notice is the smell. It\'s bad in a lot of ways.  You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illumniate the sewer line just enough for you to decide that you\'d rather not linger.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'To the east the drain tunnel snakes up into the darkness.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'The western wall is old hand stacked stone. Embedded awkwardly is a more modern doorway marked "MAINTENANCE".'
+                   },
+                S: null,
+            }
+        },
+        {
+            id: 12,
+            x: 50,
+            y: 48,
+            summary: 'in the subway',
+            description: 'The flickering overhead flourescent lights illumnate a subway tunnel.  The rail comes from the north and curves sharply to the east. There is a stopped train blocking the northern direction, and the absence of rats makes you happy and concerned at the same time.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'The "MAINTENANCE" door to the east marks the beginning of the tracks\' turn.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'To the west, the rail stretches into darkness, the lights failing less than fifty meters away.'
+                   },
+                S: {
+                    closed: null,
+                    opened: 'On the southern wall under the platform there is what looks like a cave, edged by markings that look almost like mayan writing, or at least what you think that would look like since you don\'t really have any idea.'
+                   }
+            }
+        },
+        {
+            id: 13,
+            x: 50,
+            y: 49,
+            summary: 'in a cave',
+            description: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: null
+            }
+        },
+        {
+            id: 14,
+            x: 45,
+            y: 48,
+            summary: 'in the meadow',
+            description: 'The sun is shining, the birds are chirping, the soft grass is delicate underfoot. You are in an open meadow, wildflowers bending in the gentle breeze.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'You can see a narrow path winding through the trees to the east.'
+                   },
+                W: null,
+                S: null
             }
         }
     ]
