@@ -298,7 +298,79 @@ export default {
                    },
                 S: null
             }
+        },
+        {
+            id: 16,
+            x: 51,
+            y: 46,
+            summary: 'in the laboratory',
+            description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off.  It actually looks like there was an explosion on the south side of the room.',
+            exits: {
+                N: null,
+                E: null,
+                W: {
+                    closed: null,
+                    opened: 'To the west is an open security door.'
+                   },
+                S: {
+                    closed: 'The southern door is operated by a control panel with unidentifiable runes on each button. You are too scared to touch any of them.',
+                    opened: 'Beside the southern door is a control panel. You check the dictionary and see one button just says "OPEN".'
+                   }
+            }
+        },
+        {
+            id: 17,
+            x: 51,
+            y: 47,
+            summary: 'in the portal room',
+            description: 'So this is crazy. The room is basically a giant grey cube. The walls, ceiling and floor are all identically constructed of what looks like shark skin, but upoon closer inspection appears to be thin steel cables packed tightly against themselves. The room feels larger than it is.',
+            exits: {
+                N: {
+                    closed: 'You don\'t remember which button on the control panel is the right one.  You\'re pretty sure if you hit the wrong button you could implode the universe.',
+                    opened: 'To the north is a door controlled by a complicated control panel. The dictionary allows you to find the one marked "OPEN".'
+                   },
+                E: {
+                    closed: 'A bunch of lights shine on a single blank point of the eastern wall.',
+                    opened: 'There is a fucking video-game style portal glowing green, floating in front of the eastern wall. Through it you see another dimly lit room.'
+                   },
+                W: null,
+                S: null
+            }
+        },
+        {
+            id: 18,
+            x: 52,
+            y: 48,
+            summary: 'in a creepy dark tunnel',
+            description: 'It is dark.',
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'There\'s light to the east.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'There\'s light to the west.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 19,
+            x: 53,
+            y: 48,
+            summary: 'in the aliens den',
+            description: 'You are basically in a black hole with bones and it is stinky.',
+            exits: {
+                N: null,
+                E: null,
+                W: {
+                    closed: null,
+                    opened: 'There\'s light to the west.'
+                   },
+                S: null
+            }
         }
-
     ]
 }

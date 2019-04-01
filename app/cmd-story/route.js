@@ -126,11 +126,15 @@ export default Route.extend({
             return;
         }
 
-        const inventoryResponse = ['You\'ve got:'];
+        const inventoryResponse = ['You\'ve got:', ''];
 
         yourItems.forEach((currItem) => {
             inventoryResponse.push(this.storyCore.getItemNameById(currItem));
         });
+
+        // show weight stats
+        const curr = this.storyCore.getWeightOfUserInventory();
+        inventoryResponse.push('', `[${curr}/${environmentValues.WEIGHT_CAPACITY}]`);
 
         this.inputProcessor.handleFunctionFromApp(inventoryResponse);
     },
@@ -196,6 +200,7 @@ export default Route.extend({
         }
     },
 
+    inspect: aliasMethod('examine'),
     examine(passedArgs) {
         const theArgs = passedArgs || this.inputProcessor.currentArgs;
         const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];

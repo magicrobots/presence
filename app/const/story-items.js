@@ -137,8 +137,8 @@ export default {
             use: {
                 unlocks: {room: 10, direction: environmentValues.DIRECTION_S()},
                 response: {
-                    first: 'With a series of syncopated grinding noises, a door opens from the robots side. A segmented arm extends with snake like precision and reaches out to you.  You hold out the device you found and it absorbs itself into the robots appendage like mercury. Another arm delivers to you a freshly printed book at your feet. Resonating inside your mind, the voice of the robot somehow speaks: "I need your help. And trust me, you need my help as well. Bring me three stolen components so I can mend myself and rid your planet of these destructive monsters. A Nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!"',
-                    subsequent: 'The robot stares through you, waiting. It beeps.'
+                    first: 'With a series of syncopated grinding noises, a door opens from the robots side. A segmented arm extends with snake like precision and reaches out to you.  You hold out the device you found and it absorbs from the robots appendage like mercury. Another arm delivers to you a freshly printed book at your feet. Resonating inside your mind, the voice of the robot somehow speaks: "I need your help. And trust me, you need my help as well. Bring me three stolen components so I can mend myself and rid your planet of these destructive monsters. A Nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!"',
+                    subsequent: 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
                 }
             },
             isKey: null,
@@ -158,11 +158,32 @@ export default {
             id: 12,
             type: environmentValues.ITEM_TYPE_DOC,
             name: 'dictionary',
-            description: 'A dictionary.',
+            description: 'The dictionary sits on the floor.',
             details: 'Clearly the robot printed this somehow inside itself just for you.  It translates alien runes into english. You are excited and scared.',
             use: null,
             isKey: {room: 16, direction: environmentValues.DIRECTION_S()},
             weight: 4
+        },
+        {
+            id: 13,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'disk',
+            description: 'A 3.5" High Density floppy disk sits on a shelf. Its label reads: "?"',
+            details: 'It\'s just a normal floppy disk, with average physical wear. It\'s unlocked, and scrawled across the lines of the label in hurried sharpie is a big black question mark. High Density 1.44 MB',
+            use: null,
+            isKey: null,
+            isTrophy: true,
+            weight: 1
+        },
+        {
+            id: 14,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'artifact',
+            description: 'Some weird alien artifact.',
+            details: 'It is spiky and oozing and red and has things.',
+            use: null,
+            isKey: {room: 17, direction: environmentValues.DIRECTION_E()},
+            weight: 1
         }
     ]
 }

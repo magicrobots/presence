@@ -1,4 +1,7 @@
 export default {
+    
+    WEIGHT_CAPACITY: 50,
+
     badWords: [
         'shit',
         'shitty',

@@ -9,7 +9,6 @@ import environmentValues from '../const/environment-values';
 
 const XP_PER_MOVE = 1;
 const XP_PER_UNLOCK = 2;
-const WEIGHT_CAPACITY = 50;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
 const MAX_THINGS_TO_LIST = 10;
@@ -99,7 +98,11 @@ export default Service.extend({
             {roomId: 12, inventory: []},
             {roomId: 13, inventory: []},
             {roomId: 14, inventory: []},
-            {roomId: 15, inventory: [11]}
+            {roomId: 15, inventory: [11]},
+            {roomId: 16, inventory: [13]},
+            {roomId: 17, inventory: []},
+            {roomId: 18, inventory: []},
+            {roomId: 19, inventory: [14]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -318,7 +321,7 @@ export default Service.extend({
     canTakeItem(targetItemId) {
         const targetItem = items.getItemById(targetItemId);
 
-        return targetItem.weight + this.getWeightOfUserInventory() < WEIGHT_CAPACITY;
+        return targetItem.weight + this.getWeightOfUserInventory() < environmentValues.WEIGHT_CAPACITY;
     },
 
     getRoomInventory() {
@@ -464,6 +467,12 @@ export default Service.extend({
 
                 // store unlock change
                 this.persistenceHandler.setIsUnlockedDirectionInRoom(item.use.unlocks.room, item.use.unlocks.direction);
+
+                // handle special events
+                if (item.id === 10) {
+                    // robot gives you dictionary
+                    this.persistenceHandler.addStoryInventoryItem(12);
+                }
 
                 // user feedback
                 return [item.use.response.first];
