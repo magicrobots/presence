@@ -184,6 +184,10 @@ export default keyFunctions.extend({
         set(this, 'appResponse', response);
     },
 
+    overrideArgs(newArgs) {
+        set(this, 'currentArgs', newArgs);
+    },
+
     processKey(keyEvent) {
         const entry = keyEvent.key.toUpperCase();
 

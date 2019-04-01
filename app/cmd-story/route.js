@@ -126,11 +126,15 @@ export default Route.extend({
             return;
         }
 
-        const inventoryResponse = ['You\'ve got:'];
+        const inventoryResponse = ['You\'ve got:', ''];
 
         yourItems.forEach((currItem) => {
             inventoryResponse.push(this.storyCore.getItemNameById(currItem));
         });
+
+        // show weight stats
+        const curr = this.storyCore.getWeightOfUserInventory();
+        inventoryResponse.push('', `[${curr}/${environmentValues.WEIGHT_CAPACITY}]`);
 
         this.inputProcessor.handleFunctionFromApp(inventoryResponse);
     },
@@ -196,6 +200,7 @@ export default Route.extend({
         }
     },
 
+    inspect: aliasMethod('examine'),
     examine(passedArgs) {
         const theArgs = passedArgs || this.inputProcessor.currentArgs;
         const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
@@ -212,6 +217,23 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp([`What do you want to examine?`]);
             }
         }
+    },
+
+    talk() {
+        const args = this.inputProcessor.currentArgs;
+
+        let responseObjectName = 'that';
+
+        if (args[0] === 'to') {
+            responseObjectName = args[1] === 'the' ? args[2] : args[1];
+            if (responseObjectName === 'robot') {
+                this.inputProcessor.overrideArgs(['robot']);
+                this.use();
+                return;
+            }
+        }
+
+        this.inputProcessor.handleFunctionFromApp([`You don't know how to talk to ${responseObjectName}.`]);
     },
 
     use() {
@@ -258,6 +280,7 @@ export default Route.extend({
         }
     },
 
+    where: aliasMethod('look'),
     look() {
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {
@@ -299,6 +322,9 @@ export default Route.extend({
         const currXp = this.persistenceHandler.getStoryXP();
         const completionRatio = currXp / maxXp;
 
+        // deaths:
+        const deathCount = this.persistenceHandler.getStoryDeaths();
+
         // -2 here for initial and end pipes
         const maxChars = this.inputProcessor.maxCharsPerLine - 2;
         const completedChars = Math.floor(completionRatio * maxChars);
@@ -307,7 +333,7 @@ export default Route.extend({
         let returnString = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
 
         // result
-        const result = [`XP: ${currXp}`, returnString];
+        const result = [`XP: ${currXp}`, returnString, `Deaths: ${deathCount}`];
         if (completionRatio === 1) {
             result.push('You are the Champion of the Universe!');
         }

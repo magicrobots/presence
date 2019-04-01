@@ -17,6 +17,7 @@ const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
 const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
 const KEY_STORY_ROOM_UNLOCKED_DIRECTIONS = 'story-room-unlocked-directions';
 const KEY_STORY_UNLOCKED_ITEMS = 'story-unlocked-items';
+const KEY_STORY_DEATH_COUNTER = 'story-death-counter';
 
 export default Service.extend({
     init() {
@@ -84,6 +85,15 @@ export default Service.extend({
 
     getStoryXP() {
         return get(this._getStorageObject(), KEY_STORY_XP);
+    },
+    
+    setStoryDeaths(newDeaths) {
+        set(this, `magicRobotsData.${KEY_STORY_DEATH_COUNTER}`, newDeaths);
+        this._setStorageObject();
+    },
+
+    getStoryDeaths() {
+        return get(this._getStorageObject(), KEY_STORY_DEATH_COUNTER);
     },
     
     addStoryVisitedRoom(newRoom) {

@@ -1,4 +1,7 @@
 export default {
+    
+    WEIGHT_CAPACITY: 50,
+
     badWords: [
         'shit',
         'shitty',
@@ -36,6 +39,14 @@ export default {
         return this.exitPossibilities[3].abbr;
     },
 
+    DIRECTION_NULL() {
+        return 'Z';
+    },
+
+    ROOM_NULL() {
+        return 474747;
+    },
+
     exitPossibilities: [
         {abbr:'N', word: 'NORTH', coordModifier: {direction: 'Y', amount: -1}},
         {abbr:'E', word: 'EAST', coordModifier: {direction: 'X', amount: 1}},
@@ -44,5 +55,7 @@ export default {
     ],
 
     ITEM_TYPE_THING: 'thing',
-    ITEM_TYPE_DOC: 'document'
+    ITEM_TYPE_DOC: 'document',
+
+    RESPAWN_COORDS: {x:45, y:48}
 }

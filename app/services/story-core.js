@@ -9,7 +9,6 @@ import environmentValues from '../const/environment-values';
 
 const XP_PER_MOVE = 1;
 const XP_PER_UNLOCK = 2;
-const WEIGHT_CAPACITY = 50;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
 const MAX_THINGS_TO_LIST = 10;
@@ -79,15 +78,31 @@ export default Service.extend({
         // TODO: find a better way to store init values for everything
         // initialize defaults / start over
         this.persistenceHandler.setStoryXP(0);
+        this.persistenceHandler.setStoryDeaths(0);
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
-            {roomId: 2, inventory: [2]},
+            {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
-            {roomId: 4, inventory: [5, 6]}
+            {roomId: 4, inventory: [6]},
+            {roomId: 5, inventory: [7, 8]},
+            {roomId: 6, inventory: []},
+            {roomId: 7, inventory: []},
+            {roomId: 8, inventory: []},
+            {roomId: 9, inventory: [9]},
+            {roomId: 10, inventory: [10]},
+            {roomId: 11, inventory: []},
+            {roomId: 12, inventory: []},
+            {roomId: 13, inventory: []},
+            {roomId: 14, inventory: []},
+            {roomId: 15, inventory: [11]},
+            {roomId: 16, inventory: [13]},
+            {roomId: 17, inventory: []},
+            {roomId: 18, inventory: []},
+            {roomId: 19, inventory: [14]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -138,7 +153,49 @@ export default Service.extend({
         this.persistenceHandler[positionFunctionNameSet](newCoord);
     },
 
+    getIsRoomTrap() {
+        if (isNone(this.currentRoom.exits[environmentValues.DIRECTION_N()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_E()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_W()]) &&
+            isNone(this.currentRoom.exits[environmentValues.DIRECTION_S()])) {
+            return true;
+        }
+
+        return false;
+    },
+
+    handleTrap() {
+        const trapDescription = this.currentRoom.description;
+        this.handleDeath();
+
+        return [trapDescription];
+    },
+
+    handleDeath() {
+        // increment deaths
+        const currDeaths = this.persistenceHandler.getStoryDeaths();
+        this.persistenceHandler.setStoryDeaths(currDeaths + 1);
+
+        // reset items?
+
+        // respawn
+        this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
+        this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);        
+    },
+
+    handleRobotAttack() {
+        this.handleDeath();
+
+        return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
+    },
+
     getCurrentRoomDescription() {
+        // are you dead?
+        if (this.getIsRoomTrap()) {
+            return this.handleTrap();
+        }
+
+        // have you been here before?
         const roomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(this.currentRoom.id);
 
         if (roomIsNew) {
@@ -194,7 +251,35 @@ export default Service.extend({
 
         if(isPresent(targetOrientation)) {
             if(isPresent(targetOrientation.closed)) {
-                return this.persistenceHandler.getIsUnlockedDirectionFromRoom(room.id, exitOrientation);
+                // either unlocked by using item
+                const isUnlockedByUse = this.persistenceHandler.getIsUnlockedDirectionFromRoom(room.id, exitOrientation);
+                if (isUnlockedByUse) {
+                    return true;
+                }
+
+                // or is unlocked by having key in inventory
+                const inventory = this.persistenceHandler.getStoryInventoryItems();
+                let hasKey = false;
+                inventory.forEach((currInventoryItemId) => {
+                    const currItem = items.getItemById(currInventoryItemId);
+                    if (isPresent(currItem.isKey)) {
+                        if (isPresent(currItem.isKey.room)) {
+                            if (currItem.isKey.room === room.id &&
+                                currItem.isKey.direction === exitOrientation) {
+                                hasKey = true;
+                            }
+                        } else if (isPresent(currItem.isKey.length)) {
+                            currItem.isKey.forEach((currKeyObject) => {
+                                if (currKeyObject.room === room.id &&
+                                    currKeyObject.direction === exitOrientation) {
+                                    hasKey = true;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                return hasKey;
             }
 
             return true;
@@ -236,7 +321,7 @@ export default Service.extend({
     canTakeItem(targetItemId) {
         const targetItem = items.getItemById(targetItemId);
 
-        return targetItem.weight + this.getWeightOfUserInventory() < WEIGHT_CAPACITY;
+        return targetItem.weight + this.getWeightOfUserInventory() < environmentValues.WEIGHT_CAPACITY;
     },
 
     getRoomInventory() {
@@ -312,7 +397,10 @@ export default Service.extend({
 
     getItemIsLocked(item) {
         const lockList = [];
+        const passiveKeyItems = [];
+        const passiveKeyIds = [];
         items.items.forEach((currItem) => {
+            // list of things unlocked by using an item
             if (currItem.type === environmentValues.ITEM_TYPE_DOC) {
                 if (isPresent(currItem.use)) {
                     if (isPresent(currItem.use.unlocks)) {
@@ -321,10 +409,20 @@ export default Service.extend({
                         }
                     }
                 }
+            } else {
+                // list of things unlocked by having an item in your inventory
+                if (currItem.type === environmentValues.ITEM_TYPE_THING) {
+                    if (isPresent(currItem.isKey)) {
+                        if (isPresent(currItem.isKey.item)) {
+                            passiveKeyIds.push(currItem.isKey.item);
+                            passiveKeyItems.push(currItem);
+                        }
+                    }
+                }
             }
         });
 
-        const isLockable = lockList.includes(item.id);
+        const isLockable = lockList.includes(item.id) || passiveKeyIds.includes(item.id);
 
         if (isLockable) {
             const isUnlocked = this.persistenceHandler.getAllUnlockedItems().includes(item.id);
@@ -332,7 +430,16 @@ export default Service.extend({
                 return false;
             }
 
-            return true;
+            // check if item is unlocked passively by having a key item
+            const userInventory = this.persistenceHandler.getStoryInventoryItems();
+            let isUnlockedPassively = false;
+            passiveKeyItems.forEach((currPassiveKeyItem) => {
+                if (userInventory.includes(currPassiveKeyItem.id)) {
+                    isUnlockedPassively = true;
+                }
+            });
+
+            return !isUnlockedPassively;
         }
 
         return false;
@@ -343,7 +450,13 @@ export default Service.extend({
 
         // reject usage of locked item
         if (this.getItemIsLocked(item)) {
-            return [`You can't figure out how to use the ${item.name}.`];
+
+            // if it's the robot it kills you.
+            if (item.id === 10) {
+                return this.handleRobotAttack();
+            }
+
+            return [`You can't figure out how to use the ${item.name}. You feel like you're missing something.`];
         }
 
         if (isPresent(item.use)) {
@@ -354,6 +467,12 @@ export default Service.extend({
 
                 // store unlock change
                 this.persistenceHandler.setIsUnlockedDirectionInRoom(item.use.unlocks.room, item.use.unlocks.direction);
+
+                // handle special events
+                if (item.id === 10) {
+                    // robot gives you dictionary
+                    this.persistenceHandler.addStoryInventoryItem(12);
+                }
 
                 // user feedback
                 return [item.use.response.first];
