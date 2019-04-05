@@ -24,6 +24,20 @@ export default Service.extend({
         this.persistenceHandler.setStoryXP(newXP);
     },
 
+    _processVariableText(text) {
+        // if text is an object
+        if (isPresent(text.translated)) {
+            // check for posession of dictionary
+            if (this.persistenceHandler.getStoryInventoryItems().includes(12)) {
+                return text.translated;
+            }
+            return text.unknown;
+        }
+
+        // just return the plain string
+        return text;
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -224,7 +238,7 @@ export default Service.extend({
         environmentValues.exitPossibilities.forEach((currPossibility) => {
             const currExitDescription = this.getExitDescription(scope.currentRoom.id, currPossibility.abbr);
             if(isPresent(currExitDescription)) {
-                exitDescs = exitDescs.concat(`${currExitDescription} `);
+                exitDescs = exitDescs.concat(`${this._processVariableText(currExitDescription)} `);
             }
         });
 

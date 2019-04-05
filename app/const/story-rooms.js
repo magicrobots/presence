@@ -247,7 +247,10 @@ export default {
                    },
                 S: {
                     closed: null,
-                    opened: 'On the southern wall under the platform there is what looks like a cave, edged by markings that look almost like mayan writing, or at least what you think that would look like since you don\'t really have any idea.'
+                    opened: {
+                        unknown: 'On the southern wall under the platform there is what looks like a cave, edged by markings that look almost like mayan writing, or at least what you think that would look like since you don\'t really have any idea.',
+                        translated: 'On the southern wall under the platform there is what looks like a cave. You use the alien dictionary to translate the writing at its edges to read "NOT WELCOME".'
+                        }
                    }
             }
         },
