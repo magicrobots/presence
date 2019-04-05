@@ -113,13 +113,19 @@ export default Service.extend({
             {roomId: 13, inventory: []},
             {roomId: 14, inventory: []},
             {roomId: 15, inventory: [11]},
-            {roomId: 16, inventory: [13]},
+            {roomId: 16, inventory: [13, 15]},
             {roomId: 17, inventory: []},
             {roomId: 18, inventory: []},
-            {roomId: 19, inventory: [14]}
+            {roomId: 19, inventory: [14]},
+            {roomId: 20, inventory: []},
+            {roomId: 21, inventory: [16]},
+            {roomId: 22, inventory: []},
+            {roomId: 23, inventory: []},
+            {roomId: 24, inventory: []}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
+        this.persistenceHandler.setStoryCompletionItemsCollected([]);
     },
 
     isValidDirection(enteredDirection) {
@@ -221,6 +227,10 @@ export default Service.extend({
 
     getCurrentRoomId() {
         return this.currentRoom.id;
+    },
+
+    getIsCurrentRoomInSpace() {
+        return isPresent(this.currentRoom.isInSpace) && this.currentRoom.isInSpace === true;
     },
 
     getDescriptionInDirection(lookDirection) {
@@ -511,6 +521,14 @@ export default Service.extend({
         });
 
         return roomXp + useXp;
+    },
+
+    handleCompletionEvent(completionItemId) {
+        // remove item from user inventory
+        this.persistenceHandler.removeStoryInventoryItem(completionItemId);
+
+        // store item in robot inventory
+        this.persistenceHandler.addStoryCompletionItemCollected(completionItemId);
     },
 
     // ------------------- private methods -------------------

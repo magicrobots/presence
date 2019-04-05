@@ -8,7 +8,7 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: [`<3 BOOP`,
+            response: [`<3`,
         '',                                                           
 '                          ##     (,',
 '                        &@@@    @@/',

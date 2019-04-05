@@ -374,6 +374,120 @@ export default {
                    },
                 S: null
             }
-        }
+        },
+        {
+            id: 20,
+            x: 52,
+            y: 47,
+            summary: 'in ... a space garage',
+            description: 'There are shelves of mechanical doohickeys in buckets. The ceiling glows a bright green. You have lost all sense of direction.',
+            isInSpace: true,
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'A hallway snakes into the distance, lit both by the floor and the ceiling.'
+                   },
+                E: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A circular door is inset into the wall, labeled by mysterious alien runes.',
+                        translated: 'A circular door is inset into the wall, according to the dictionary it is labeled "Engine Room".'
+                    }
+                   },
+                W: {
+                    closed: 'Incredibly complicated looking tools are hung elegantly on the wall.',
+                    opened: 'The portal hovers in mid air, illuminating the nearby stacks of coiled space chain.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 21,
+            x: 52,
+            y: 46,
+            summary: 'in ... a space kitchen',
+            description: 'Lots of closed storage, and formless voids in the walls. There is a large table in the center of the room. Seems like a kitchen for horrible deadly monsters.',
+            isInSpace: true,
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'There\'s a large grand square hall.'
+                   },
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'A hallway snakes into the distance, lit both by the floor and the ceiling..'
+                   }
+            }
+        },
+        {
+            id: 22,
+            x: 53,
+            y: 46,
+            summary: 'on the command deck',
+            description: 'The room is wide open and spacious - there are what look like orbital maps and star charts projected dimensionally into the center of the room. There are buttons and screens everywhere.',
+            isInSpace: true,
+            exits: {
+                N: {
+                    closed: null,
+                    opened: {
+                        unknown: 'There is a small, windowless, very secure looking hatch in the wall, labeled by mysterious alien runes.',
+                        translated: 'There is a small, windowless, very secure looking hatch in the wall labeled "PILOT".'
+                    }
+                   },
+                E: {
+                    closed: null,
+                    opened: 'A ladder going down.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'There\'s a large grand square hall.'
+                   },
+                S: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A circular door is inset into the wall, labeled by mysterious alien runes.',
+                        translated: 'A circular door is inset into the wall, according to the dictionary it is labeled "Engine Room".'
+                    }
+                   }
+            }
+        },
+        {
+            id: 23,
+            x: 54,
+            y: 46,
+            summary: 'in ... a space bedroom',
+            description: 'If you slept in hammocks made of slimy razorwire you\'d be right at home here.',
+            isInSpace: true,
+            exits: {
+                N: null,
+                E: null,
+                W: {
+                    closed: null,
+                    opened: 'A ladder going up.'
+                   },
+                S: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'A giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                    }
+                   }
+            }
+        },
+        {
+            id: 24,
+            x: 54,
+            y: 47,
+            summary: 'in the airlock',
+            description: 'The door opens and in a split second you realize you have made a grave error. You, and everything around you are sucked into the void of space. It is quick, but a cold and lonely death.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: null
+            }
+        },
     ]
 }

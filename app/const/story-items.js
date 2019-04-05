@@ -85,12 +85,12 @@ export default {
             name: 'vending-machine',
             description: 'There\'s a vending-machine humming in the corner.',
             details: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars.',
-            detailsUsed: 'Behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars. They are taunting you.',
+            detailsUsed: 'Taunting you from behind the glass stands in formation an army of Snickers, Milky Way, Zagnut, O\'Henry, M&Ms, Almond Joy,  Reese\'s Pieces, Zero, 100 Grand, Hershey\'s, Butterfinger, Kit Kat, Baby Ruth, 3 Musketeers, Twix, Nestle Crunch, Charleston Chew, Clark, and Watchamacallit bars.',
             use: {
                 unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
                 response: {
                     first: 'You insert the dollar bill into the tray and the mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration and you clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
-                    subsequent: 'You feed the bill into the tray again.  Zeep zoop.  Annoyed.'
+                    subsequent: 'You feed the bill into the tray again.  Zeep zoop. Nothing. You are annoyed.'
                 }
             },
             isKey: null,
@@ -161,7 +161,8 @@ export default {
             description: 'The dictionary sits on the floor.',
             details: 'Clearly the robot printed this somehow inside itself just for you.  It translates alien runes into english. You are excited and scared.',
             use: null,
-            isKey: {room: 16, direction: environmentValues.DIRECTION_S()},
+            isKey: [{room: 16, direction: environmentValues.DIRECTION_S()},
+                    {room: 17, direction: environmentValues.DIRECTION_N()}],
             weight: 4
         },
         {
@@ -182,7 +183,28 @@ export default {
             description: 'Some weird alien artifact.',
             details: 'It is spiky and oozing and red and has things.',
             use: null,
-            isKey: {room: 17, direction: environmentValues.DIRECTION_E()},
+            isKey: [{room: 17, direction: environmentValues.DIRECTION_E()},
+                    {room: 20, direction: environmentValues.DIRECTION_W()}],
+            weight: 1
+        },
+        {
+            id: 15,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'helmet',
+            description: 'A pretty sweet helmet.',
+            details: 'It\'s got a mirror face mask and carbon fiber and ooooweeee!',
+            use: null,
+            isKey: null,
+            weight: 5
+        },
+        {
+            id: 16,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'liquid',
+            description: 'A vial of purple fizzy liquid.',
+            details: 'Looks like grape soda, but sparkles - just holding the container makes your fingers tingle like the feeling of pop rocks.',
+            use: null,
+            isKey: null,
             weight: 1
         }
     ]
