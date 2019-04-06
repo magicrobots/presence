@@ -121,7 +121,9 @@ export default Service.extend({
             {roomId: 21, inventory: [16]},
             {roomId: 22, inventory: []},
             {roomId: 23, inventory: []},
-            {roomId: 24, inventory: []}
+            {roomId: 24, inventory: []},
+            {roomId: 25, inventory: [19]},
+            {roomId: 26, inventory: [18, 17]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);

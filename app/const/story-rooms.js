@@ -489,5 +489,46 @@ export default {
                 S: null
             }
         },
+        {
+            id: 25,
+            x: 53,
+            y: 47,
+            summary: 'in the engine room',
+            description: 'This room is pretty incredible.  Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'Behind a floor to ceiling column of cables there is a round door.'
+                   },
+                E: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'A giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                    }
+                   },
+                W: {
+                    closed: null,
+                    opened: 'Another round door is inset into the wall on the other side of the room.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 26,
+            x: 53,
+            y: 45,
+            summary: 'in the cockpit',
+            description: 'You are looking out into the blackness of space. Through two large rectangular windows. Like the stars, which from here are indescribably beautiful, the points of light from the buttons and illuminated switches on the controls shine from every direction.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'Behind you is the small hatch you emerged from.'
+                   }
+            }
+        }
     ]
 }

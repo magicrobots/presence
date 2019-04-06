@@ -58,5 +58,5 @@ export default {
     ITEM_TYPE_DOC: 'document',
 
     RESPAWN_COORDS: {x:45, y:48},
-    COMPLETION_ITEM_IDS: [13]
+    COMPLETION_ITEM_IDS: [13, 18, 19]
 }

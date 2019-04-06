@@ -206,6 +206,36 @@ export default {
             use: null,
             isKey: null,
             weight: 1
+        },
+        {
+            id: 17,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'controls',
+            description: 'The space ship controls blink their lights at you.',
+            details: 'Three stalks extend from the console, each a different thickness with a lever or two branching off them. You wonder if it is weaponized and if perhaps you could try to pilot it against the alien force.',
+            use: null,
+            isKey: null,
+            weight: 1000
+        },
+        {
+            id: 18,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'nav-card',
+            description: 'The nav-card is magnetically attached to the wall.  You assume it\'s magnetism anyway, this is crazy alien technology.',
+            details: 'It reminds you of a densely packed arrangement of legos, if they were made of unearthly metals.  It\'s about the size of your forearm, but flat.',
+            use: null,
+            isKey: null,
+            weight: 3
+        },
+        {
+            id: 19,
+            type: environmentValues.ITEM_TYPE_THING,
+            name: 'hypercore',
+            description: 'What could only be a brightly glowing hypercore is floating and rotating in the center of the room.',
+            details: 'It\'s a constantly self-igniting nuclear explosion, contained by the gravity of its own mass. It would be infinitely heavy but there is some clever stuff going on with the containment unit allowing it to be portable. It\'s about the size of a basketball.  A basketball made of churning pulsing plasma and flame.',
+            use: null,
+            isKey: null,
+            weight: 7
         }
     ]
 }
