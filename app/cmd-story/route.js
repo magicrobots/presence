@@ -77,15 +77,17 @@ export default Route.extend({
         return yourItems.concat(roomItems);
     },
 
-    _handlePotentiallyFatalMistake() {
+    _handlePotentiallyFatalMistake(roomOverride) {
         // is the user in space without a helmet?
-        const isInSpace = this.storyCore.getIsCurrentRoomInSpace();
+        const isInSpace = this.storyCore.getIsRoomInSpace(roomOverride);
         if (isInSpace &&
             !this.persistenceHandler.getStoryInventoryItems().includes(15)) {
-                this.inputProcessor.handleFunctionFromApp(['You clutch your throat as all the air rushes out of your lungs and you feel like you\'re being pulled inside out. Outer space is a dangerous place.']);
+                this.inputProcessor.handleFunctionFromApp(['You clutch your throat as all the air rushes out of your lungs and you feel like you\'re being pulled inside out. Outer space is a dangerous place. You die quickly.']);
                 this.storyCore.handleDeath();
-                return;
+                return true;
         }
+
+        return false;
     },
 
     /* ----------------------- public methods --------------------
@@ -119,13 +121,19 @@ export default Route.extend({
 
         // if it's a valid direction, update position
         if (this.storyCore.isValidDirection(chosenDirection)) {
-            this.storyCore.handlePositionChange(chosenDirection);
+            const nextRoomInfo = this.storyCore.getNextRoomInfo(chosenDirection);
+            
+            if (this._handlePotentiallyFatalMistake(nextRoomInfo.nextRoom)) {
+                return;
+            }
+
+            this.storyCore.handlePositionChange(nextRoomInfo);
             this.inputProcessor.handleFunctionFromApp(this.storyCore.getCurrentRoomDescription());
         } else {
             this.inputProcessor.handleFunctionFromApp(['you can\'t go that way.']);
         }
 
-        this._handlePotentiallyFatalMistake();
+        // this.storyCore.handlePotentiallyFatalMistake();
     },
 
     exits() {
