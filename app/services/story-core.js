@@ -9,6 +9,7 @@ import environmentValues from '../const/environment-values';
 
 const XP_PER_MOVE = 1;
 const XP_PER_UNLOCK = 2;
+const XP_PER_COMPLETION_ITEM = 3;
 const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
 const MAX_THINGS_TO_LIST = 10;
@@ -459,8 +460,10 @@ export default Service.extend({
             // check if item is unlocked passively by having a key item
             const userInventory = this.persistenceHandler.getStoryInventoryItems();
             let isUnlockedPassively = false;
+
             passiveKeyItems.forEach((currPassiveKeyItem) => {
-                if (userInventory.includes(currPassiveKeyItem.id)) {
+                if (userInventory.includes(currPassiveKeyItem.id) &&
+                    currPassiveKeyItem.isKey.item === item.id) {
                     isUnlockedPassively = true;
                 }
             });
@@ -498,6 +501,8 @@ export default Service.extend({
                 if (item.id === 10) {
                     // robot drops translator in helipad
                     this.persistenceHandler.addItemToRoom(10, 12);
+                    // force unlock robot so he doesn't kill you
+                    this.persistenceHandler.unlockItem(10);
                 }
 
                 // user feedback
@@ -516,16 +521,25 @@ export default Service.extend({
         const roomXp = (rooms.rooms.length - 1) * XP_PER_MOVE;
         let useXp = 0;
 
+        // add active unlock xp
         items.items.forEach((currItem) => {
             if (isPresent(currItem.use)) {
                 useXp += XP_PER_UNLOCK;
             }
         });
 
-        return roomXp + useXp;
+        // add completion item delivery xp
+        const completionItemXp = environmentValues.COMPLETION_ITEM_IDS.length * XP_PER_COMPLETION_ITEM;
+
+        return roomXp +
+            useXp +
+            completionItemXp;
     },
 
     handleCompletionEvent(completionItemId) {
+        // increase XP
+        this._increaseXP(XP_PER_COMPLETION_ITEM);
+
         // remove item from user inventory
         this.persistenceHandler.removeStoryInventoryItem(completionItemId);
 

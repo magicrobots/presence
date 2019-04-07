@@ -1,6 +1,6 @@
 export default {
     
-    WEIGHT_CAPACITY: 25,
+    WEIGHT_CAPACITY: 20,
 
     badWords: [
         'shit',
