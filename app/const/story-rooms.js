@@ -19,7 +19,7 @@ export default {
             x: 47,
             y: 47,
             summary: 'in the library',
-            description: 'Smells like books.  You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
+            description: 'Smells like old paper and leather bindings. You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
             exits: {
                 N: null,
                 E: {
@@ -57,7 +57,7 @@ export default {
             x: 46,
             y: 48,
             summary: 'in the forest',
-            description: 'Deep creaks resonate around you as the breeze gently bends the network of branches sprawling above you. Moss clings to the rolling earth in every direction, softening every sound and beckoning your touch.',
+            description: 'Deep creaks resonate around you as the breeze gently bends the network of branches sprawling above you. Moss clings to the rolling earth in every direction, softening sound and beckoning your touch.',
             exits: {
                 N: {
                     closed: null,
@@ -66,7 +66,7 @@ export default {
                 E: null,
                 W: {
                     closed: null,
-                    opened: 'Weaving through the trees is a dirt path heading west towards a break in the trees.'
+                    opened: 'Weaving through the trees is a dirt path heading west towards a small clearing.'
                    },
                 S: null
             }
@@ -89,7 +89,7 @@ export default {
                    },
                 S: {
                     closed: null,
-                    opened: 'To the south is a half open door showing a bold red lettered sign: \'No Admittance\'.'
+                    opened: 'To the south is a barely noticeable closet door showing a bold red lettered sign: \'No Admittance\'.'
                    }
             }
         },
@@ -106,7 +106,7 @@ export default {
                    },
                 E: {
                     closed: null,
-                    opened: 'A floor level vent cover looks like it has been unscrewed.  Beyond is a narrow downward sloping tunnel, stretching eastward into blackness.'
+                    opened: 'On the eastern wall, a floor level vent cover looks like it has been unscrewed.'
                    },
                 W: null,
                 S: null
@@ -180,7 +180,7 @@ export default {
             x: 50,
             y: 47,
             summary: 'in a giant machine room.  Maybe a factory',
-            description: 'You are on a network of steel catwalks suspended above massive unidentifiable machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
+            description: 'You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
             exits: {
                 N: {
                     closed: null,
@@ -224,7 +224,7 @@ export default {
                    },
                 W: {
                     closed: null,
-                    opened: 'To the west the drain tunnel snakes up into the darkness.'
+                    opened: 'To the west the vent tunnel snakes up into the darkness.'
                    },
                 S: null,
             }
@@ -247,7 +247,10 @@ export default {
                    },
                 S: {
                     closed: null,
-                    opened: 'On the southern wall under the platform there is what looks like a cave, edged by markings that look almost like mayan writing, or at least what you think that would look like since you don\'t really have any idea.'
+                    opened: {
+                        unknown: 'On the southern wall under the platform there is what looks like a cave, edged by markings that look almost like mayan writing, or at least what you think that would look like since you don\'t really have any idea.',
+                        translated: 'On the southern wall under the platform there is what looks like a cave. The runes carved into the stone above it read "NOT WELCOME".'
+                        }
                    }
             }
         },
@@ -285,7 +288,7 @@ export default {
             x: 51,
             y: 48,
             summary: 'at the crash site',
-            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater.  Sunlight beams down fighting through the billowing smoke and rent steel girders and rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. It\'s impossible to know how long it has been here.',
+            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater.  Sunlight beams down fighting through the billowing smoke and rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
             exits: {
                 N: null,
                 E: {
@@ -304,7 +307,7 @@ export default {
             x: 51,
             y: 46,
             summary: 'in the laboratory',
-            description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off.  It actually looks like there was an explosion on the south side of the room.',
+            description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off.  It actually looks like there was an explosion on the south side of the room. There are stacks of papers and beakers on almost every surface.',
             exits: {
                 N: null,
                 E: null,
@@ -314,7 +317,7 @@ export default {
                    },
                 S: {
                     closed: 'The southern door is operated by a control panel with unidentifiable runes on each button. You are too scared to touch any of them.',
-                    opened: 'Beside the southern door is a control panel. You check the dictionary and see one button just says "OPEN".'
+                    opened: 'Beside the southern door is a control panel covered with switches and buttons labeled with alien runes. One button just says "OPEN".'
                    }
             }
         },
@@ -322,16 +325,16 @@ export default {
             id: 17,
             x: 51,
             y: 47,
-            summary: 'in the portal room',
-            description: 'So this is crazy. The room is basically a giant grey cube. The walls, ceiling and floor are all identically constructed of what looks like shark skin, but upoon closer inspection appears to be thin steel cables packed tightly against themselves. The room feels larger than it is.',
+            summary: 'in the cube shaped room',
+            description: 'So this is crazy. The room is basically a giant perfect grey cube. The walls, ceiling and floor are all identically constructed of what looks like thin steel cables packed tightly against themselves. The room feels larger than it is.',
             exits: {
                 N: {
                     closed: 'You don\'t remember which button on the control panel is the right one.  You\'re pretty sure if you hit the wrong button you could implode the universe.',
-                    opened: 'To the north is a door controlled by a complicated control panel. The dictionary allows you to find the one marked "OPEN".'
+                    opened: 'To the north is a door controlled by a complicated control panel. One button is marked "OPEN".'
                    },
                 E: {
                     closed: 'A bunch of lights shine on a single blank point of the eastern wall.',
-                    opened: 'There is a fucking video-game style portal glowing green, floating in front of the eastern wall. Through it you see another dimly lit room.'
+                    opened: 'There is seriously a video-game style floating portal glowing blue in front of the eastern wall. Through it you see some things you can\'t quite describe.'
                    },
                 W: null,
                 S: null
@@ -347,11 +350,11 @@ export default {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'There\'s light to the east.'
+                    opened: 'You can\'t see anything in any direction.'
                    },
                 W: {
                     closed: null,
-                    opened: 'There\'s light to the west.'
+                    opened: 'It\'s so dark you can\'t even see your own hand in front of your face.'
                    },
                 S: null
             }
@@ -360,16 +363,171 @@ export default {
             id: 19,
             x: 53,
             y: 48,
-            summary: 'in the aliens den',
-            description: 'You are basically in a black hole with bones and it is stinky.',
+            summary: 'in the cave with the weird machines hooked up to each other',
+            description: 'You find yourself in some sort of underground workspace. There doesn\'t seem to be anyone, or anyTHING around. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. These are things you have never seen before in any context. There are what look like computer parts strewn about.',
             exits: {
                 N: null,
                 E: null,
                 W: {
                     closed: null,
-                    opened: 'There\'s light to the west.'
+                    opened: 'To the west is a rocky hill of rubble: up at the top is the cave you came in from.'
                    },
                 S: null
+            }
+        },
+        {
+            id: 20,
+            x: 52,
+            y: 47,
+            summary: 'in ... a space garage',
+            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big.  You feel like Alice in Wonderland. This area is a very well organized space; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
+            isInSpace: true,
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'A hallway snakes into the distance, lit both by the floor and the ceiling.'
+                   },
+                E: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A circular door is inset into the wall, labeled by mysterious alien runes.',
+                        translated: 'A circular door is inset into the wall, it is labeled "Engine Room".'
+                    }
+                   },
+                W: {
+                    closed: 'Incredibly complicated looking tools are hung elegantly on the wall.',
+                    opened: 'The portal hovers in mid air, illuminating the nearby stacks of coiled space chain.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 21,
+            x: 52,
+            y: 46,
+            summary: 'in ... a space kitchen',
+            description: 'Lots of closed storage, and formless voids in the walls. There is a large table in the center of the room. Seems like a kitchen for horrible deadly monsters.',
+            isInSpace: true,
+            exits: {
+                N: null,
+                E: {
+                    closed: null,
+                    opened: 'There\'s a grand square hallway lined with flags going off in one direction.'
+                   },
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'A doorway sits between two counters; it opens on its own when you approach.'
+                   }
+            }
+        },
+        {
+            id: 22,
+            x: 53,
+            y: 46,
+            summary: 'on the command deck',
+            description: 'The room is wide open and spacious - there are what look like orbital maps and star charts projected dimensionally into the center of the room. There are buttons and screens everywhere.',
+            isInSpace: true,
+            exits: {
+                N: {
+                    closed: null,
+                    opened: {
+                        unknown: 'There is a small, windowless, very secure looking hatch in the wall, labeled with mysterious alien runes.',
+                        translated: 'There is a small, windowless, very secure looking hatch in the wall labeled "PILOT".'
+                    }
+                   },
+                E: {
+                    closed: null,
+                    opened: 'One face of the room houses a big blue door.'
+                   },
+                W: {
+                    closed: null,
+                    opened: 'There\'s a grand square hallway lined with flags going off in one direction.'
+                   },
+                S: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A circular door is inset into the wall, labeled with mysterious alien runes.',
+                        translated: 'A circular door is inset into the wall, it is labeled "Engine Room".'
+                    }
+                   }
+            }
+        },
+        {
+            id: 23,
+            x: 54,
+            y: 46,
+            summary: 'in ... a space bedroom',
+            description: 'If you slept in hammocks made of slimy razorwire you\'d be right at home here.',
+            isInSpace: true,
+            exits: {
+                N: null,
+                E: null,
+                W: {
+                    closed: null,
+                    opened: 'One face of the room houses a big blue door.'
+                   },
+                S: {
+                    closed: null,
+                    opened: {
+                        unknown: 'There\'s a giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'There\'s a giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                    }
+                   }
+            }
+        },
+        {
+            id: 24,
+            x: 54,
+            y: 47,
+            summary: 'in the airlock',
+            description: 'The door opens and in a split second you realize you have made a grave error. You, and everything around you are sucked into the void of space. It is quick, but a cold and lonely death.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: null
+            }
+        },
+        {
+            id: 25,
+            x: 53,
+            y: 47,
+            summary: 'in the engine room',
+            description: 'This room is pretty incredible.  Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
+            exits: {
+                N: {
+                    closed: null,
+                    opened: 'Behind a floor to ceiling column of cables there is a round door.'
+                   },
+                E: {
+                    closed: null,
+                    opened: {
+                        unknown: 'A giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'A giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                    }
+                   },
+                W: {
+                    closed: null,
+                    opened: 'Another round door is inset into the wall on the other side of the room.'
+                   },
+                S: null
+            }
+        },
+        {
+            id: 26,
+            x: 53,
+            y: 45,
+            summary: 'in the cockpit',
+            description: 'You are looking out into the blackness of space through two large rectangular windows. Like the stars, which from here are indescribably beautiful, the points of light from the buttons and illuminated switches on the controls shine from every direction. This must be the ship\'s cockpit.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: {
+                    closed: null,
+                    opened: 'Behind you is the small hatch you emerged from.'
+                   }
             }
         }
     ]

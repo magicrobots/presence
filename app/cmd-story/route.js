@@ -35,9 +35,10 @@ export default Route.extend({
 
     welcomeMessage: computed('persistenceHandler.magicRobotsData.story-xp', {
         get() {
+            const username = this.persistenceHandler.getUsername();
             return this.isNewStory ?
-                'Welcome to story.' :
-                'Welcome back.';
+                `Welcome to story ${username}.` :
+                `Welcome back ${username}.`;
         }
     }),
 
@@ -48,7 +49,7 @@ export default Route.extend({
         }
     }),
 
-    // ------------------- private properties -------------------
+    // ------------------- private methods -------------------
 
     _parseDirectionFromEntries(entries) {
         let chosenDirection = null;
@@ -73,6 +74,17 @@ export default Route.extend({
         const roomItems = this.storyCore.getRoomInventory();
 
         return yourItems.concat(roomItems);
+    },
+
+    _handlePotentiallyFatalMistake() {
+        // is the user in space without a helmet?
+        const isInSpace = this.storyCore.getIsCurrentRoomInSpace();
+        if (isInSpace &&
+            !this.persistenceHandler.getStoryInventoryItems().includes(15)) {
+                this.inputProcessor.handleFunctionFromApp(['You clutch your throat as all the air rushes out of your lungs and you feel like you\'re being pulled inside out. Outer space is a dangerous place.']);
+                this.storyCore.handleDeath();
+                return;
+        }
     },
 
     /* ----------------------- public methods --------------------
@@ -111,12 +123,15 @@ export default Route.extend({
         } else {
             this.inputProcessor.handleFunctionFromApp(['you can\'t go that way.']);
         }
+
+        this._handlePotentiallyFatalMistake();
     },
 
     exits() {
         this.inputProcessor.handleFunctionFromApp([this.storyCore.getExitDescriptions()]);
     },
 
+    items: aliasMethod('list'),
     inventory: aliasMethod('list'),
     list() {
         const yourItems = this.persistenceHandler.getStoryInventoryItems();
@@ -137,6 +152,18 @@ export default Route.extend({
         inventoryResponse.push('', `[${curr}/${environmentValues.WEIGHT_CAPACITY}]`);
 
         this.inputProcessor.handleFunctionFromApp(inventoryResponse);
+    },
+
+    pick() {
+        const args = this.inputProcessor.currentArgs;
+
+        // if use is typing 'pick up' then alias 'get()'
+        if (args[0] === 'up') {
+            this.inputProcessor.currentArgs.shift();
+            this.take();
+        } else {
+            this.inputProcessor.handleFunctionFromApp([`What do you want to pick up?`]);
+        }
     },
 
     get: aliasMethod('take'),
@@ -171,6 +198,8 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp([`What do you want to take?`]);
             }
         }
+
+        this._handlePotentiallyFatalMistake();
     },
 
     discard: aliasMethod('drop'),
@@ -198,6 +227,8 @@ export default Route.extend({
                 this.inputProcessor.handleFunctionFromApp([`What do you want to drop?`]);
             }
         }
+
+        this._handlePotentiallyFatalMistake();
     },
 
     inspect: aliasMethod('examine'),
@@ -251,11 +282,74 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp(this.storyCore.useItem(targetItemId));
         } else {
             if(isPresent(targetItemName)) {
-                this.inputProcessor.handleFunctionFromApp([`You don't know how to use the ${targetItemName}.`]);
+                this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
             } else {
                 this.inputProcessor.handleFunctionFromApp([`What do you want to use?`]);
             }
         }
+    },
+
+    give() {
+        const args = this.inputProcessor.currentArgs;
+        const targetItemName = args[0];
+        const operator = args[1];
+        const recipientName = args[2] === 'the' ? args[3] : args[2];
+        const yourItems = this.persistenceHandler.getStoryInventoryItems();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const currRoom = this.storyCore.getCurrentRoomId();
+
+        // handle thing doesn't exist
+        if (isEmpty(targetItemId)) {
+            this.inputProcessor.handleFunctionFromApp([`What's a ${targetItemName}?`]);
+            return;
+        }
+
+        // handle you don't have the thing
+        if (!yourItems.includes(targetItemId)) {
+            this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}`]);
+            return;
+        }
+
+        // approve syntax
+        if (operator === 'to') {
+            // no recipient
+            if (isEmpty(recipientName)) {
+                this.inputProcessor.handleFunctionFromApp([`Who do you want to give the ${targetItemName} to?`]);
+                return;
+            }
+
+            // you can only give to robot
+            if (recipientName.toUpperCase() === 'ROBOT') {
+            
+                // you have to be on the helipad
+                if (currRoom === 10) {
+
+                    // you can only give completion items to robot
+                    if (environmentValues.COMPLETION_ITEM_IDS.includes(targetItemId)) {
+                        this.inputProcessor.handleFunctionFromApp([`You give the robot the ${targetItemName} and it's like YEAH`]);
+                        this.storyCore.handleCompletionEvent(targetItemId);
+                        return;
+                    }
+
+                    this.inputProcessor.handleFunctionFromApp([`The robot doesn't need a ${targetItemName}.`]);
+                    return;
+                } else {
+                    this.inputProcessor.handleFunctionFromApp([`You aren't with the robot, so you can't give it the ${targetItemName}.`]);
+                    return;
+                }
+            }
+
+            this.inputProcessor.handleFunctionFromApp([`You can't give the ${targetItemName} to the ${recipientName}.`]);
+            return;
+        }
+
+        // improperly referenced or lacking recipient
+        if (isPresent(targetItemName)) {
+            this.inputProcessor.handleFunctionFromApp([`Who do you want to give the ${targetItemName} to?`]);
+            return;
+        }
+
+        this.inputProcessor.handleFunctionFromApp([`What do you want to give?`]);
     },
 
     read() {
@@ -332,12 +426,17 @@ export default Route.extend({
         // create ASCII graph
         let returnString = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
 
+        // show completion status
+        const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
+        const completionReport = `[${collectedCompletionItems.length}/${environmentValues.COMPLETION_ITEM_IDS.length}]`;
+
         // result
-        const result = [`XP: ${currXp}`, returnString, `Deaths: ${deathCount}`];
+        const result = [`XP: ${currXp}`, returnString, `Deaths: ${deathCount}`, `Completion Items: ${completionReport}`];
         if (completionRatio === 1) {
             result.push('You are the Champion of the Universe!');
         }
         this.inputProcessor.handleFunctionFromApp(result);
+
     },
 
     formatStoryData() {

@@ -24,6 +24,20 @@ export default Service.extend({
         this.persistenceHandler.setStoryXP(newXP);
     },
 
+    _processVariableText(text) {
+        // if text is an object
+        if (isPresent(text.translated)) {
+            // check for posession of translator
+            if (this.persistenceHandler.getStoryInventoryItems().includes(12)) {
+                return text.translated;
+            }
+            return text.unknown;
+        }
+
+        // just return the plain string
+        return text;
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -99,13 +113,21 @@ export default Service.extend({
             {roomId: 13, inventory: []},
             {roomId: 14, inventory: []},
             {roomId: 15, inventory: [11]},
-            {roomId: 16, inventory: [13]},
+            {roomId: 16, inventory: [13, 15]},
             {roomId: 17, inventory: []},
             {roomId: 18, inventory: []},
-            {roomId: 19, inventory: [14]}
+            {roomId: 19, inventory: [14]},
+            {roomId: 20, inventory: []},
+            {roomId: 21, inventory: [16]},
+            {roomId: 22, inventory: []},
+            {roomId: 23, inventory: []},
+            {roomId: 24, inventory: []},
+            {roomId: 25, inventory: [19]},
+            {roomId: 26, inventory: [18, 17]}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
+        this.persistenceHandler.setStoryCompletionItemsCollected([]);
     },
 
     isValidDirection(enteredDirection) {
@@ -209,6 +231,10 @@ export default Service.extend({
         return this.currentRoom.id;
     },
 
+    getIsCurrentRoomInSpace() {
+        return isPresent(this.currentRoom.isInSpace) && this.currentRoom.isInSpace === true;
+    },
+
     getDescriptionInDirection(lookDirection) {
         const exitInDirection = this.currentRoom.exits[lookDirection.abbr];
         if (isPresent(exitInDirection)) {
@@ -224,7 +250,7 @@ export default Service.extend({
         environmentValues.exitPossibilities.forEach((currPossibility) => {
             const currExitDescription = this.getExitDescription(scope.currentRoom.id, currPossibility.abbr);
             if(isPresent(currExitDescription)) {
-                exitDescs = exitDescs.concat(`${currExitDescription} `);
+                exitDescs = exitDescs.concat(`${this._processVariableText(currExitDescription)} `);
             }
         });
 
@@ -470,8 +496,8 @@ export default Service.extend({
 
                 // handle special events
                 if (item.id === 10) {
-                    // robot gives you dictionary
-                    this.persistenceHandler.addStoryInventoryItem(12);
+                    // robot drops translator in helipad
+                    this.persistenceHandler.addItemToRoom(10, 12);
                 }
 
                 // user feedback
@@ -497,6 +523,14 @@ export default Service.extend({
         });
 
         return roomXp + useXp;
+    },
+
+    handleCompletionEvent(completionItemId) {
+        // remove item from user inventory
+        this.persistenceHandler.removeStoryInventoryItem(completionItemId);
+
+        // store item in robot inventory
+        this.persistenceHandler.addStoryCompletionItemCollected(completionItemId);
     },
 
     // ------------------- private methods -------------------

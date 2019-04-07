@@ -1,6 +1,6 @@
 export default {
     
-    WEIGHT_CAPACITY: 50,
+    WEIGHT_CAPACITY: 25,
 
     badWords: [
         'shit',
@@ -57,5 +57,6 @@ export default {
     ITEM_TYPE_THING: 'thing',
     ITEM_TYPE_DOC: 'document',
 
-    RESPAWN_COORDS: {x:45, y:48}
+    RESPAWN_COORDS: {x:45, y:48},
+    COMPLETION_ITEM_IDS: [13, 18, 19]
 }

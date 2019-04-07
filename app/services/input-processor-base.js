@@ -24,7 +24,7 @@ export default Service.extend({
 
         // set defaults
         set(this, 'commandHistory', []),
-        set(this, 'appResponse', ['Faux OS v0.1.4234265', 'Author: Adam Hilliker, ©2019', '? for help']);
+        set(this, 'appResponse', ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help']);
         set(this, 'previousExecutionBlocks', []),
 
         this._startPromptCursorLoop();

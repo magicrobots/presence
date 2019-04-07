@@ -25,7 +25,7 @@ export default Route.extend({
         const newColor = this.inputProcessor.currentArgs[0];
 
         if (isBlank(newColor)) {
-            this.inputProcessor.handleFunctionFromApp([`enter valid hex color as second parameter to change prompt color - eg: {promptcolor #336699}`]);
+            this.inputProcessor.handleFunctionFromApp([`enter valid hex code as second parameter to change prompt color - eg: {promptcolor #336699}`]);
 
             return;
         }

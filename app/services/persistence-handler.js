@@ -18,6 +18,7 @@ const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
 const KEY_STORY_ROOM_UNLOCKED_DIRECTIONS = 'story-room-unlocked-directions';
 const KEY_STORY_UNLOCKED_ITEMS = 'story-unlocked-items';
 const KEY_STORY_DEATH_COUNTER = 'story-death-counter';
+const KEY_STORY_COMPLETION_ITEMS = 'story-completion-items';
 
 export default Service.extend({
     init() {
@@ -253,5 +254,28 @@ export default Service.extend({
 
         // set updated value
         this.setAllUnlockedItems(currUnlockedItems);
-    }
+    },
+    
+    addStoryCompletionItemCollected(newItem) {
+        let currItems = this.getStoryCompletionItemsCollected();
+        if (isPresent(currItems)) {
+            if (!currItems.includes(newItem)) {
+                currItems.push(newItem);
+            }
+        } else {
+            currItems = [newItem];
+        }
+
+        // set updated value
+        this.setStoryCompletionItemsCollected(currItems);
+    },
+    
+    setStoryCompletionItemsCollected(newItems) {
+        set(this, `magicRobotsData.${KEY_STORY_COMPLETION_ITEMS}`, newItems);
+        this._setStorageObject();
+    },
+
+    getStoryCompletionItemsCollected() {
+        return get(this._getStorageObject(), KEY_STORY_COMPLETION_ITEMS);
+    },
 });
