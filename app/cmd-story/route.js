@@ -35,9 +35,10 @@ export default Route.extend({
 
     welcomeMessage: computed('persistenceHandler.magicRobotsData.story-xp', {
         get() {
+            const username = this.persistenceHandler.getUsername();
             return this.isNewStory ?
-                'Welcome to story.' :
-                'Welcome back.';
+                `Welcome to story ${username}.` :
+                `Welcome back ${username}.`;
         }
     }),
 
@@ -281,7 +282,7 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp(this.storyCore.useItem(targetItemId));
         } else {
             if(isPresent(targetItemName)) {
-                this.inputProcessor.handleFunctionFromApp([`You don't know how to use the ${targetItemName}.`]);
+                this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
             } else {
                 this.inputProcessor.handleFunctionFromApp([`What do you want to use?`]);
             }

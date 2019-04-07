@@ -36,11 +36,11 @@ export default {
             id: 2,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'sandwich',
-            description: 'There\'s a sandwich on the ground.',
+            description: 'There\'s a sandwich on a paper plate on the ground.',
             details: 'It\'s half eaten.  There is some unidentifiable meat, or meat substitute along with some wilted undescernible vegetables.  The paper plate it sits on is transparent with grease.',
             use: null,
             isKey: null,
-            weight: 3
+            weight: 4
         },
         {
             id: 3,
@@ -67,7 +67,7 @@ export default {
                 }
             },
             isKey: null,
-            weight: 12
+            weight: 3
         },
         {
             id: 5,
@@ -104,7 +104,7 @@ export default {
             details: 'It\'s a fist thick police style black knurled metal flashlight.  Probably powered by a box full of D cell batteries, this thing looks like it could weather the apocalypse. It is heavy.',
             use: null,
             isKey: null,
-            weight: 15
+            weight: 9
         },
         {
             id: 8,
@@ -132,12 +132,12 @@ export default {
             type: environmentValues.ITEM_TYPE_THING,
             name: 'robot',
             description: 'Towering high above you is what can only be described as a giant robot.  It turns and stares at you with an unearthly whine, leaning heavy against a building.  It beeps, a deep physical tone like a fog horn but digital. ¯|_|¯|_|¯|_|¯|_|¯|_',
-            details: 'The machine is almost humanoid in form, broad steel chest and arms like enormous bright excavators. It doesn\'t have a head but one broad glowing rectangular eye on the top half of its body. You can feel its gaze analyzing your very being.',
-            detailsUsed: 'The hulking machine looks very old. No rust or flaking paint, but toothed edges and shallow scrapes everywhere scarring its solid surfaces. It also seems tired, despite clearly being enormously powerful.',
+            details: 'The machine is almost humanoid in form, broad steel chest and arms like enormous bright excavators. It doesn\'t have a head but one thick glowing rectangular eye across the top half of its body. You can feel its gaze analyzing your very being. It also seems tired, despite clearly being enormously powerful.',
+            detailsUsed: 'The machine is almost humanoid in form, broad steel chest and arms like enormous bright excavators. It doesn\'t have a head but one thick glowing rectangular eye across the top half of its body. You can feel its gaze analyzing your very being. It also seems tired, despite clearly being enormously powerful.',
             use: {
                 unlocks: {room: 10, direction: environmentValues.DIRECTION_S()},
                 response: {
-                    first: 'With a series of syncopated grinding noises, a door opens from the robots side. A segmented arm extends with snake like precision and reaches out to you.  You hold out the device you found and it absorbs from the robots appendage like mercury. Another arm delivers to you a freshly printed book at your feet. Resonating inside your mind, the voice of the robot somehow speaks: "I need your help. And trust me, you need my help as well. Bring me three stolen components so I can mend myself and rid your planet of these destructive monsters. A Nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!"',
+                    first: '"Hello!" you yell up toward it. You wave awkwardly trying to be friendly and non-threatening. A piercing light from somewhere on it immediately sweeps your body and you freeze in place. The device you found by the crash site beeps three times. Resonating inside your mind, the voice of the robot somehow speaks: "This is a translator for the alien creature\'s language." It places a small metal thing on the ground beside you. It continues, "I need you to use it to bring me three small stolen components so I can mend myself and rid your planet of these destructive monsters. A nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!" You can\'t believe this is happening. Earlier today your greatest challenge was finding an open coffee shop.',
                     subsequent: 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
                 }
             },
@@ -148,8 +148,8 @@ export default {
             id: 11,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'device',
-            description: 'Hovering a few inches above the ground nearby is some sort of mechanical device.',
-            details: 'You\'ve never seen a device like this. It pulses gently with desaturated internal lights, and rotates slowly in mid air. You poke it, and it responds inanimately. You don\'t think it\'s alive.',
+            description: 'Among some random junk sits a weird device. Maybe a computer part?',
+            details: 'You\'ve never seen a device like this. It pulses gently with desaturated internal lights. When you touch it, it conducts a sound through your body that feels like the noise a 14.4k modem makes.',
             use: null,
             isKey: {item: 10},
             weight: 6
@@ -157,9 +157,9 @@ export default {
         {
             id: 12,
             type: environmentValues.ITEM_TYPE_DOC,
-            name: 'dictionary',
-            description: 'The dictionary sits on the floor.',
-            details: 'Clearly the robot printed this somehow inside itself just for you.  It translates alien runes into english. You are excited and scared.',
+            name: 'translator',
+            description: 'The translator the robot gave you hums quietly by the wall.',
+            details: 'You feel a strange connection to this thing.  It\'s not something you use; it seems to have a magical pathway to your mind\'s language center. You are excited and scared.',
             use: null,
             isKey: [{room: 16, direction: environmentValues.DIRECTION_S()},
                     {room: 17, direction: environmentValues.DIRECTION_N()}],
@@ -180,8 +180,8 @@ export default {
             id: 14,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'artifact',
-            description: 'Some weird alien artifact.',
-            details: 'It is spiky and oozing and red and has things.',
+            description: 'Hovering a few inches above the ground nearby is some sort of alien artifact.',
+            details: 'It looks like a cube of metallic crystals spinning an mid-air. The artifact almost looks man-made, but somehow you know that it is something naturally occuring, and extremely rare in the universe. Just being in its presence you feel an expending sense of awareness. You poke it. Nothing happens - you don\'t think it\'s alive.',
             use: null,
             isKey: [{room: 17, direction: environmentValues.DIRECTION_E()},
                     {room: 20, direction: environmentValues.DIRECTION_W()}],
@@ -191,8 +191,8 @@ export default {
             id: 15,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'helmet',
-            description: 'A pretty sweet helmet.',
-            details: 'It\'s got a mirror face mask and carbon fiber and ooooweeee!',
+            description: 'Hanging on a hook is a pretty sweet looking full face helmet.',
+            details: 'It\'s got a mirrored face mask and looks to be made of carbon fiber. There\'s a bit of bulk on the back that may hold batteries or something.',
             use: null,
             isKey: null,
             weight: 5
@@ -201,7 +201,7 @@ export default {
             id: 16,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'liquid',
-            description: 'A vial of purple fizzy liquid.',
+            description: 'A vial of purple fizzy liquid sits on a table.',
             details: 'Looks like grape soda, but sparkles - just holding the container makes your fingers tingle like the feeling of pop rocks.',
             use: null,
             isKey: null,
@@ -231,7 +231,7 @@ export default {
             id: 19,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'hypercore',
-            description: 'What could only be a brightly glowing hypercore is floating and rotating in the center of the room.',
+            description: 'What could only be a brightly glowing hypercore is floating and rotating in the center of everything.',
             details: 'It\'s a constantly self-igniting nuclear explosion, contained by the gravity of its own mass. It would be infinitely heavy but there is some clever stuff going on with the containment unit allowing it to be portable. It\'s about the size of a basketball.  A basketball made of churning pulsing plasma and flame.',
             use: null,
             isKey: null,

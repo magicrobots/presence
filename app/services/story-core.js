@@ -27,7 +27,7 @@ export default Service.extend({
     _processVariableText(text) {
         // if text is an object
         if (isPresent(text.translated)) {
-            // check for posession of dictionary
+            // check for posession of translator
             if (this.persistenceHandler.getStoryInventoryItems().includes(12)) {
                 return text.translated;
             }
@@ -496,8 +496,8 @@ export default Service.extend({
 
                 // handle special events
                 if (item.id === 10) {
-                    // robot gives you dictionary
-                    this.persistenceHandler.addStoryInventoryItem(12);
+                    // robot drops translator in helipad
+                    this.persistenceHandler.addItemToRoom(10, 12);
                 }
 
                 // user feedback
