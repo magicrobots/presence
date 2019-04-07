@@ -356,7 +356,10 @@ export default {
                     closed: null,
                     opened: 'It\'s so dark you can\'t even see your own hand in front of your face.'
                    },
-                S: null
+                S: {
+                    closed: null,
+                    opened: 'Smells like earth.'
+                   }
             }
         },
         {
@@ -528,6 +531,19 @@ export default {
                     closed: null,
                     opened: 'Behind you is the small hatch you emerged from.'
                    }
+            }
+        },
+        {
+            id: 27,
+            x: 52,
+            y: 49,
+            summary: 'in a cave',
+            description: 'You wave your hands in front of you as you proceed into the darkness. You hear something coming towards you.  Quickly. You slip as you turn to run. The clawing foot falls get closer in the dark, and you can hear it breathing loudly as you scramble to get up. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+            exits: {
+                N: null,
+                E: null,
+                W: null,
+                S: null
             }
         }
     ]
