@@ -5,6 +5,7 @@ import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../const/environment-values';
+import items from '../const/story-items';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -424,14 +425,26 @@ export default Route.extend({
         const completedChars = Math.floor(completionRatio * maxChars);
 
         // create ASCII graph
-        let returnString = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
+        let progressBar = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
 
-        // show completion status
-        const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
-        const completionReport = `[${collectedCompletionItems.length}/${environmentValues.COMPLETION_ITEM_IDS.length}]`;
+        // show completion status if you've unlocked robot
+        const completionReport = [];
+
+        const hasUnlockedRobot = this.persistenceHandler.getAllUnlockedItems().includes(10);
+        if (hasUnlockedRobot) {
+            completionReport.push('Completion Items:');
+
+            const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
+
+            environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
+                const itemObtained = collectedCompletionItems.includes(currCompletionId);
+                const itemName = items.getItemById(currCompletionId).name;
+                completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
+            });
+        }
 
         // result
-        const result = [`XP: ${currXp}`, returnString, `Deaths: ${deathCount}`, `Completion Items: ${completionReport}`];
+        const result = [`XP: ${currXp}`, progressBar, '', `Deaths: ${deathCount}`].concat(completionReport);
         if (completionRatio === 1) {
             result.push('You are the Champion of the Universe!');
         }

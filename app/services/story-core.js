@@ -459,8 +459,10 @@ export default Service.extend({
             // check if item is unlocked passively by having a key item
             const userInventory = this.persistenceHandler.getStoryInventoryItems();
             let isUnlockedPassively = false;
+
             passiveKeyItems.forEach((currPassiveKeyItem) => {
-                if (userInventory.includes(currPassiveKeyItem.id)) {
+                if (userInventory.includes(currPassiveKeyItem.id) &&
+                    currPassiveKeyItem.isKey.item === item.id) {
                     isUnlockedPassively = true;
                 }
             });
@@ -498,6 +500,8 @@ export default Service.extend({
                 if (item.id === 10) {
                     // robot drops translator in helipad
                     this.persistenceHandler.addItemToRoom(10, 12);
+                    // force unlock robot so he doesn't kill you
+                    this.persistenceHandler.unlockItem(10);
                 }
 
                 // user feedback
