@@ -39,6 +39,18 @@ export default Service.extend({
         return text;
     },
 
+    _findRoomThatContainsItem(itemId) {
+        const allRooms = this.persistenceHandler.getStoryRoomInventories();
+        for (let i = 0; i < allRooms.length; i++) {
+            const currRoomRef = allRooms[i];
+            if (currRoomRef.inventory.includes(itemId)) {
+                return currRoomRef.roomId;
+            }
+        }
+
+        return null;
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -124,7 +136,8 @@ export default Service.extend({
             {roomId: 23, inventory: []},
             {roomId: 24, inventory: []},
             {roomId: 25, inventory: [19]},
-            {roomId: 26, inventory: [18, 17]}
+            {roomId: 26, inventory: [18, 17]},
+            {roomId: 27, inventory: []}
         ]);
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
@@ -144,7 +157,7 @@ export default Service.extend({
         return false;
     },
 
-    handlePositionChange(enteredDirection) {
+    getNextRoomInfo(enteredDirection) {
         const changeAxis = enteredDirection.coordModifier.direction;
         const positionFunctionNameGet = `getStoryPos${changeAxis}`;
         const positionFunctionNameSet = `setStoryPos${changeAxis}`;
@@ -160,20 +173,29 @@ export default Service.extend({
             this.currentRoom.y;
         const nextRoom = rooms.getRoom({x:nextX, y:nextY});
 
+        return {nextRoom,
+            nextX,
+            nextY,
+            newCoord,
+            positionFunctionNameSet};
+    },
+
+    handlePositionChange(nextRoomInfo) {
+
         // warn if room is under construction
-        if (isNone(nextRoom)) {
-            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextX}, y:${nextY}}`);
+        if (isNone(nextRoomInfo.nextRoom)) {
+            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextRoomInfo.nextX}, y:${nextRoomInfo.nextY}}`);
             return false;
         }
 
         // reward user for exploring
-        const nextRoomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(nextRoom.id);
+        const nextRoomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(nextRoomInfo.nextRoom.id);
         if (nextRoomIsNew) {
             this._increaseXP(XP_PER_MOVE);
         }
 
-        // go
-        this.persistenceHandler[positionFunctionNameSet](newCoord);
+        // store that user has gone to the next room
+        this.persistenceHandler[nextRoomInfo.positionFunctionNameSet](nextRoomInfo.newCoord);
     },
 
     getIsRoomTrap() {
@@ -199,7 +221,17 @@ export default Service.extend({
         const currDeaths = this.persistenceHandler.getStoryDeaths();
         this.persistenceHandler.setStoryDeaths(currDeaths + 1);
 
-        // reset items?
+        // reset helmet and badge if they aren't in inventory
+        const badgeId = 8; // reset to room 5
+        const helmetId = 15; // into room 16
+        if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
+            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
+            this.persistenceHandler.addItemToRoom(5, badgeId);
+        }
+        if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
+            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
+            this.persistenceHandler.addItemToRoom(16, helmetId);
+        }
 
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
@@ -232,8 +264,10 @@ export default Service.extend({
         return this.currentRoom.id;
     },
 
-    getIsCurrentRoomInSpace() {
-        return isPresent(this.currentRoom.isInSpace) && this.currentRoom.isInSpace === true;
+    getIsRoomInSpace(roomOverride) {
+        const testRoom = isPresent(roomOverride) ? roomOverride : this.currentRoom;
+
+        return isPresent(testRoom.isInSpace) && testRoom.isInSpace === true;
     },
 
     getDescriptionInDirection(lookDirection) {

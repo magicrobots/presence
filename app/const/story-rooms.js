@@ -307,7 +307,7 @@ export default {
             x: 51,
             y: 46,
             summary: 'in the laboratory',
-            description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off.  It actually looks like there was an explosion on the south side of the room. There are stacks of papers and beakers on almost every surface.',
+            description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off. It actually looks like there was an explosion on the south side of the room. There are stacks of papers and beakers on almost every surface.',
             exits: {
                 N: null,
                 E: null,
@@ -383,7 +383,7 @@ export default {
             x: 52,
             y: 47,
             summary: 'in ... a space garage',
-            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big.  You feel like Alice in Wonderland. This area is a very well organized space; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
+            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big.  You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
             isInSpace: true,
             exits: {
                 N: {
@@ -399,7 +399,7 @@ export default {
                    },
                 W: {
                     closed: 'Incredibly complicated looking tools are hung elegantly on the wall.',
-                    opened: 'The portal hovers in mid air, illuminating the nearby stacks of coiled space chain.'
+                    opened: 'The portal hovers in mid air, illuminating nearby stacks of coiled space chain.'
                    },
                 S: null
             }
@@ -498,6 +498,7 @@ export default {
             y: 47,
             summary: 'in the engine room',
             description: 'This room is pretty incredible.  Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
+            isInSpace: true,
             exits: {
                 N: {
                     closed: null,
@@ -523,6 +524,7 @@ export default {
             y: 45,
             summary: 'in the cockpit',
             description: 'You are looking out into the blackness of space through two large rectangular windows. Like the stars, which from here are indescribably beautiful, the points of light from the buttons and illuminated switches on the controls shine from every direction. This must be the ship\'s cockpit.',
+            isInSpace: true,
             exits: {
                 N: null,
                 E: null,
