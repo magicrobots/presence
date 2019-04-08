@@ -51,6 +51,26 @@ export default Service.extend({
         return null;
     },
 
+    // _shuffleArray stolen outright from https://jsfiddle.net/Jonathan_Ironman/hbtq58m4/
+
+    _shuffleArray ( array ) {
+        var counter = array.length, temp, index;
+        // While there are elements in the array
+        while ( counter > 0 ) {
+            // Pick a random index
+            index = Math.floor( Math.random() * counter );
+    
+            // Decrease counter by 1
+            counter--;
+    
+            // And swap the last element with it
+            temp = array[ counter ];
+            array[ counter ] = array[ index ];
+            array[ index ] = temp;
+        }
+        return array;
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -222,15 +242,15 @@ export default Service.extend({
         this.persistenceHandler.setStoryDeaths(currDeaths + 1);
 
         // reset helmet and badge if they aren't in inventory
-        const badgeId = 8; // reset to room 5
-        const helmetId = 15; // into room 16
+        const badgeId = environmentValues.ROOM_RESET_BADGE.itemId;
+        const helmetId = environmentValues.ROOM_RESET_HELMET.itemId;
         if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
             this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
-            this.persistenceHandler.addItemToRoom(5, badgeId);
+            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_BADGE.roomId, badgeId);
         }
         if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
             this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
-            this.persistenceHandler.addItemToRoom(16, helmetId);
+            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_HELMET.roomId, helmetId);
         }
 
         // respawn
@@ -280,16 +300,16 @@ export default Service.extend({
     },
 
     getExitDescriptions() {
-        let exitDescs = '';
+        const exitDescs = [];
         const scope = this;
         environmentValues.exitPossibilities.forEach((currPossibility) => {
             const currExitDescription = this.getExitDescription(scope.currentRoom.id, currPossibility.abbr);
             if(isPresent(currExitDescription)) {
-                exitDescs = exitDescs.concat(`${this._processVariableText(currExitDescription)} `);
+                exitDescs.push(`${this._processVariableText(currExitDescription)}`);
             }
         });
 
-        return exitDescs;
+        return this._shuffleArray(exitDescs).join(' ');
     },
 
     getExitDescription(roomId, exitOrientation) {
