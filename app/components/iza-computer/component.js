@@ -55,6 +55,12 @@ export default Component.extend(Deformers, {
 
     // ------------------- computed properties -------------------
 
+    isMobileDevice: computed({
+        get() {
+            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+        }
+    }),
+
     textEdgeBuffer: computed('viewportMeasurements.{width,height}', {
         get() {
             return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
