@@ -58,5 +58,8 @@ export default {
     ITEM_TYPE_DOC: 'document',
 
     RESPAWN_COORDS: {x:45, y:48},
-    COMPLETION_ITEM_IDS: [13, 18, 19]
+    COMPLETION_ITEM_IDS: [13, 18, 19],
+
+    ROOM_RESET_BADGE: {roomId: 5, itemId: 8},
+    ROOM_RESET_HELMET: {roomId: 16, itemId: 15}
 }
