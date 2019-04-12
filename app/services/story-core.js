@@ -6,6 +6,7 @@ import { inject as service } from '@ember/service';
 import rooms from '../const/story-rooms';
 import items from '../const/story-items';
 import environmentValues from '../const/environment-values';
+import environmentHelpers from '../utils/environment-helpers';
 
 const XP_PER_MOVE = 1;
 const XP_PER_UNLOCK = 2;
@@ -37,6 +38,29 @@ export default Service.extend({
 
         // just return the plain string
         return text;
+    },
+
+    _processVariableItemDescription(description) {
+        if (description === environmentValues.ROBOT_RESPONSE_USED) {
+            return this._getRobotResponseUsed();
+        }
+
+        return description;
+    },
+
+    _getRobotResponseUsed() {
+        // 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
+        const remainingIds = environmentValues.COMPLETION_ITEM_IDS.filter(x => !this.persistenceHandler.getStoryCompletionItemsCollected().includes(x));
+        const remainingNames = remainingIds.map((currId) => {
+            return items.getItemById(currId).name;
+        });
+        const responses = [
+            'Keep it up. Still need',
+            'Keep going. Get me',
+            `Still remaining ${remainingIds.length > 1 ? 'are' : 'is'}`
+        ];
+
+        return `${environmentHelpers.getRandomResponseFromList(responses)} the ${remainingNames.join(' and ')}.`;
     },
 
     _findRoomThatContainsItem(itemId) {
@@ -236,22 +260,38 @@ export default Service.extend({
         return [trapDescription];
     },
 
+    _resetItemLocationOnDeath(itemResetObject) {
+        if (!this.persistenceHandler.getStoryInventoryItems().includes(itemResetObject.itemId)) {
+            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(itemResetObject.itemId), itemResetObject.itemId);
+            this.persistenceHandler.addItemToRoom(itemResetObject.roomId, itemResetObject.itemId);
+        }
+    },
+
     handleDeath() {
         // increment deaths
         const currDeaths = this.persistenceHandler.getStoryDeaths();
         this.persistenceHandler.setStoryDeaths(currDeaths + 1);
 
-        // reset helmet and badge if they aren't in inventory
-        const badgeId = environmentValues.ROOM_RESET_BADGE.itemId;
-        const helmetId = environmentValues.ROOM_RESET_HELMET.itemId;
-        if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
-            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
-            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_BADGE.roomId, badgeId);
-        }
-        if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
-            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
-            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_HELMET.roomId, helmetId);
-        }
+        // reset helmet badge and translator if they aren't in inventory
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_BADGE);
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
+
+        // const badgeId = environmentValues.ROOM_RESET_BADGE.itemId;
+        // const helmetId = environmentValues.ROOM_RESET_HELMET.itemId;
+        // const translatorId = environmentValues.ROOM_RESET_TRANSLATOR.itemId;
+        // if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
+        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
+        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_BADGE.roomId, badgeId);
+        // }
+        // if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
+        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
+        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_HELMET.roomId, helmetId);
+        // }
+        // if (!this.persistenceHandler.getStoryInventoryItems().includes(translatorId)) {
+        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(translatorId), translatorId);
+        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_TRANSLATOR.roomId, translatorId);
+        // }
 
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
@@ -318,9 +358,9 @@ export default Service.extend({
 
         if (isPresent(exitObject)) {
             if (this.getIsExitUnlocked(room, exitOrientation)) {
-                return exitObject.opened;
+                return this._processVariableText(exitObject.opened);
             } else {
-                return exitObject.closed;
+                return this._processVariableText(exitObject.closed);
             }
         }
 
@@ -402,7 +442,7 @@ export default Service.extend({
     canTakeItem(targetItemId) {
         const targetItem = items.getItemById(targetItemId);
 
-        return targetItem.weight + this.getWeightOfUserInventory() < environmentValues.WEIGHT_CAPACITY;
+        return targetItem.weight + this.getWeightOfUserInventory() <= environmentValues.WEIGHT_CAPACITY;
     },
 
     getRoomInventory() {
@@ -564,7 +604,7 @@ export default Service.extend({
             }
 
             // tell user something happened
-            return [item.use.response.subsequent];
+            return [this._processVariableItemDescription(item.use.response.subsequent)];
         }
 
         return [`${item.name} is not a useable item.`];
@@ -599,6 +639,43 @@ export default Service.extend({
 
         // store item in robot inventory
         this.persistenceHandler.addStoryCompletionItemCollected(completionItemId);
+
+        const givenItem = items.getItemById(completionItemId);
+
+        const returnLines = [];
+
+        let returnPhrase = '';
+
+        switch (givenItem.id) {
+            case 13:
+            // disk
+            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            break;
+
+            case 18:
+            // nav-card
+            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            break;
+
+            case 19:
+            // hypercore
+            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            break;
+        }
+
+        // start with give
+        returnLines.push(returnPhrase);
+
+        // add list of what remains
+        const completedList = this.persistenceHandler.getStoryCompletionItemsCollected();
+        const fullList = environmentValues.COMPLETION_ITEM_IDS;
+        if (completedList.length < fullList.length) {
+            returnLines.push(this._getRobotResponseUsed());
+        } else {
+            returnLines.push('holy shit you won the universe!');
+        }
+
+        return returnLines;
     },
 
     // ------------------- private methods -------------------

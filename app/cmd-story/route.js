@@ -333,8 +333,7 @@ export default Route.extend({
 
                     // you can only give completion items to robot
                     if (environmentValues.COMPLETION_ITEM_IDS.includes(targetItemId)) {
-                        this.inputProcessor.handleFunctionFromApp([`You give the robot the ${targetItemName} and it's like YEAH`]);
-                        this.storyCore.handleCompletionEvent(targetItemId);
+                        this.inputProcessor.handleFunctionFromApp(this.storyCore.handleCompletionEvent(targetItemId));
                         return;
                     }
 
