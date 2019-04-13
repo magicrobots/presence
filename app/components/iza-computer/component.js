@@ -18,7 +18,7 @@ export default Component.extend(Deformers, {
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,
-    MIN_USEABLE_COLUMNS: 40,
+    MIN_USEABLE_COLUMNS: 60,
     FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------

@@ -277,22 +277,6 @@ export default Service.extend({
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
 
-        // const badgeId = environmentValues.ROOM_RESET_BADGE.itemId;
-        // const helmetId = environmentValues.ROOM_RESET_HELMET.itemId;
-        // const translatorId = environmentValues.ROOM_RESET_TRANSLATOR.itemId;
-        // if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
-        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
-        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_BADGE.roomId, badgeId);
-        // }
-        // if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
-        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
-        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_HELMET.roomId, helmetId);
-        // }
-        // if (!this.persistenceHandler.getStoryInventoryItems().includes(translatorId)) {
-        //     this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(translatorId), translatorId);
-        //     this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_TRANSLATOR.roomId, translatorId);
-        // }
-
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
         this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);        
