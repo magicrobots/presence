@@ -95,6 +95,10 @@ export default Service.extend({
         return array;
     },
 
+    _getIsGameCompleted() {
+        return this.persistenceHandler.getStoryCompletionItemsCollected().length === environmentValues.COMPLETION_ITEM_IDS.length;
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -254,7 +258,7 @@ export default Service.extend({
     },
 
     handleTrap() {
-        const trapDescription = this.currentRoom.description;
+        const trapDescription = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
         this.handleDeath();
 
         return [trapDescription];
@@ -300,7 +304,9 @@ export default Service.extend({
         if (roomIsNew) {
             return this.getFullRoomDescription();
         } else {
-            return [`You are ${this.currentRoom.summary}.`];
+            return [ this._getIsGameCompleted()
+                ? this.currentRoom.completed :
+                `You are ${this.currentRoom.summary}.`];
         }
     },
 
@@ -394,7 +400,7 @@ export default Service.extend({
     },
 
     getFullRoomDescription() {
-        let roomDesc = this.currentRoom.description;
+        let roomDesc = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
 
         // store room as visited
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
@@ -633,17 +639,17 @@ export default Service.extend({
         switch (givenItem.id) {
             case 13:
             // disk
-            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            returnPhrase = `You give the robot the ${givenItem.name}. A narrow pyramid of green light twists from a beacon on the robot's shoulder, and briefly scans the plastic square. It throws the disk away, having quickly ingested the data within.`;
             break;
 
             case 18:
             // nav-card
-            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            returnPhrase = `You hold the ${givenItem.name} up towards the robot. A long thin grasping arm emerges from the side of its body, and it gently plucks the ${givenItem.name} from your grasp. The arm and the ${givenItem.name} disappear into the machine, and a small door grinds closed behind them. You hear some quiet beeps.`;
             break;
 
             case 19:
             // hypercore
-            returnPhrase = `You give the robot the ${givenItem.name} and it's like YEAH`;
+            returnPhrase = `You place the heavy ${givenItem.name} in front of you. The robot turns and though it has no face, you interperet its body language as a smile. It takes an earth shaking step towards you, and the ${givenItem.name} rises. It glows brighter than usual, and almost instantly absorbs like flaming mercury into the center of the robots core. The huge machine contracts briefly, then seems to exhale as its massive rectangular eye turns a bright orange, emitting a visible churn of plasma. You feel like you just typed IDDQD.`;
             break;
         }
 
@@ -656,13 +662,17 @@ export default Service.extend({
         if (completedList.length < fullList.length) {
             returnLines.push(this._getRobotResponseUsed());
         } else {
-            returnLines.push('holy shit you won the universe!');
+            returnLines.push(this._handleAllItemsGiven());
         }
 
         return returnLines;
     },
 
     // ------------------- private methods -------------------
+
+    _handleAllItemsGiven() {
+        return 'The robot looks at you for a moment, then jumps up into the air and fires a bunch of lasers into a nearby building. It pauses for a moment, then flies at horrifying speed towards some distant alien nest to eviscerate it. You stare after it for a few minutes, and realize for the first time in a long time that you are surrounded by quiet. It\'s really nice. You decide to go get some donuts.';
+    },
 
     _getItemDescriptions() {
         const roomInventory = this.getRoomInventory();

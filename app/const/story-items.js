@@ -62,7 +62,7 @@ export default {
             use: {
                 unlocks: {item: 1},
                 response: {
-                    first: 'As you turn the pages, you can feel your mind expanding.  You are engrossed.  You begin not to need the reference section in the back as you absorb the terms and details.  You almost feel like a physical gust of wind spirals around you as your understanding clicks into place.  You are a hacker now.',
+                    first: 'A HACKER\'S MANUAL: As you turn the pages, you can feel your mind expanding.  You are engrossed.  You begin not to need the reference section in the back as you absorb the terms and details.  You almost feel like a physical gust of wind spirals around you as your understanding clicks into place.  You are a hacker now.',
                     subsequent: 'You thumb through the pages again, but no further knowledge is found there.'
                 }
             },

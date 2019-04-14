@@ -277,5 +277,5 @@ export default Service.extend({
 
     getStoryCompletionItemsCollected() {
         return get(this._getStorageObject(), KEY_STORY_COMPLETION_ITEMS);
-    },
+    }
 });
