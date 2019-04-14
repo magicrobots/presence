@@ -266,6 +266,10 @@ export default Service.extend({
 
     _resetItemLocationOnDeath(itemResetObject) {
         if (!this.persistenceHandler.getStoryInventoryItems().includes(itemResetObject.itemId)) {
+            const currRoomLocationForItem = this._findRoomThatContainsItem(itemResetObject.itemId);
+            if (isNone(currRoomLocationForItem)) {
+                return;
+            }
             this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(itemResetObject.itemId), itemResetObject.itemId);
             this.persistenceHandler.addItemToRoom(itemResetObject.roomId, itemResetObject.itemId);
         }
@@ -573,6 +577,12 @@ export default Service.extend({
         }
 
         if (isPresent(item.use)) {
+
+            // kill you if it's the controls
+            if (item.id === 17) {
+                this.handleDeath();
+            }
+
             // increase XP if they haven't done this before
             const isNewUnlock = !this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction);
             if (isNewUnlock) {
@@ -671,6 +681,9 @@ export default Service.extend({
     // ------------------- private methods -------------------
 
     _handleAllItemsGiven() {
+        // remove robot from helipad
+        this.persistenceHandler.removeItemFromRoom(10, 10);
+
         return 'The robot looks at you for a moment, then jumps up into the air and fires a bunch of lasers into a nearby building. It pauses for a moment, then flies at horrifying speed towards some distant alien nest to eviscerate it. You stare after it for a few minutes, and realize for the first time in a long time that you are surrounded by quiet. It\'s really nice. You decide to go get some donuts.';
     },
 

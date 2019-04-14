@@ -10,11 +10,7 @@ export default Route.extend({
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
             response: ['MAGIC ROBOTS is a lifestyle brand.',
-                'Celebrate the beauty in balance of digital and analog.',
-                'The story adventure game on this site tells the true origin of existing modern mechanically augmented transportation.',
-                '-O-',
-                'o=--o',
-                '0']
+                'Celebrate the beauty in balance of digital and analog.']
             // response: ['I had a the following goals for this website:',
             // ' - Create a command-line interface',
             // ' - Use canvas to create a crappy old CRT monitor effect',
