@@ -441,16 +441,25 @@ export default Route.extend({
 
         const hasUnlockedRobot = this.persistenceHandler.getAllUnlockedItems().includes(10);
         if (hasUnlockedRobot) {
+            const hasCompletedGame = this.storyCore._getIsGameCompleted();
+
+            // add blank line
             completionReport.push('');
-            completionReport.push('Completion Items:');
 
-            const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
-
-            environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
-                const itemObtained = collectedCompletionItems.includes(currCompletionId);
-                const itemName = items.getItemById(currCompletionId).name;
-                completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
-            });
+            // add completion status
+            if (hasCompletedGame) {
+                completionReport.push('You have totally saved the world.  Nice work.');
+            } else {
+                completionReport.push('Completion Items:');
+    
+                const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
+    
+                environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
+                    const itemObtained = collectedCompletionItems.includes(currCompletionId);
+                    const itemName = items.getItemById(currCompletionId).name;
+                    completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
+                });
+            }
         }
 
         // result
