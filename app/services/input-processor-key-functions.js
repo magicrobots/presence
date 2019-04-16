@@ -1,5 +1,7 @@
-import { set } from '@ember/object';
+import { get, set } from '@ember/object';
+import { isPresent } from '@ember/utils';
 import inputComputed from './input-processor-computed';
+import commandRegistry from '../const/command-registry';
 
 let deleteFromCommand;
 let newCommand;
@@ -94,5 +96,28 @@ export default inputComputed.extend({
 
         set(this, 'currentCommand', newCommand);
         set(this, 'cursorPosition', this.cursorPosition + 1);
+    },
+
+    handleTab(event) {
+        // stop user from tabbing outside of browser focus
+        event.preventDefault();
+
+        const fragment = this.currentCommand;
+        let matchedCommand;
+
+        if (this.overrideScope) {
+            const scopedTabComplete = get(this.overrideScope, 'commandComplete');
+            if (isPresent(scopedTabComplete)) {
+                matchedCommand = scopedTabComplete(fragment);
+            }
+        } else {
+            matchedCommand = commandRegistry.getMatchingCommandFragment(fragment);
+        }
+
+        // command completion        
+        if (isPresent(matchedCommand)) {
+            set(this, 'currentCommand', matchedCommand);
+            this.toEnd();
+        }
     }
 });

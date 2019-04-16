@@ -62,7 +62,7 @@ export default {
             use: {
                 unlocks: {item: 1},
                 response: {
-                    first: 'As you turn the pages, you can feel your mind expanding.  You are engrossed.  You begin not to need the reference section in the back as you absorb the terms and details.  You almost feel like a physical gust of wind spirals around you as your understanding clicks into place.  You are a hacker now.',
+                    first: 'A HACKER\'S MANUAL: As you turn the pages, you can feel your mind expanding.  You are engrossed.  You begin not to need the reference section in the back as you absorb the terms and details.  You almost feel like a physical gust of wind spirals around you as your understanding clicks into place.  You are a hacker now.',
                     subsequent: 'You thumb through the pages again, but no further knowledge is found there.'
                 }
             },
@@ -137,8 +137,8 @@ export default {
             use: {
                 unlocks: {room: 10, direction: environmentValues.DIRECTION_S()},
                 response: {
-                    first: '"Hello!" you yell up toward it. You wave awkwardly trying to be friendly and non-threatening. A piercing light from somewhere on it immediately sweeps your body and you freeze in place. The device you found by the crash site beeps three times. Resonating inside your mind, the voice of the robot somehow speaks: "This is a translator for the alien creature\'s language." It places a small metal thing on the ground beside you. It continues, "I need you to use it to bring me three small stolen components so I can mend myself and rid your planet of these destructive monsters. A nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!" You can\'t believe this is happening. Earlier today your greatest challenge was finding an open coffee shop.',
-                    subsequent: 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
+                    first: '"Hello!" you yell up toward it. You wave awkwardly trying to be friendly and non-threatening. A piercing light from somewhere on it immediately sweeps your body and you freeze in place. Resonating inside your mind, the voice of the robot somehow speaks: "I see you brought cake. You are therefore trustworthy..." It places a small metal thing on the ground beside you. "This is a translator for the alien creature\'s language," it continues. "I need you to use it to bring me three stolen components so I can repair myself and rid your planet of these destructive monsters. A nav-card will repair my instruments. A hypercore will restore my full power. A human computer disk contains mapped locations of their hives. Bring me these things and we can end this. Disk. Nav-Card. Hypercore. GO!" You can\'t believe this is happening. Earlier today your greatest challenge was finding an open coffee shop.',
+                    subsequent: environmentValues.ROBOT_RESPONSE_USED
                 }
             },
             isKey: null,
@@ -147,9 +147,9 @@ export default {
         {
             id: 11,
             type: environmentValues.ITEM_TYPE_THING,
-            name: 'device',
-            description: 'Among some random junk sits a weird device. Maybe a computer part?',
-            details: 'You\'ve never seen a device like this. It pulses gently with desaturated internal lights. When you touch it, it conducts a sound through your body that feels like the noise a 14.4k modem makes.',
+            name: 'cake',
+            description: 'Weirdly there is a slice of cake under glass on a small pedestal.',
+            details: 'It\'s the kind of display you\'d see in a diner; a short pedestal with a broad base, topped by a fat cylindrical glass cover with an integrated glass sphere as a handle on top. Inside on the tray is a delicious looking slice of cake.  Chocolate. You try to lift the cover and find that you can\'t.',
             use: null,
             isKey: {item: 10},
             weight: 6
@@ -181,7 +181,7 @@ export default {
             type: environmentValues.ITEM_TYPE_THING,
             name: 'artifact',
             description: 'Hovering a few inches above the ground nearby is some sort of alien artifact.',
-            details: 'It looks like a cube of metallic crystals spinning an mid-air. The artifact almost looks man-made, but somehow you know that it is something naturally occuring, and extremely rare in the universe. Just being in its presence you feel an expending sense of awareness. You poke it. Nothing happens - you don\'t think it\'s alive.',
+            details: 'It looks like a cube of metallic crystals spinning an mid-air. The artifact almost looks man-made, but somehow you know that it is something naturally occuring, and extremely rare in the universe. Just being in its presence you feel an expanding sense of awareness. You poke it. Nothing happens - you don\'t think it\'s alive.',
             use: null,
             isKey: [{room: 17, direction: environmentValues.DIRECTION_E()},
                     {room: 20, direction: environmentValues.DIRECTION_W()}],
@@ -213,7 +213,13 @@ export default {
             name: 'controls',
             description: 'The space ship controls blink their lights at you.',
             details: 'Three stalks extend from the console, each a different thickness with a lever or two branching off them. You wonder if it is weaponized and if perhaps you could try to pilot it against the alien force.',
-            use: null,
+            use: {
+                unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
+                response: {
+                    first: 'You grab the levers as if you were an actual pilot. You move them around and push some buttons, seeing if anything happens. You fall to the floor as the ship accelerates into the vastness of space. After a few days of hurtling through the nothingness, you die of dehydration.',
+                    subsequent: 'You are pretty sure you remember which button you pressed last time. So you try something new this time. Unfortunately you seriously have no idea what you are doing and suffer the same fate. You die of dehydration in the middle of nowhere, the closest thing probably UDF 2457.'
+                }
+            },
             isKey: null,
             weight: 1000
         },

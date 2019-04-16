@@ -1,3 +1,5 @@
+import environmentHelpers from "../utils/environment-helpers";
+
 const helpRoute = 'cmd-man';
 const helpText = 'Help, and ? are proxies to the MAN command. Enter either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
 const helpUsage = 'man contact';
@@ -12,6 +14,11 @@ export default {
                 return true;
             }
         })[0];
+    },
+
+    getMatchingCommandFragment(fragment) {
+        const listOfCommandNames = this.registry.mapBy('commandName');
+        return environmentHelpers.getMatchingFragmentFromSet(fragment, listOfCommandNames);
     },
 
     registry: [

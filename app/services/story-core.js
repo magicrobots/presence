@@ -6,6 +6,7 @@ import { inject as service } from '@ember/service';
 import rooms from '../const/story-rooms';
 import items from '../const/story-items';
 import environmentValues from '../const/environment-values';
+import environmentHelpers from '../utils/environment-helpers';
 
 const XP_PER_MOVE = 1;
 const XP_PER_UNLOCK = 2;
@@ -39,6 +40,29 @@ export default Service.extend({
         return text;
     },
 
+    _processVariableItemDescription(description) {
+        if (description === environmentValues.ROBOT_RESPONSE_USED) {
+            return this._getRobotResponseUsed();
+        }
+
+        return description;
+    },
+
+    _getRobotResponseUsed() {
+        // 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
+        const remainingIds = environmentValues.COMPLETION_ITEM_IDS.filter(x => !this.persistenceHandler.getStoryCompletionItemsCollected().includes(x));
+        const remainingNames = remainingIds.map((currId) => {
+            return items.getItemById(currId).name;
+        });
+        const responses = [
+            'Keep it up. Still need',
+            'Keep going. Get me',
+            `Still remaining ${remainingIds.length > 1 ? 'are' : 'is'}`
+        ];
+
+        return `${environmentHelpers.getRandomResponseFromList(responses)} the ${remainingNames.join(' and ')}.`;
+    },
+
     _findRoomThatContainsItem(itemId) {
         const allRooms = this.persistenceHandler.getStoryRoomInventories();
         for (let i = 0; i < allRooms.length; i++) {
@@ -69,6 +93,10 @@ export default Service.extend({
             array[ index ] = temp;
         }
         return array;
+    },
+
+    _getIsGameCompleted() {
+        return this.persistenceHandler.getStoryCompletionItemsCollected().length === environmentValues.COMPLETION_ITEM_IDS.length;
     },
 
     // ------------------- computed properties -------------------
@@ -230,10 +258,21 @@ export default Service.extend({
     },
 
     handleTrap() {
-        const trapDescription = this.currentRoom.description;
+        const trapDescription = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
         this.handleDeath();
 
         return [trapDescription];
+    },
+
+    _resetItemLocationOnDeath(itemResetObject) {
+        if (!this.persistenceHandler.getStoryInventoryItems().includes(itemResetObject.itemId)) {
+            const currRoomLocationForItem = this._findRoomThatContainsItem(itemResetObject.itemId);
+            if (isNone(currRoomLocationForItem)) {
+                return;
+            }
+            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(itemResetObject.itemId), itemResetObject.itemId);
+            this.persistenceHandler.addItemToRoom(itemResetObject.roomId, itemResetObject.itemId);
+        }
     },
 
     handleDeath() {
@@ -241,17 +280,10 @@ export default Service.extend({
         const currDeaths = this.persistenceHandler.getStoryDeaths();
         this.persistenceHandler.setStoryDeaths(currDeaths + 1);
 
-        // reset helmet and badge if they aren't in inventory
-        const badgeId = environmentValues.ROOM_RESET_BADGE.itemId;
-        const helmetId = environmentValues.ROOM_RESET_HELMET.itemId;
-        if (!this.persistenceHandler.getStoryInventoryItems().includes(badgeId)) {
-            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(badgeId), badgeId);
-            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_BADGE.roomId, badgeId);
-        }
-        if (!this.persistenceHandler.getStoryInventoryItems().includes(helmetId)) {
-            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(helmetId), helmetId);
-            this.persistenceHandler.addItemToRoom(environmentValues.ROOM_RESET_HELMET.roomId, helmetId);
-        }
+        // reset helmet badge and translator if they aren't in inventory
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_BADGE);
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
+        this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
 
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
@@ -276,7 +308,9 @@ export default Service.extend({
         if (roomIsNew) {
             return this.getFullRoomDescription();
         } else {
-            return [`You are ${this.currentRoom.summary}.`];
+            return [ this._getIsGameCompleted()
+                ? this.currentRoom.completed :
+                `You are ${this.currentRoom.summary}.`];
         }
     },
 
@@ -318,9 +352,9 @@ export default Service.extend({
 
         if (isPresent(exitObject)) {
             if (this.getIsExitUnlocked(room, exitOrientation)) {
-                return exitObject.opened;
+                return this._processVariableText(exitObject.opened);
             } else {
-                return exitObject.closed;
+                return this._processVariableText(exitObject.closed);
             }
         }
 
@@ -370,7 +404,7 @@ export default Service.extend({
     },
 
     getFullRoomDescription() {
-        let roomDesc = this.currentRoom.description;
+        let roomDesc = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
 
         // store room as visited
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
@@ -402,7 +436,7 @@ export default Service.extend({
     canTakeItem(targetItemId) {
         const targetItem = items.getItemById(targetItemId);
 
-        return targetItem.weight + this.getWeightOfUserInventory() < environmentValues.WEIGHT_CAPACITY;
+        return targetItem.weight + this.getWeightOfUserInventory() <= environmentValues.WEIGHT_CAPACITY;
     },
 
     getRoomInventory() {
@@ -543,6 +577,12 @@ export default Service.extend({
         }
 
         if (isPresent(item.use)) {
+
+            // kill you if it's the controls
+            if (item.id === 17) {
+                this.handleDeath();
+            }
+
             // increase XP if they haven't done this before
             const isNewUnlock = !this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction);
             if (isNewUnlock) {
@@ -564,7 +604,7 @@ export default Service.extend({
             }
 
             // tell user something happened
-            return [item.use.response.subsequent];
+            return [this._processVariableItemDescription(item.use.response.subsequent)];
         }
 
         return [`${item.name} is not a useable item.`];
@@ -599,9 +639,53 @@ export default Service.extend({
 
         // store item in robot inventory
         this.persistenceHandler.addStoryCompletionItemCollected(completionItemId);
+
+        const givenItem = items.getItemById(completionItemId);
+
+        const returnLines = [];
+
+        let returnPhrase = '';
+
+        switch (givenItem.id) {
+            case 13:
+            // disk
+            returnPhrase = `You give the robot the ${givenItem.name}. A narrow pyramid of green light twists from a beacon on the robot's shoulder, and briefly scans the plastic square. It throws the disk away, having quickly ingested the data within.`;
+            break;
+
+            case 18:
+            // nav-card
+            returnPhrase = `You hold the ${givenItem.name} up towards the robot. A long thin grasping arm emerges from the side of its body, and it gently plucks the ${givenItem.name} from your grasp. The arm and the ${givenItem.name} disappear into the machine, and a small door grinds closed behind them. You hear some quiet beeps.`;
+            break;
+
+            case 19:
+            // hypercore
+            returnPhrase = `You place the heavy ${givenItem.name} in front of you. The robot turns and though it has no face, you interperet its body language as a smile. It takes an earth shaking step towards you, and the ${givenItem.name} rises. It glows brighter than usual, and almost instantly absorbs like flaming mercury into the center of the robots core. The huge machine contracts briefly, then seems to exhale as its massive rectangular eye turns a bright orange, emitting a visible churn of plasma. You feel like you just typed IDDQD.`;
+            break;
+        }
+
+        // start with give
+        returnLines.push(returnPhrase);
+
+        // add list of what remains
+        const completedList = this.persistenceHandler.getStoryCompletionItemsCollected();
+        const fullList = environmentValues.COMPLETION_ITEM_IDS;
+        if (completedList.length < fullList.length) {
+            returnLines.push(this._getRobotResponseUsed());
+        } else {
+            returnLines.push(this._handleAllItemsGiven());
+        }
+
+        return returnLines;
     },
 
     // ------------------- private methods -------------------
+
+    _handleAllItemsGiven() {
+        // remove robot from helipad
+        this.persistenceHandler.removeItemFromRoom(10, 10);
+
+        return 'The robot looks at you for a moment, then jumps up into the air and fires a bunch of lasers into a nearby building. It pauses for a moment, then flies at horrifying speed towards some distant alien nest to eviscerate it. You stare after it for a few minutes, and realize for the first time in a long time that you are surrounded by quiet. It\'s really nice. You decide to go get some donuts.';
+    },
 
     _getItemDescriptions() {
         const roomInventory = this.getRoomInventory();

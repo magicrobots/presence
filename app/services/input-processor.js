@@ -143,15 +143,11 @@ export default keyFunctions.extend({
         return false;
     },
 
-    _reset() {
+    _resetInput() {
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'cursorPosition', 0);
         getOwner(this).lookup('router:main').transitionTo('index');
-    },
-
-    _quit() {
-        this.clear();
     },
 
     // ------------------- public methods -------------------
@@ -163,19 +159,26 @@ export default keyFunctions.extend({
         set(this, 'interruptPrompt', appEnvironment.interruptPrompt);
         set(this, 'keyOverrides', appEnvironment.keyOverrides);
         set(this, 'overrideScope', appEnvironment.overrideScope);
-        this._reset();
+
+        this._resetInput();
     },
 
-    clear() {
-        set(this, 'previousExecutionBlocks', []);
+    quit() {
         set(this, 'activeApp', undefined);
-        set(this, 'appResponse', []);
         set(this, 'displayAppNameInPrompt', undefined);
         set(this, 'interruptPrompt', undefined);
         set(this, 'keyOverrides', undefined);
         set(this, 'bgImage', undefined);
         set(this, 'overrideScope', undefined);
-        this._reset();
+
+        this._resetInput();
+    },
+
+    clear() {
+        set(this, 'previousExecutionBlocks', []);
+        set(this, 'appResponse', []);
+
+        this._resetInput();
     },
 
     handleFunctionFromApp(response) {
@@ -222,8 +225,10 @@ export default keyFunctions.extend({
             case 'PAUSE':
             case 'SCROLLLOCK':
             case 'SHIFT':
-            case 'TAB':
                 // ignore the above keystrokes
+                break;
+            case 'TAB':
+                this.handleTab(keyEvent);
                 break;
 
             case 'ARROWUP':
@@ -269,7 +274,7 @@ export default keyFunctions.extend({
                     // quit running app
                     if (entry === 'ESCAPE' ||
                         entry === 'C' && keyEvent.ctrlKey === true) {
-                        this._quit();
+                        this.quit();
 
                         return;
                     }
@@ -283,7 +288,7 @@ export default keyFunctions.extend({
                 this.addKeyToCommand(keyEvent);
 
                 // kill key event
-                normalizeEvent(keyEvent).preventDefault()
+                normalizeEvent(keyEvent).preventDefault();
                 break;
         }
     }

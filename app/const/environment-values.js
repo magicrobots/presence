@@ -61,5 +61,8 @@ export default {
     COMPLETION_ITEM_IDS: [13, 18, 19],
 
     ROOM_RESET_BADGE: {roomId: 5, itemId: 8},
-    ROOM_RESET_HELMET: {roomId: 16, itemId: 15}
+    ROOM_RESET_HELMET: {roomId: 16, itemId: 15},
+    ROOM_RESET_TRANSLATOR: {roomId: 10, itemId: 12},
+
+    ROBOT_RESPONSE_USED: 'robot-response-used'
 }

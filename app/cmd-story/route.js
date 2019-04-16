@@ -333,8 +333,7 @@ export default Route.extend({
 
                     // you can only give completion items to robot
                     if (environmentValues.COMPLETION_ITEM_IDS.includes(targetItemId)) {
-                        this.inputProcessor.handleFunctionFromApp([`You give the robot the ${targetItemName} and it's like YEAH`]);
-                        this.storyCore.handleCompletionEvent(targetItemId);
+                        this.inputProcessor.handleFunctionFromApp(this.storyCore.handleCompletionEvent(targetItemId));
                         return;
                     }
 
@@ -442,16 +441,25 @@ export default Route.extend({
 
         const hasUnlockedRobot = this.persistenceHandler.getAllUnlockedItems().includes(10);
         if (hasUnlockedRobot) {
+            const hasCompletedGame = this.storyCore._getIsGameCompleted();
+
+            // add blank line
             completionReport.push('');
-            completionReport.push('Completion Items:');
 
-            const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
-
-            environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
-                const itemObtained = collectedCompletionItems.includes(currCompletionId);
-                const itemName = items.getItemById(currCompletionId).name;
-                completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
-            });
+            // add completion status
+            if (hasCompletedGame) {
+                completionReport.push('You have totally saved the world.  Nice work.');
+            } else {
+                completionReport.push('Completion Items:');
+    
+                const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
+    
+                environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
+                    const itemObtained = collectedCompletionItems.includes(currCompletionId);
+                    const itemName = items.getItemById(currCompletionId).name;
+                    completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
+                });
+            }
         }
 
         // result
@@ -467,5 +475,65 @@ export default Route.extend({
         // resets story
         this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription()));
+    },
+
+    quit() {
+        this.inputProcessor.quit();
+    },
+
+    clear() {
+        this.inputProcessor.clear();
+    },
+
+    commandComplete(fragment) {
+        const commandRegistry = [
+            'status',
+            'progress',
+            'report',
+            'xp',
+            'save',
+            'look',
+            'where',
+            'read',
+            'give',
+            'use',
+            'talk',
+            'examine',
+            'inspect',
+            'drop',
+            'discard',
+            'take',
+            'get',
+            'pick',
+            'list',
+            'inventory',
+            'items',
+            'go',
+            'move',
+            'walk',
+            'hello',
+            'sup',
+            'hi',
+            'clear',
+            'quit'
+        ]
+
+        // check for item completion
+        const splitFrag = fragment.split(' ');
+        if (splitFrag.length > 1) {
+            const itemFrag = splitFrag[splitFrag.length - 1];
+            const listOfItemNames = items.items.mapBy('name');
+            const matchedItem = environmentHelpers.getMatchingFragmentFromSet(itemFrag, listOfItemNames);
+
+            if (isPresent(matchedItem)) {
+                // recombine result
+                const firstPortion = splitFrag.slice(0, -1);
+                firstPortion.push(matchedItem);
+                
+                return firstPortion.join(' ');
+            }
+        }
+
+        return environmentHelpers.getMatchingFragmentFromSet(fragment, commandRegistry);
     }
 });
