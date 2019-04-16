@@ -8,6 +8,10 @@ module.exports = function(defaults) {
       sourceMaps: 'inline'
     },
 
+    fingerprint: {
+      exclude: ['assets/robots/']
+    },
+
     'ember-cli-babel': {
       includePolyfill: true
     }
