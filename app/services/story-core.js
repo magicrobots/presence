@@ -49,7 +49,6 @@ export default Service.extend({
     },
 
     _getRobotResponseUsed() {
-        // 'The robot stares through you, waiting. It beeps: Disk. Nav-Card. Hypercore.'
         const remainingIds = environmentValues.COMPLETION_ITEM_IDS.filter(x => !this.persistenceHandler.getStoryCompletionItemsCollected().includes(x));
         const remainingNames = remainingIds.map((currId) => {
             return items.getItemById(currId).name;

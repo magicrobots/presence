@@ -32,6 +32,15 @@ export default keyFunctions.extend({
         return isViewerActiveDiv;
     },
 
+    _doAnalytics() {
+        if (typeof window.ga !== 'function') { return; }
+        window.ga('send',
+            'event',
+            this.PROMPT_LINE_2,
+            this.currentCommand || 'n/a'
+        );
+    },
+
     _execute() {
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -57,6 +66,8 @@ export default keyFunctions.extend({
         const commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
+
+        this._doAnalytics();
 
         if (this._commandHasSwears(enteredWords)) {
             this._handleFilthyInput();
