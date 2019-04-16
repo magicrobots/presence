@@ -79,7 +79,7 @@ export default {
             x: 48,
             y: 47,
             summary: 'in the reception area',
-            description: 'You are in what looks like a reception area for a long defunct corporation.  There is an empty desk in the center with a shadow where the logo signage used to be.  Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
+            description: 'You are in what looks like a reception area for a long defunct corporation.  There is an empty desk in the center with a large black and yellow logo: "V.5. Department of Robotics".  Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
             completed: 'All you can think of is the vending-machine.',
             exits: {
                 N: {
@@ -216,7 +216,7 @@ export default {
                 W: null,
                 S: {
                     closed: null,
-                    opened: 'To the south is the only safety, the doorway through which you emerged.'
+                    opened: 'To the south is the only egress, the doorway through which you emerged.'
                    }
             }
         },

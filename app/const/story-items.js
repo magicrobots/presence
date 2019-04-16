@@ -181,7 +181,7 @@ export default {
             type: environmentValues.ITEM_TYPE_THING,
             name: 'artifact',
             description: 'Hovering a few inches above the ground nearby is some sort of alien artifact.',
-            details: 'It looks like a cube of metallic crystals spinning an mid-air. The artifact almost looks man-made, but somehow you know that it is something naturally occuring, and extremely rare in the universe. Just being in its presence you feel an expending sense of awareness. You poke it. Nothing happens - you don\'t think it\'s alive.',
+            details: 'It looks like a cube of metallic crystals spinning an mid-air. The artifact almost looks man-made, but somehow you know that it is something naturally occuring, and extremely rare in the universe. Just being in its presence you feel an expanding sense of awareness. You poke it. Nothing happens - you don\'t think it\'s alive.',
             use: null,
             isKey: [{room: 17, direction: environmentValues.DIRECTION_E()},
                     {room: 20, direction: environmentValues.DIRECTION_W()}],
