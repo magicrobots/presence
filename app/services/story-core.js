@@ -564,6 +564,12 @@ export default Service.extend({
     useItem(targetItemId) {
         const item = items.getItemById(targetItemId);
 
+        // kill you if it's the controls
+        if (item.id === 17) {
+            this.handleDeath();
+            return ['You grab the levers as if you were an actual pilot. You move them around and push some buttons, seeing if anything happens. You are slammed against the back wall as the ship accelerates into the vastness of space. After a few days of hurtling through the nothingness, you die of dehydration somewhere out by UDF 2457.'];
+        }
+
         // reject usage of locked item
         if (this.getItemIsLocked(item)) {
 
@@ -576,11 +582,6 @@ export default Service.extend({
         }
 
         if (isPresent(item.use)) {
-
-            // kill you if it's the controls
-            if (item.id === 17) {
-                this.handleDeath();
-            }
 
             // increase XP if they haven't done this before
             const isNewUnlock = !this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction);

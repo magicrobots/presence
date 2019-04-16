@@ -132,8 +132,6 @@ export default Route.extend({
         } else {
             this.inputProcessor.handleFunctionFromApp(['you can\'t go that way.']);
         }
-
-        // this.storyCore.handlePotentiallyFatalMistake();
     },
 
     exits() {
@@ -465,6 +463,7 @@ export default Route.extend({
         // result
         const result = [`XP: ${currXp}`, '', 'Progress:', progressBar, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport);
         if (completionRatio === 1) {
+            result.push('');
             result.push('You are the Champion of the Universe!');
         }
         this.inputProcessor.handleFunctionFromApp(result);

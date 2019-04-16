@@ -213,13 +213,7 @@ export default {
             name: 'controls',
             description: 'The space ship controls blink their lights at you.',
             details: 'Three stalks extend from the console, each a different thickness with a lever or two branching off them. You wonder if it is weaponized and if perhaps you could try to pilot it against the alien force.',
-            use: {
-                unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
-                response: {
-                    first: 'You grab the levers as if you were an actual pilot. You move them around and push some buttons, seeing if anything happens. You fall to the floor as the ship accelerates into the vastness of space. After a few days of hurtling through the nothingness, you die of dehydration.',
-                    subsequent: 'You are pretty sure you remember which button you pressed last time. So you try something new this time. Unfortunately you seriously have no idea what you are doing and suffer the same fate. You die of dehydration in the middle of nowhere, the closest thing probably UDF 2457.'
-                }
-            },
+            use: null,
             isKey: null,
             weight: 1000
         },
