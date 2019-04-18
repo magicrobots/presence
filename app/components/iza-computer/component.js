@@ -292,16 +292,24 @@ export default Component.extend(Deformers, {
         }
 
         allLines.forEach((currLine) => {
+
+            let undemarcatedLine;
+            // remove current block demarcation if it's there in addition to custom color
+            if (currLine.indexOf(this.inputProcessor.CURRENT_BLOCK_DEMARCATION()) === 0) {
+                undemarcatedLine = currLine.split(this.inputProcessor.CURRENT_BLOCK_DEMARCATION())[1];
+            }         
+
             const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
-            const isColorizedLine = currLine.substr(0, colorizePrefix.length) === colorizePrefix;
+            const testLine = isPresent(undemarcatedLine) ? undemarcatedLine : currLine;
+            const isColorizedLine = testLine.substr(0, colorizePrefix.length) === colorizePrefix;
             let savedLineColor = '';
             let workingLine = currLine;
 
             // remove color tag
             if (isColorizedLine) {
                 const extractColorIndex = colorizePrefix.length + this.inputProcessor.COLORIZE_COLOR_LENGTH;
-                savedLineColor = currLine.substr(0, extractColorIndex);
-                workingLine = currLine.substr(extractColorIndex);
+                savedLineColor = testLine.substr(0, extractColorIndex);
+                workingLine = testLine.substr(extractColorIndex);
             }
 
             if (workingLine.length > maxCharsPerLine) {

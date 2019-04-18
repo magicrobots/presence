@@ -484,6 +484,24 @@ export default Route.extend({
         this.inputProcessor.clear();
     },
 
+    help() {
+        this.inputProcessor.handleFunctionFromApp(['Story help:',
+            '',
+            'This is an interactive text adventure. Here is a list of some of the basic commands you can use, but there are plenty of others (some of which are required to WIN) you can find by experimenting.',
+            '',
+            '  look ...... Describes your surroundings.',
+            '  exits ..... Lists the exits in a room.',
+            '  go ........ Followed by a direction; moves between areas.',
+            '  use ....... Certain items in the environment are useable.',
+            '  read ...... Readable things can be read.',
+            '  take ...... If you see something and want it ... take it!',
+            '  drop ...... If you have something you can drop it.',
+            '  inventory . Lists items you possess.',
+            '  progress .. Displays progress through story.',
+            '',
+            'Have fun!']);
+    },
+
     commandComplete(fragment) {
         const commandRegistry = [
             'status',
@@ -514,7 +532,8 @@ export default Route.extend({
             'sup',
             'hi',
             'clear',
-            'quit'
+            'quit',
+            'help'
         ]
 
         // check for item completion
