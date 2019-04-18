@@ -19,6 +19,10 @@ export default Service.extend({
     currCommandIndex: -1,
     bgImage: undefined,
 
+    CURRENT_BLOCK_DEMARCATION() {
+        return this.COLORIZE_LINE_PREFIX.concat('#FFFFFF');
+    },
+
     init() {
         this._super(...arguments);
 

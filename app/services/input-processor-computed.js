@@ -66,7 +66,12 @@ export default processorBase.extend({
                 ['', `${this.COLORIZE_LINE_PREFIX}${this.STATIC_PROMPT_COLOR}${this.PROMPT_LINE_1}`,
                     `${this.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`];
 
-            return this.appResponse.concat(fullBlock);
+            const appResponseMarked = [];
+            this.appResponse.forEach((currLine) => {
+                appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currLine));
+            });
+
+            return appResponseMarked.concat(fullBlock);
         }
     }),
 
