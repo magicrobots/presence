@@ -75,9 +75,14 @@ export default keyFunctions.extend({
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
         const enteredWords = commandComponents.concat();
-        const commandName = commandComponents[0];
+        let commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
+
+        // trim accidental white space from beginning of command entry
+        if (commandName === '' && args.length > 0) {
+            commandName = args.shift();
+        }
 
         this._doAnalytics();
 
