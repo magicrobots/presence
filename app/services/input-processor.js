@@ -34,9 +34,11 @@ export default keyFunctions.extend({
 
     _doAnalytics() {
         if (typeof window.ga !== 'function') { return; }
+        const username = this.persistenceHandler.getUsername();
+
         window.ga('send',
             'event',
-            this.PROMPT_LINE_2,
+            `${username} | ${this.PROMPT_LINE_2}`,
             this.currentCommand || 'n/a'
         );
     },
@@ -90,6 +92,13 @@ export default keyFunctions.extend({
             if (isPresent(this.overrideScope[commandName])) {
                 this.overrideScope[commandName]();
             } else {
+
+                // handle ?
+                if (commandName === '?') {
+                    this.overrideScope['help']();
+                    return;
+                }
+
                 this._handleInvalidInput(commandName.toUpperCase());
             }
         } else {
