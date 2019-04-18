@@ -40,7 +40,7 @@ export default {
             y: 47,
             summary: 'next to the pond',
             description: 'The sun warms your face as you enjoy the picturesque view of the pond outside the entrance to the library.  The street runs east west beyond the lawn.',
-            completed: 'You\'re out by the pond.  The breeze scuttles through the reeds at the water\'s edge.',
+            completed: 'You\'re out by the pond. The breeze scuttles through the reeds at the water\'s edge.',
             exits: {
                 N: null,
                 E: {

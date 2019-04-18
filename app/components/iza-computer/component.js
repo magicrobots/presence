@@ -10,7 +10,6 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     classNames: ['iza-computer'],
-    classNameBindings: ['isFocused'],
 
     // ------------------- consts -------------------
 
@@ -55,12 +54,6 @@ export default Component.extend(Deformers, {
     },
 
     // ------------------- computed properties -------------------
-
-    isFocused: computed('frameCounter', {
-        get() {
-            return this.inputProcessor._getIsKeyboardActive();
-        }
-    }),
 
     isMobileDevice: computed({
         get() {
@@ -256,9 +249,9 @@ export default Component.extend(Deformers, {
         this.visibleDisplayLines.forEach((currLine) => {
             
             if (isPresent(currLine.customColor)) {
-                scopedContext.fillStyle = currLine.customColor;
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? currLine.customColor : '#666666';
             } else {
-                scopedContext.fillStyle = 'white';
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? '#999999' : '#888888';
             }
 
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);

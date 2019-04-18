@@ -41,6 +41,18 @@ export default keyFunctions.extend({
         );
     },
 
+    _setPreviousExecutionBlocks() {
+        const currBlockCopy = Object.assign([],this.currExecutionBlock.map((currLine) => {
+            // remove current block demarcation
+            if (currLine.indexOf(this.CURRENT_BLOCK_DEMARCATION()) === 0) {
+                return currLine.split(this.CURRENT_BLOCK_DEMARCATION())[1];
+            }
+            return currLine;
+        }));
+        const allBlocks = this.previousExecutionBlocks.concat(currBlockCopy).concat(['']);
+        set(this, 'previousExecutionBlocks', allBlocks);
+    },
+
     _execute() {
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -55,10 +67,8 @@ export default keyFunctions.extend({
         set(this, 'forceDisplayCursor', false);
         set(this, 'isPromptCursorVisible', false);
 
-        // store execution block with empty string array for empty line
-        const currBlockCopy = Object.assign([],this.currExecutionBlock);
-        const allBlocks = this.previousExecutionBlocks.concat(currBlockCopy).concat(['']);
-        set(this, 'previousExecutionBlocks', allBlocks);
+        // store execution block in block history
+        this._setPreviousExecutionBlocks();
 
         // create executable command from string
         const commandComponents = this.currentCommand.split(' ');
