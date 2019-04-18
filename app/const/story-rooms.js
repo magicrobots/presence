@@ -20,7 +20,7 @@ export default {
             y: 47,
             summary: 'in the library',
             description: 'Smells like old paper and leather bindings. You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
-            completed: 'Back in the library',
+            completed: 'You are in the library, sun is streaming through the windows, bright shafts of light falling squarely upon the table surfaces.',
             exits: {
                 N: null,
                 E: {
@@ -38,19 +38,19 @@ export default {
             id: 2,
             x: 46,
             y: 47,
-            summary: 'next to the pond outside the library',
-            description: 'The sun warms your face as your foot falls softly on the cut grass outside the entrance to the library.  The street runs east west beyond the lawn.',
-            completed: 'Out by the pond.  It\'s pretty',
+            summary: 'next to the pond',
+            description: 'The sun warms your face as you enjoy the picturesque view of the pond outside the entrance to the library.  The street runs east west beyond the lawn.',
+            completed: 'You\'re out by the pond.  The breeze scuttles through the reeds at the water\'s edge.',
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'To the east, the library door is unlocked.  The flowers flanking the entrance are well cultivated.'
+                    opened: 'To the east, the library door is open.  The flowers flanking the entrance are well cultivated.'
                    },
                 W: null,
                 S: {
                     closed: null,
-                    opened: 'Next to the pond heading south there is a walkway with benches.  It has recently been swept.'
+                    opened: 'Heading south there is a walkway with benches.  It has recently been swept.'
                    }
             }
         },
@@ -60,7 +60,7 @@ export default {
             y: 48,
             summary: 'in the forest',
             description: 'Deep creaks resonate around you as the breeze gently bends the network of branches sprawling above you. Moss clings to the rolling earth in every direction, softening sound and beckoning your touch.',
-            completed: 'Back in the pretty forest',
+            completed: 'In the forest, the birds converse above you. The smell of rich earth rises sweetly from the soft moss.',
             exits: {
                 N: {
                     closed: null,
@@ -80,7 +80,7 @@ export default {
             y: 47,
             summary: 'in the reception area',
             description: 'You are in what looks like a reception area for a long defunct corporation.  There is an empty desk in the center with a large black and yellow logo: "V.5. Department of Robotics".  Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
-            completed: 'All you can think of is the vending-machine.',
+            completed: 'You\'re in the entrance hall for V.5. Department of Robotics.',
             exits: {
                 N: {
                     closed: null,
@@ -103,7 +103,7 @@ export default {
             y: 48,
             summary: 'inside a server room',
             description: 'Columns of floor to ceiling rack servers surround you.  Dense clusters of tiny blinking lights busy the space like an active beehive.  Most towers have well routed cables, organized in careful angled tributaries flowing into large gathered bundles that disappear into the ceiling.',
-            completed: 'Back among the humming servers.',
+            completed: 'Among the humming, blinking servers, you are very curious about exactly what kind of data is coming and going through here.',
             exits: {
                 N: {
                     closed: null,
@@ -123,7 +123,7 @@ export default {
             y: 46,
             summary: 'in a large kitchen',
             description: 'Clearly a catering or restaurant kitchen, the room is large enough to accommodate dozens of preparation stations at rows of steel tables. To the north through the windows you recognize your city\'s skyline but something is different. Through the floor you feel occasional deep rumbling noises that rattle the stacked pots like a jazz percussionists brush on a snare drum.  Maybe it\'s the subway.',
-            completed: 'Here you are in the kitchen. Maybe make yourself a sammich.',
+            completed: 'You enter the kitchen, and think about making yourself a sammich. Sadly, all the supply shelves are empty. Anything there probably would have been 20 years old anyway.',
             exits: {
                 N: null,
                 E: {
@@ -143,7 +143,7 @@ export default {
             y: 46,
             summary: 'three stories up in a covered connection between two buildings',
             description: 'You are in an enclosed, raised walkway connecting two buildings. The street far below you is empty. To the south you see through the windows the building eastward is billowing smoke from a number of large chimneys. Some of the smoke is thicker and darker than the rest. To the north there are unnaturally growing shadows darkening your view of the area. You hear thunder, but you see no clouds.',
-            completed: 'In the bridge, you see a butterfly.',
+            completed: 'Suspended in a glass bridge above the street, you take in the beauty of your city\'s skyline. A couple cars drive by.',
             exits: {
                 N: null,
                 E: {
@@ -163,7 +163,7 @@ export default {
             y: 46,
             summary: 'among a sea of dusty computer workstations',
             description: 'In every direction stretches an endless grid of computer monitors on small desks - each paired with a thick tan keyboard.  Not a single screen is on, everything is dusty and dark. The room is not quiet, however. There is a pulsing rhythmic industrial pounding the source of which you cannot identify accompanied by an electrical whining hum that seems to have the resonant frequency of your brain.',
-            completed: 'Surrounded by desks. You think about booting up one of the machines and playing zork.',
+            completed: 'You are surrounded by old computer work stations. You consider booting up one of the machines and playing zork.',
             exits: {
                 N: {
                     closed: null,
@@ -189,7 +189,7 @@ export default {
             y: 47,
             summary: 'in a giant machine room.  Maybe a factory',
             description: 'You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
-            completed: 'This place still feels creepy. You imagine maybe this is what it is like inside that magical robot.',
+            completed: 'You imagine this is what it would look like inside a giant magic robot. You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
             exits: {
                 N: {
                     closed: null,
@@ -207,9 +207,9 @@ export default {
             id: 10,
             x: 50,
             y: 45,
-            summary: 'on the helipad.  The robot stares at you expectantly',
+            summary: 'on the helipad. You stick close to the door, the robot is fighting an endless number of awful looking creatures. It is looking tired. You do not want to be seen.',
             description: 'The cold wind rips through you as you step out onto a helipad.  Mind crushing sounds you have never heard reverberate off the nearby building roof structures and unsettle your stance.',
-            completed: 'The view from the helipad is a bit of a disaster, but at least the only sound now is the quiet breeze and some chirping birds.',
+            completed: 'On the helipad, the view is a bit of a disaster, but at least the only sound now is the quiet breeze and some chirping birds.',
             exits: {
                 N: null,
                 E: null,
@@ -226,7 +226,7 @@ export default {
             y: 48,
             summary: 'in the sewers',
             description: 'The first thing you notice is the smell. It\'s bad in a lot of ways.  You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illumniate the sewer line just enough for you to decide that you\'d rather not linger.',
-            completed: 'Sewers still stinky.',
+            completed: 'You\'ve found an elevated brick walkway that allows you to navigate the sewer without wading through the muck.',
             exits: {
                 N: null,
                 E: {
@@ -245,8 +245,8 @@ export default {
             x: 50,
             y: 48,
             summary: 'in the subway',
-            description: 'The flickering overhead flourescent lights illumnate a subway tunnel.  The rail comes from the north and curves sharply to the east. There is a stopped train blocking the northern direction, and the absence of rats makes you happy and concerned at the same time.',
-            completed: 'Subway still creepy.',
+            description: 'The flickering overhead flourescent lights illumnate a subway tunnel. The rail comes from the north and curves sharply to the east. There is a stopped train blocking the northern direction, and the absence of rats makes you happy and concerned at the same time.',
+            completed: 'In the dim flourescent light you pick your way along the subway tunnel without tripping on the rails. A rat scurries past your feet with a candy wrapper in its mouth.',
             exits: {
                 N: null,
                 E: {
@@ -271,8 +271,8 @@ export default {
             x: 50,
             y: 49,
             summary: 'in a cave',
-            completed: 'You get stuck and starve to death sorry.',
             description: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+            completed: 'You crawl down the tunnel sure that there won\'t be any aliens now. However you get stuck and starve to death sorry.',
             exits: {
                 N: null,
                 E: null,
@@ -286,7 +286,7 @@ export default {
             y: 48,
             summary: 'in the meadow',
             description: 'The sun is shining, the birds are chirping, the soft grass is delicate underfoot. You are in an open meadow, wildflowers bending in the gentle breeze.',
-            completed: 'The meadow is pretty.',
+            completed: 'The sun is shining, the birds are chirping, the soft grass is delicate underfoot. You are in an open meadow, wildflowers bending in the gentle breeze.',
             exits: {
                 N: null,
                 E: {
@@ -303,7 +303,7 @@ export default {
             y: 48,
             summary: 'at the crash site',
             description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater.  Sunlight beams down fighting through the billowing smoke and rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
-            completed: 'Crash site still a disaster. You wonder what the news crews will make of this madness.',
+            completed: 'You step into the crash site. You wonder what the news crews will make of this madness.',
             exits: {
                 N: null,
                 E: {
@@ -323,7 +323,7 @@ export default {
             y: 46,
             summary: 'in the laboratory',
             description: 'Suspended chaos. The room is not large, and the density of objects contained within contributes to the feeling of claustrophobic disarray. It\'s as if a hoarder lived here, and they accumulated only objects of scientific nature. And then a bomb went off. It actually looks like there was an explosion on the south side of the room. There are stacks of papers and beakers on almost every surface.',
-            completed: 'You see a rubik\'s cube. You solve it in a minute and a half using rudimentary CFOP.',
+            completed: 'Among the clutter in the Lab, you see a rubik\'s cube. You solve it in a minute and a half using rudimentary CFOP.',
             exits: {
                 N: null,
                 E: null,
@@ -362,8 +362,8 @@ export default {
             x: 52,
             y: 48,
             summary: 'in a creepy dark tunnel',
-            description: 'It is dark in here. You really need to find a working flashlight.',
-            completed: 'Still dark.',
+            description: 'It is dark in here.',
+            completed: 'It\'s dark in here.',
             exits: {
                 N: null,
                 E: {
@@ -386,7 +386,7 @@ export default {
             y: 48,
             summary: 'in the cave with the weird machines hooked up to each other',
             description: 'You find yourself in some sort of underground workspace. There doesn\'t seem to be anyone, or anyTHING around. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. These are things you have never seen before in any context. There are what look like computer parts strewn about.',
-            completed: 'You still don\'t get what is going on here.',
+            completed: 'You are in some sort of underground workspace. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. There are what look like computer parts strewn about.',
             exits: {
                 N: null,
                 E: null,
@@ -403,8 +403,8 @@ export default {
             y: 47,
             summary: 'in ... a space garage',
             description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big.  You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
-            isInSpace: true,
             completed: 'You take your time and look around. Everything in this garage is ridiculous.',
+            isInSpace: true,
             exits: {
                 N: {
                     closed: null,
@@ -429,9 +429,9 @@ export default {
             x: 52,
             y: 46,
             summary: 'in ... a space kitchen',
-            description: 'Lots of closed storage, and formless voids in the walls. There is a large table in the center of the room. Seems like a kitchen for horrible deadly monsters.',
+            description: 'Lots of closed storage. There is a large table in the center of the room, which you can\'t see the surface of without getting up on your tippy toes. Seems like a kitchen for large horrible deadly monsters.',
+            completed: 'Lots of closed storage. There is a large table in the center of the room, which you can\'t see the surface of without getting up on your tippy toes. Seems like a kitchen for large horrible deadly monsters.',
             isInSpace: true,
-            completed: 'You try to open every enclosure. You are unable to open anything. You are no longer convinced this is a kitchen.',
             exits: {
                 N: null,
                 E: {
@@ -451,8 +451,8 @@ export default {
             y: 46,
             summary: 'on the command deck',
             description: 'The room is wide open and spacious - there are what look like orbital maps and star charts projected dimensionally into the center of the room. There are buttons and screens everywhere.',
-            isInSpace: true,
             completed: 'In the command deck, you pretend you\'re in Star Trek for a minute. It would be more fun with some friends.',
+            isInSpace: true,
             exits: {
                 N: {
                     closed: null,
@@ -484,8 +484,8 @@ export default {
             y: 46,
             summary: 'in ... a space bedroom',
             description: 'If you slept in hammocks made of slimy razorwire you\'d be right at home here.',
+            completed: 'If you slept in hammocks made of slimy razorwire you\'d be right at home here.',
             isInSpace: true,
-            completed: 'These barracks are just awful.',
             exits: {
                 N: null,
                 E: null,
@@ -522,8 +522,8 @@ export default {
             y: 47,
             summary: 'in the engine room',
             description: 'This room is pretty incredible.  Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
+            completed: 'Everything in the engine room is so cool. You admire some glowing lines and excquisitely architected cable routing.',
             isInSpace: true,
-            completed: 'Everything in here is so cool. You admire some glowing lines and excquisitely architected cable routing.',
             exits: {
                 N: {
                     closed: null,
@@ -549,8 +549,8 @@ export default {
             y: 45,
             summary: 'in the cockpit',
             description: 'You are looking out into the blackness of space through two large rectangular windows. Like the stars, which from here are indescribably beautiful, the points of light from the buttons and illuminated switches on the controls shine from every direction. This must be the ship\'s cockpit.',
+            completed: 'The alien cockpit is just incredible. You want to see other worlds. You want to explore the limits of this ships capability. Piloting an alien spacecraft, how hard could it be?',
             isInSpace: true,
-            completed: 'This room makes you a little sad. You want to see other worlds. You want to explore the limits of this ships capability. But every time you push a button you are killed.',
             exits: {
                 N: null,
                 E: null,

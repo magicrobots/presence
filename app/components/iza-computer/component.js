@@ -10,6 +10,7 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     classNames: ['iza-computer'],
+    classNameBindings: ['isFocused'],
 
     // ------------------- consts -------------------
 
@@ -54,6 +55,12 @@ export default Component.extend(Deformers, {
     },
 
     // ------------------- computed properties -------------------
+
+    isFocused: computed('frameCounter', {
+        get() {
+            return this.inputProcessor._getIsKeyboardActive();
+        }
+    }),
 
     isMobileDevice: computed({
         get() {
