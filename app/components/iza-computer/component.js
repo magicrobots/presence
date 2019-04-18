@@ -302,14 +302,17 @@ export default Component.extend(Deformers, {
             const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
             const testLine = isPresent(undemarcatedLine) ? undemarcatedLine : currLine;
             const isColorizedLine = testLine.substr(0, colorizePrefix.length) === colorizePrefix;
+            const extractColorIndex = colorizePrefix.length + this.inputProcessor.COLORIZE_COLOR_LENGTH;
             let savedLineColor = '';
             let workingLine = currLine;
 
             // remove color tag
             if (isColorizedLine) {
-                const extractColorIndex = colorizePrefix.length + this.inputProcessor.COLORIZE_COLOR_LENGTH;
                 savedLineColor = testLine.substr(0, extractColorIndex);
                 workingLine = testLine.substr(extractColorIndex);
+            } else if (isPresent(undemarcatedLine)) {
+                savedLineColor = currLine.substr(0, extractColorIndex);
+                workingLine = undemarcatedLine;
             }
 
             if (workingLine.length > maxCharsPerLine) {
@@ -347,7 +350,7 @@ export default Component.extend(Deformers, {
                 segments.push(currLastSegment);
 
                 // if it's a colorized line, add colorizor to each line
-                if (isColorizedLine) {
+                if (isColorizedLine || isPresent(undemarcatedLine)) {
                     segments = segments.map((currSubLine) => {
                         return savedLineColor.concat(currSubLine);
                     });
