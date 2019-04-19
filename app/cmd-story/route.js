@@ -537,7 +537,7 @@ export default Route.extend({
         ]
 
         // check for item completion
-        const splitFrag = fragment.split(' ');
+        const splitFrag = fragment.toLowerCase().split(' ');
         if (splitFrag.length > 1) {
             const itemFrag = splitFrag[splitFrag.length - 1];
             const listOfItemNames = items.items.mapBy('name');
