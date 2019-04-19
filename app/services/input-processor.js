@@ -73,6 +73,7 @@ export default keyFunctions.extend({
         this._setPreviousExecutionBlocks();
 
         // create executable command from string
+        set(this, 'currentCommand', this.currentCommand.toLowerCase());
         const commandComponents = this.currentCommand.split(' ');
         const enteredWords = commandComponents.concat();
         let commandName = commandComponents[0];
