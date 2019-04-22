@@ -249,9 +249,9 @@ export default Component.extend(Deformers, {
         this.visibleDisplayLines.forEach((currLine) => {
             
             if (isPresent(currLine.customColor)) {
-                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? currLine.customColor : '#666666';
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? currLine.customColor : '#2a4959';
             } else {
-                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? '#999999' : '#888888';
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? '#878787' : '#555555';
             }
 
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);
