@@ -225,7 +225,7 @@ export default {
             x: 49,
             y: 48,
             summary: 'in the sewers',
-            description: 'The first thing you notice is the smell. It\'s bad in a lot of ways.  You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illumniate the sewer line just enough for you to decide that you\'d rather not linger.',
+            description: 'The first thing you notice is the smell. It\'s bad in a lot of ways.  You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illuminate the sewer line just enough for you to decide that you\'d rather not linger.',
             completed: 'You\'ve found an elevated brick walkway that allows you to navigate the sewer without wading through the muck.',
             exits: {
                 N: null,
@@ -362,21 +362,33 @@ export default {
             x: 52,
             y: 48,
             summary: 'in a creepy dark tunnel',
-            description: 'It is dark in here.',
+            description: {
+                dark: 'It is dark in here.',
+                illuminated: 'You sweep the comforting beam from the flashlight around you. The floor is packed gravel, and the walls are raw stone. The tunnel is definitely not natural. It is silent save for the quiet whistle of moving air somewhere, and a distant drip of slow moving water.'
+            },
             completed: 'It\'s dark in here.',
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'You can\'t see anything in any direction.'
+                    opened: {
+                            dark: 'You can\'t see anything in any direction.',
+                            illuminated: 'You shine the flashlight eastward, and the tunnel stretches into nothingness.'
+                        }
                    },
                 W: {
                     closed: null,
-                    opened: 'It\'s so dark you can\'t even see your own hand in front of your face.'
+                    opened: {
+                            dark: 'It\'s so dark you can\'t even see your own hand in front of your face.',
+                            illuminated: 'Your circular pool of light moves to the west. Looks like a break in stone walls in that direction.'
+                        }
                    },
                 S: {
                     closed: null,
-                    opened: 'Smells like earth.'
+                    opened: {
+                            dark: 'Smells like earth.',
+                            illuminated: 'The darkness deepens into a crawlspace heading south, claw marks scratched into the stone around the curvature of the entrance.'
+                        }
                    }
             }
         },

@@ -36,6 +36,14 @@ export default Service.extend({
             return text.unknown;
         }
 
+        if (isPresent(text.dark)) {
+            // check for posession of translator
+            if (this.persistenceHandler.getStoryInventoryItems().includes(7)) {
+                return text.illuminated;
+            }
+            return text.dark;
+        }
+
         // just return the plain string
         return text;
     },
@@ -403,7 +411,7 @@ export default Service.extend({
     },
 
     getFullRoomDescription() {
-        let roomDesc = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
+        let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
 
         // store room as visited
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
