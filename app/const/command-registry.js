@@ -139,6 +139,15 @@ export default {
         isExec: true,
         hideFromList: false },
 
+        { commandName: 'shop',
+        routeName: 'cmd-shop',
+        helpText: 'Displays gallery of things you can buy. And some things you can\'t.',
+        usage: 'Use left and right arrows to navigate, and ESC to exit.',
+        date: 'Apr 18 21:30',
+        size: '0824054527',
+        isExec: true,
+        hideFromList: false },
+
         { commandName: 'whoami',
         routeName: 'cmd-whoami',
         helpText: 'Prints current active username.',
