@@ -249,9 +249,13 @@ export default Component.extend(Deformers, {
         this.visibleDisplayLines.forEach((currLine) => {
             
             if (isPresent(currLine.customColor)) {
-                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? currLine.customColor : '#2a4959';
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ?
+                    currLine.customColor : 
+                    this.inputProcessor.INACTIVE_COLORIZED_COLOR;
             } else {
-                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ? '#878787' : '#555555';
+                scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ?
+                    this.inputProcessor.DEFAULT_SCROLLED_COLOR :
+                    this.inputProcessor.INACTIVE_SCROLLED_COLOR;
             }
 
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);

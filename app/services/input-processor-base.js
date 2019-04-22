@@ -8,6 +8,10 @@ export default Service.extend({
     DEFAULT_PROMPT_COLOR: '#35dd59',
     STATIC_PROMPT_COLOR: '#e3ff16',
     DIRECTORY_LIST_COLOR: '#18def4',
+    INACTIVE_COLORIZED_COLOR: '#2a4959',
+    INACTIVE_SCROLLED_COLOR: '#555555',
+    DEFAULT_SCROLLED_COLOR: '#878787',
+    DEFAULT_FEEDBACK_COLOR: '#FFFFFF',
 
     currentCommand: '',
     currentArgs: undefined,
@@ -20,7 +24,7 @@ export default Service.extend({
     bgImage: undefined,
 
     CURRENT_BLOCK_DEMARCATION() {
-        return this.COLORIZE_LINE_PREFIX.concat('#FFFFFF');
+        return this.COLORIZE_LINE_PREFIX.concat(this.DEFAULT_FEEDBACK_COLOR);
     },
 
     init() {
