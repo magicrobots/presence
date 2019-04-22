@@ -533,8 +533,7 @@ export default Route.extend({
             'hi',
             'clear',
             'quit',
-            'help',
-            'shop'
+            'help'
         ]
 
         // check for item completion
