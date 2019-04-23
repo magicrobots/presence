@@ -19,6 +19,7 @@ const KEY_STORY_ROOM_UNLOCKED_DIRECTIONS = 'story-room-unlocked-directions';
 const KEY_STORY_UNLOCKED_ITEMS = 'story-unlocked-items';
 const KEY_STORY_DEATH_COUNTER = 'story-death-counter';
 const KEY_STORY_COMPLETION_ITEMS = 'story-completion-items';
+const KEY_FLASHLIGHT_STATUS = 'story-flashlight-status';
 
 export default Service.extend({
     init() {
@@ -277,5 +278,14 @@ export default Service.extend({
 
     getStoryCompletionItemsCollected() {
         return get(this._getStorageObject(), KEY_STORY_COMPLETION_ITEMS);
+    },
+
+    setFlashlightStatus(newFlashlightStatus) {
+        set(this, `magicRobotsData.${KEY_FLASHLIGHT_STATUS}`, newFlashlightStatus);
+        this._setStorageObject();
+    },
+
+    getFlashlightStatus() {
+        return get(this._getStorageObject(), KEY_FLASHLIGHT_STATUS);
     }
 });

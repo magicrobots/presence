@@ -37,10 +37,14 @@ export default Service.extend({
         }
 
         if (isPresent(text.dark)) {
-            // check for posession of translator
-            if (this.persistenceHandler.getStoryInventoryItems().includes(7)) {
+            // check for posession of flashlight
+            const currLightStatus = this.persistenceHandler.getFlashlightStatus();
+            if (this.hasFlashlight() &&
+                currLightStatus.isOn) {
+
                 return text.illuminated;
             }
+
             return text.dark;
         }
 
@@ -106,6 +110,53 @@ export default Service.extend({
         return this.persistenceHandler.getStoryCompletionItemsCollected().length === environmentValues.COMPLETION_ITEM_IDS.length;
     },
 
+    _handleFlashlightBatteryDrain() {
+        // if the flashlight is on
+        const lightStatus = this.persistenceHandler.getFlashlightStatus();
+
+        if (lightStatus.isOn) {
+            // decrease battery
+            this.persistenceHandler.setFlashlightStatus({
+                isOn: lightStatus.isOn,
+                batteryLevel: lightStatus.batteryLevel - 1
+            });
+        }
+    },
+
+    _getIsFlashlightWorking() {
+        return this.persistenceHandler.getFlashlightStatus().batteryLevel > 0;
+    },
+
+    _useFlashlight() {
+        // check to see if you have the flashlight
+        let flashlightMessage;
+        let shouldDisplayRoomDescription;
+
+        if (this.hasFlashlight()) {
+            // check battery level
+            if (this._getIsFlashlightWorking()) {
+                // toggle flashlight power
+                const currStatus = this.persistenceHandler.getFlashlightStatus();
+                this.persistenceHandler.setFlashlightStatus({
+                    isOn: !currStatus.isOn,
+                    batteryLevel: currStatus.batteryLevel
+                });
+
+                flashlightMessage = ['You click the rubber domed power button on the flashlight.'];
+                shouldDisplayRoomDescription = true;
+            } else {
+                flashlightMessage = ['You click the flashlight\'s button, but nothing happens. The batteries must be dead. You don\'t like this. You click it again just in case. Nothing.'];
+            }            
+        } else {
+            flashlightMessage = ['You don\'t have a flashlight.'];
+        }
+
+        return {
+            flashlightMessage,
+            shouldDisplayRoomDescription
+        }
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -118,6 +169,10 @@ export default Service.extend({
     }),
 
     // ------------------- public methods -------------------
+
+    hasFlashlight() {
+        return this.persistenceHandler.getStoryInventoryItems().includes(7);
+    },
 
     reportStoryData() {
         const posX = this.persistenceHandler.getStoryPosX();
@@ -197,6 +252,10 @@ export default Service.extend({
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
         this.persistenceHandler.setStoryCompletionItemsCollected([]);
+        this.persistenceHandler.setFlashlightStatus({
+            isOn: false,
+            batteryLevel: environmentValues.FLASHLIGHT_BATTERY_FULL
+        });
     },
 
     isValidDirection(enteredDirection) {
@@ -236,6 +295,9 @@ export default Service.extend({
     },
 
     handlePositionChange(nextRoomInfo) {
+
+        // handle battery drain
+        this._handleFlashlightBatteryDrain();
 
         // warn if room is under construction
         if (isNone(nextRoomInfo.nextRoom)) {
@@ -576,6 +638,15 @@ export default Service.extend({
         if (item.id === 17) {
             this.handleDeath();
             return ['You grab the levers as if you were an actual pilot. You move them around and push some buttons, seeing if anything happens. You are slammed against the back wall as the ship accelerates into the vastness of space. After a few days of hurtling through the nothingness, you die of dehydration somewhere out by UDF 2457.'];
+        }
+
+        // handle flashlight usage
+        if (item.id === 7) {
+            const flashlightResponse = this._useFlashlight();
+
+            return flashlightResponse.shouldDisplayRoomDescription ?
+                flashlightResponse.flashlightMessage.concat(['', this.getFullRoomDescription()]) :
+                flashlightResponse.flashlightMessage;
         }
 
         // reject usage of locked item

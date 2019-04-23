@@ -64,5 +64,7 @@ export default {
     ROOM_RESET_HELMET: {roomId: 16, itemId: 15},
     ROOM_RESET_TRANSLATOR: {roomId: 10, itemId: 12},
 
-    ROBOT_RESPONSE_USED: 'robot-response-used'
+    ROBOT_RESPONSE_USED: 'robot-response-used',
+
+    FLASHLIGHT_BATTERY_FULL: 10
 }

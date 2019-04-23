@@ -90,6 +90,33 @@ export default Route.extend({
         return false;
     },
 
+    _showFlashlightStatus() {
+        const lightStatus = this.persistenceHandler.getFlashlightStatus();
+
+        // if you have the flashlight, show its status
+        if (this.storyCore.hasFlashlight()) {
+            const power = lightStatus.isOn ? 'On' : 'Off';
+            return [
+                `Flashlight power: ${power}`,
+                '',
+                'Flashlight battery level:',
+                this._makeAsciiProgressBar(lightStatus.batteryLevel, environmentValues.FLASHLIGHT_BATTERY_FULL),
+                ''
+            ];
+        }
+
+        return [];
+    },
+
+    _makeAsciiProgressBar(curr, max) {
+        const completionRatio = curr / max;
+        const subtractAmount = completionRatio === 1 ? 3 : 2;
+        const maxChars = this.inputProcessor.maxCharsPerLine - subtractAmount;
+        const completedChars = Math.floor(completionRatio * maxChars);
+
+        return '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
+    },
+
     /* ----------------------- public methods --------------------
        ------ these are also the commands the user can type ----- */
 
@@ -272,6 +299,28 @@ export default Route.extend({
         this.inputProcessor.handleFunctionFromApp([`You don't know how to talk to ${responseObjectName}.`]);
     },
 
+    turn() {
+        const args = this.inputProcessor.currentArgs;
+
+        const firstArg = args[0];
+
+        if (firstArg === 'on' ||
+            firstArg === 'off') {
+
+            // remove on / off from args
+            this.inputProcessor.overrideArgs(args.slice(1));
+            this.use();
+
+            return;
+        } else if (firstArg === 'flashlight') {
+            this.use();
+
+            return;
+        }
+
+        this.inputProcessor.handleFunctionFromApp([`ERROR: I do not understand turn ${firstArg}`]);
+    },
+
     use() {
         const args = this.inputProcessor.currentArgs;
 
@@ -415,20 +464,18 @@ export default Route.extend({
 
     progress: aliasMethod('status'),
     status() {
+        // show flashlight status if applicable
+        const flashlightStatus = this._showFlashlightStatus();
+
         // get max XP:
         const maxXp = this.storyCore.getMaxPossibleXp();
         const currXp = this.persistenceHandler.getStoryXP();
-        const completionRatio = currXp / maxXp;
 
         // deaths:
         const deathCount = this.persistenceHandler.getStoryDeaths();
 
-        // -2 here for initial and end pipes
-        const maxChars = this.inputProcessor.maxCharsPerLine - 2;
-        const completedChars = Math.floor(completionRatio * maxChars);
-
         // create ASCII graph
-        let progressBar = '|'.concat('|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|'));
+        let barProgress = this._makeAsciiProgressBar(currXp, maxXp);
 
         // hacker report
         const isHacker = this.persistenceHandler.getAllUnlockedItems().includes(1);
@@ -461,16 +508,15 @@ export default Route.extend({
         }
 
         // result
-        const result = [`XP: ${currXp}`, '', 'Progress:', progressBar, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport);
-        if (completionRatio === 1) {
+        const result = flashlightStatus.concat([`XP: ${currXp}`, '', 'Progress:', barProgress, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport));
+        if (maxXp === currXp) {
             result.push('');
             result.push('You are the Champion of the Universe!');
         }
         this.inputProcessor.handleFunctionFromApp(result);
-
     },
 
-    formatStoryData() {
+    formatstorydata() {
         // resets story
         this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription()));
@@ -533,7 +579,8 @@ export default Route.extend({
             'hi',
             'clear',
             'quit',
-            'help'
+            'help',
+            'turn'
         ]
 
         // check for item completion
