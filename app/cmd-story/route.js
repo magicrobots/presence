@@ -548,6 +548,7 @@ export default Route.extend({
             '  take ...... If you see something and want it ... take it!',
             '  drop ...... If you have something you can drop it.',
             '  inventory . Lists items you possess.',
+            '  examine ... Describes items in detail.',
             '  progress .. Displays progress through story.',
             '',
             'Have fun!']);

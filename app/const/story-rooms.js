@@ -273,8 +273,12 @@ export default {
             summary: 'in a cave',
             description: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
             completed: 'You crawl down the tunnel sure that there won\'t be any aliens now. However you get stuck and starve to death sorry.',
+            isDarkTrap: true,
             exits: {
-                N: null,
+                N: {
+                    closed: null,
+                    opened: 'The only path back is to the north.'
+                   },
                 E: null,
                 W: null,
                 S: null
@@ -370,7 +374,7 @@ export default {
                 illuminated: 'You sweep the comforting beam from the flashlight around you. The floor is packed gravel, and the walls are raw stone. The tunnel is definitely not natural. It is silent save for the quiet whistle of moving air somewhere, and a distant drip of slow moving water.'
             },
             completed: {
-                dark: 'It it\'s dark in here.',
+                dark: 'It\'s dark in here.',
                 illuminated: 'The dark tunnel is still dark even with your flashlight glinting off the rocky walls.'
             },
             exits: {
@@ -386,7 +390,7 @@ export default {
                     closed: null,
                     opened: {
                             dark: 'It\'s so dark you can\'t even see your own hand in front of your face.',
-                            illuminated: 'Your circular pool of light moves to the west. Looks like a break in stone walls in that direction.'
+                            illuminated: 'Your circular pool of light moves to the west. Looks like a break in the stone wall in that direction.'
                         }
                    },
                 S: {
@@ -583,11 +587,21 @@ export default {
             id: 27,
             x: 52,
             y: 49,
-            summary: 'in a cave',
-            description: 'You wave your hands in front of you as you proceed into the darkness. You hear something coming towards you. Quickly. You slip as you turn to run. The clawing foot falls get closer in the dark, and you can hear it breathing loudly as you scramble to get up. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
-            completed: 'It is so dark you fail to see the 500 foot crevasse and you fall for about 15 seconds and black out before you are killed by the impact.',
+            summary: 'in a cavern, the scuffs of your feet echo off the distant walls',
+            description: {
+                dark: 'You wave your hands in front of you as you proceed into the darkness. You hear something coming towards you. Quickly. You slip as you turn to run. The clawing foot falls get closer in the dark, and you can hear it breathing loudly as you scramble to get up. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+                illuminated: 'You walk through the heavy blackness, the light playing ahead of you. You think you hear footsteps of something at the edge of your lights\' reach, but it could just be the sound of your own feet reflecting off the stone walls. You almost fall into a deep crevice in the floor as the path opens to a large cavern.'
+            },
+            completed: {
+                dark: 'It is so dark you fail to see a 500 foot crevice and you fall for about 15 seconds and black out before you are killed by the impact.',
+                illuminated: 'You walk along the dark path and the light of your flashlight reveals a huge drop off in front of you. The path ends here, in a huge cavern where the floor drops away about 500 feet.'
+            },
+            isDarkTrap: true,
             exits: {
-                N: null,
+                N: {
+                    closed: null,
+                    opened: 'To the north is the way back to safety.'
+                   },
                 E: null,
                 W: null,
                 S: null

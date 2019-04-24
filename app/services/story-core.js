@@ -38,20 +38,22 @@ export default Service.extend({
         }
 
         if (isPresent(text.dark)) {
-            // check for posession of flashlight
-            const currLightStatus = this.persistenceHandler.getFlashlightStatus();
-            if (this.hasFlashlight() &&
-                currLightStatus.isOn &&
-                this._getIsFlashlightWorking()) {
-
-                return text.illuminated;
-            }
-
-            return text.dark;
+            return this._getUserCanSeeInTheDark() ?
+                text.illuminated :
+                text.dark;
         }
 
         // just return the plain string
         return text;
+    },
+
+    _getUserCanSeeInTheDark() {
+
+        // make sure user has flashlight, it's working, and it's on.
+
+        return this.hasFlashlight() &&
+            this.persistenceHandler.getFlashlightStatus().isOn &&
+            this._getIsFlashlightWorking();
     },
 
     _processVariableItemDescription(description) {
@@ -344,10 +346,7 @@ export default Service.extend({
     },
 
     getIsRoomTrap() {
-        if (isNone(this.currentRoom.exits[environmentValues.DIRECTION_N()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_E()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_W()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_S()])) {
+        if (this.currentRoom.isDarkTrap) {
             return true;
         }
 
@@ -395,17 +394,24 @@ export default Service.extend({
 
     _getFlashlightDyingMessage() {
         switch(this.persistenceHandler.getFlashlightStatus().batteryLevel) {
+            case 3:
+                return 'The light coming from the flashlight appears to get dimmer. Might just be your imagination.';
             case 2:
                 return 'The flashlight flickers off. You smash the back of it with your hand and it comes back on, but now it\'s much dimmer.';
             case 1:
                 return 'The flashlight blinks on and off. You shake it. The dim beam steadies as the batteries rattle inside.';
+            case 0:
+                return 'With an almost silent click, the flashlight goes off. Nothing you do can turn it back on.';
         }
     },
 
     getCurrentRoomDescription() {
         // are you dead?
         if (this.getIsRoomTrap()) {
-            return this.handleTrap();
+            // flashlight allows you to survive
+            if (!this._getUserCanSeeInTheDark()) {
+                return this.handleTrap();
+            }
         }
 
         // have you been here before?
@@ -415,7 +421,7 @@ export default Service.extend({
 
         // report flashlight status if it's low
         const lightStatus = this.persistenceHandler.getFlashlightStatus();
-        if (lightStatus.isOn && lightStatus.batteryLevel > 0 && lightStatus.batteryLevel < 3) {
+        if (lightStatus.isOn && lightStatus.batteryLevel >= 0 && lightStatus.batteryLevel < 4) {
             descriptionContent.push(this._getFlashlightDyingMessage());
             descriptionContent.push('');
         }
@@ -520,7 +526,7 @@ export default Service.extend({
         return false;
     },
 
-    getFullRoomDescription() {
+    _getRoomDescriptionOnly() {
         let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
 
         // store room as visited
@@ -528,6 +534,12 @@ export default Service.extend({
 
         // add any present items to paragraph
         roomDesc = roomDesc.concat(` ${this._getItemDescriptions()}`);
+
+        return roomDesc;
+    },
+
+    getFullRoomDescription() {
+        const roomDesc = this._getRoomDescriptionOnly();
 
         // add empty line
         const fullDesc = [roomDesc].concat(['']);
@@ -691,6 +703,16 @@ export default Service.extend({
         // handle flashlight usage
         if (item.id === 7) {
             const flashlightResponse = this._useFlashlight();
+
+            // are you dead?
+            if (this.getIsRoomTrap()) {
+                // flashlight allows you to survive
+                if (!this._getUserCanSeeInTheDark()) {
+                    const currTrapDescription = this._getRoomDescriptionOnly();
+
+                    return this.handleTrap().concat([currTrapDescription]);
+                }
+            }
 
             return flashlightResponse.shouldDisplayRoomDescription ?
                 flashlightResponse.flashlightMessage.concat(['', this.getFullRoomDescription()]) :
