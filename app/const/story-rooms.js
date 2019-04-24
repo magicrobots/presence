@@ -361,7 +361,10 @@ export default {
             id: 18,
             x: 52,
             y: 48,
-            summary: 'in a creepy dark tunnel',
+            summary: {
+                    dark: 'in a creepy dark tunnel',
+                    illuminated: 'in a creepy dark tunnel, the flashlight throws a circle of light on the floor'
+            },
             description: {
                 dark: 'It is dark in here.',
                 illuminated: 'You sweep the comforting beam from the flashlight around you. The floor is packed gravel, and the walls are raw stone. The tunnel is definitely not natural. It is silent save for the quiet whistle of moving air somewhere, and a distant drip of slow moving water.'

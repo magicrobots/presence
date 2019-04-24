@@ -25,7 +25,7 @@ export default Route.extend({
             displayAppNameInPrompt: true,
             interruptPrompt: true,
             overrideScope: this,
-            response: [this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription())
+            response: [this.welcomeMessage, ''].concat(this.storyCore.getCurrentRoomDescription())
         });
 
         // init story in shell
@@ -95,7 +95,9 @@ export default Route.extend({
 
         // if you have the flashlight, show its status
         if (this.storyCore.hasFlashlight()) {
-            const power = lightStatus.isOn ? 'On' : 'Off';
+            const power = lightStatus.batteryLevel < 1 ?
+                'Dead' :
+                lightStatus.isOn ? 'On' : 'Off';
             return [
                 `Flashlight power: ${power}`,
                 '',
@@ -308,7 +310,8 @@ export default Route.extend({
             firstArg === 'off') {
 
             // remove on / off from args
-            this.inputProcessor.overrideArgs(args.slice(1));
+            const argsMinusFirstArg = args.slice(1);
+            this.inputProcessor.overrideArgs(argsMinusFirstArg.concat([firstArg]));
             this.use();
 
             return;
@@ -519,7 +522,7 @@ export default Route.extend({
     formatstorydata() {
         // resets story
         this.storyCore.formatStoryData();
-        this.inputProcessor.handleFunctionFromApp([this.welcomeMessage].concat(this.storyCore.getCurrentRoomDescription()));
+        this.inputProcessor.handleFunctionFromApp([this.welcomeMessage, ''].concat(this.storyCore.getCurrentRoomDescription()));
     },
 
     quit() {

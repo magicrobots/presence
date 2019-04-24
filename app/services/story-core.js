@@ -17,6 +17,7 @@ const MAX_THINGS_TO_LIST = 10;
 
 export default Service.extend({
     persistenceHandler: service(),
+    inputProcessor: service(),
     
     // ------------------- private methods -------------------
 
@@ -40,7 +41,8 @@ export default Service.extend({
             // check for posession of flashlight
             const currLightStatus = this.persistenceHandler.getFlashlightStatus();
             if (this.hasFlashlight() &&
-                currLightStatus.isOn) {
+                currLightStatus.isOn &&
+                this._getIsFlashlightWorking()) {
 
                 return text.illuminated;
             }
@@ -135,10 +137,36 @@ export default Service.extend({
         if (this.hasFlashlight()) {
             // check battery level
             if (this._getIsFlashlightWorking()) {
-                // toggle flashlight power
                 const currStatus = this.persistenceHandler.getFlashlightStatus();
+                let newPowerSetting = !currStatus.isOn;
+
+                // toggle flashlight power if the user didn't enter an on/off parameter
+                const currArgs = this.inputProcessor.currentArgs;
+                if (currArgs.length > 1) {
+                    if (currArgs.includes('on')) {
+                        if (currStatus.isOn) {
+
+                            return {
+                                flashlightMessage: ['The flashlight is already on.'],
+                                shouldDisplayRoomDescription: false
+                            }
+                            
+                        }
+                        newPowerSetting = true;
+                    } else if (currArgs.includes('off')) {
+                        if (!currStatus.isOn) {
+
+                            return {
+                                flashlightMessage: ['The flashlight is already off.'],
+                                shouldDisplayRoomDescription: false
+                            }
+                        }
+                        newPowerSetting = false;
+                    }
+                }
+
                 this.persistenceHandler.setFlashlightStatus({
-                    isOn: !currStatus.isOn,
+                    isOn: newPowerSetting,
                     batteryLevel: currStatus.batteryLevel
                 });
 
@@ -208,7 +236,7 @@ export default Service.extend({
 
         const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);//eslint-disable-line no-console
     },
 
     formatStoryData() {
@@ -301,7 +329,7 @@ export default Service.extend({
 
         // warn if room is under construction
         if (isNone(nextRoomInfo.nextRoom)) {
-            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextRoomInfo.nextX}, y:${nextRoomInfo.nextY}}`);
+            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextRoomInfo.nextX}, y:${nextRoomInfo.nextY}}`);//eslint-disable-line no-console
             return false;
         }
 
@@ -365,6 +393,15 @@ export default Service.extend({
         return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
+    _getFlashlightDyingMessage() {
+        switch(this.persistenceHandler.getFlashlightStatus().batteryLevel) {
+            case 2:
+                return 'The flashlight flickers off. You smash the back of it with your hand and it comes back on, but now it\'s much dimmer.';
+            case 1:
+                return 'The flashlight blinks on and off. You shake it. The dim beam steadies as the batteries rattle inside.';
+        }
+    },
+
     getCurrentRoomDescription() {
         // are you dead?
         if (this.getIsRoomTrap()) {
@@ -374,13 +411,24 @@ export default Service.extend({
         // have you been here before?
         const roomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(this.currentRoom.id);
 
-        if (roomIsNew) {
-            return this.getFullRoomDescription();
-        } else {
-            return [ this._getIsGameCompleted()
-                ? this.currentRoom.completed :
-                `You are ${this.currentRoom.summary}.`];
+        const descriptionContent = [];
+
+        // report flashlight status if it's low
+        const lightStatus = this.persistenceHandler.getFlashlightStatus();
+        if (lightStatus.isOn && lightStatus.batteryLevel > 0 && lightStatus.batteryLevel < 3) {
+            descriptionContent.push(this._getFlashlightDyingMessage());
+            descriptionContent.push('');
         }
+
+        if (roomIsNew) {
+            descriptionContent.push(this.getFullRoomDescription());
+        } else {
+            descriptionContent.push([ this._getIsGameCompleted()
+                ? this.currentRoom.completed :
+                `You are ${this._processVariableText(this.currentRoom.summary)}.` ]);
+        }
+
+        return descriptionContent;
     },
 
     getCurrentRoomId() {

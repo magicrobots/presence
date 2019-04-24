@@ -68,7 +68,15 @@ export default processorBase.extend({
 
             const appResponseMarked = [];
             this.appResponse.forEach((currLine) => {
-                appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currLine));
+                if (typeof (currLine) === 'string') {
+                    appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currLine));
+                } else if (Array.isArray(currLine)) {
+
+                    // handle arrays as responses.
+                    currLine.forEach((currArrayLine) => {
+                        appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currArrayLine));
+                    });
+                }
             });
 
             return appResponseMarked.concat(fullBlock);
