@@ -369,7 +369,10 @@ export default {
                 dark: 'It is dark in here.',
                 illuminated: 'You sweep the comforting beam from the flashlight around you. The floor is packed gravel, and the walls are raw stone. The tunnel is definitely not natural. It is silent save for the quiet whistle of moving air somewhere, and a distant drip of slow moving water.'
             },
-            completed: 'It\'s dark in here.',
+            completed: {
+                dark: 'It it\'s dark in here.',
+                illuminated: 'The dark tunnel is still dark even with your flashlight glinting off the rocky walls.'
+            },
             exits: {
                 N: null,
                 E: {
@@ -547,8 +550,8 @@ export default {
                 E: {
                     closed: null,
                     opened: {
-                        unknown: 'A giant steel angled door with a big red button on it, adorned with alien runes.',
-                        translated: 'A giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                        unknown: 'You see giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'You see giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
                     }
                    },
                 W: {

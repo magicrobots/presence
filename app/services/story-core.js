@@ -424,7 +424,7 @@ export default Service.extend({
             descriptionContent.push(this.getFullRoomDescription());
         } else {
             descriptionContent.push([ this._getIsGameCompleted()
-                ? this.currentRoom.completed :
+                ? this._processVariableText(this.currentRoom.completed) :
                 `You are ${this._processVariableText(this.currentRoom.summary)}.` ]);
         }
 

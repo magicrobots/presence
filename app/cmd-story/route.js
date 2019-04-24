@@ -497,6 +497,7 @@ export default Route.extend({
             // add completion status
             if (hasCompletedGame) {
                 completionReport.push('You have totally saved the world.  Nice work.');
+                completionReport.push(' [x] self satisfaction, relief');
             } else {
                 completionReport.push('Completion Items:');
     
@@ -514,7 +515,8 @@ export default Route.extend({
         const result = flashlightStatus.concat([`XP: ${currXp}`, '', 'Progress:', barProgress, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport));
         if (maxXp === currXp) {
             result.push('');
-            result.push('You are the Champion of the Universe!');
+            result.push('You really get around.');
+            result.push(' [x] explorer');
         }
         this.inputProcessor.handleFunctionFromApp(result);
     },
