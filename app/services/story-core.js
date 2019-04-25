@@ -17,6 +17,7 @@ const MAX_THINGS_TO_LIST = 10;
 
 export default Service.extend({
     persistenceHandler: service(),
+    inputProcessor: service(),
     
     // ------------------- private methods -------------------
 
@@ -36,8 +37,23 @@ export default Service.extend({
             return text.unknown;
         }
 
+        if (isPresent(text.dark)) {
+            return this._getUserCanSeeInTheDark() ?
+                text.illuminated :
+                text.dark;
+        }
+
         // just return the plain string
         return text;
+    },
+
+    _getUserCanSeeInTheDark() {
+
+        // make sure user has flashlight, it's working, and it's on.
+
+        return this.hasFlashlight() &&
+            this.persistenceHandler.getFlashlightStatus().isOn &&
+            this._getIsFlashlightWorking();
     },
 
     _processVariableItemDescription(description) {
@@ -98,6 +114,79 @@ export default Service.extend({
         return this.persistenceHandler.getStoryCompletionItemsCollected().length === environmentValues.COMPLETION_ITEM_IDS.length;
     },
 
+    _handleFlashlightBatteryDrain() {
+        // if the flashlight is on
+        const lightStatus = this.persistenceHandler.getFlashlightStatus();
+
+        if (lightStatus.isOn) {
+            // decrease battery
+            this.persistenceHandler.setFlashlightStatus({
+                isOn: lightStatus.isOn,
+                batteryLevel: lightStatus.batteryLevel - 1
+            });
+        }
+    },
+
+    _getIsFlashlightWorking() {
+        return this.persistenceHandler.getFlashlightStatus().batteryLevel > 0;
+    },
+
+    _useFlashlight() {
+        // check to see if you have the flashlight
+        let flashlightMessage;
+        let shouldDisplayRoomDescription;
+
+        if (this.hasFlashlight()) {
+            // check battery level
+            if (this._getIsFlashlightWorking()) {
+                const currStatus = this.persistenceHandler.getFlashlightStatus();
+                let newPowerSetting = !currStatus.isOn;
+
+                // toggle flashlight power if the user didn't enter an on/off parameter
+                const currArgs = this.inputProcessor.currentArgs;
+                if (currArgs.length > 1) {
+                    if (currArgs.includes('on')) {
+                        if (currStatus.isOn) {
+
+                            return {
+                                flashlightMessage: ['The flashlight is already on.'],
+                                shouldDisplayRoomDescription: false
+                            }
+                            
+                        }
+                        newPowerSetting = true;
+                    } else if (currArgs.includes('off')) {
+                        if (!currStatus.isOn) {
+
+                            return {
+                                flashlightMessage: ['The flashlight is already off.'],
+                                shouldDisplayRoomDescription: false
+                            }
+                        }
+                        newPowerSetting = false;
+                    }
+                }
+
+                this.persistenceHandler.setFlashlightStatus({
+                    isOn: newPowerSetting,
+                    batteryLevel: currStatus.batteryLevel
+                });
+
+                flashlightMessage = ['You click the rubber domed power button on the flashlight.'];
+                shouldDisplayRoomDescription = true;
+            } else {
+                flashlightMessage = ['You click the flashlight\'s button, but nothing happens. The batteries must be dead. You don\'t like this. You click it again just in case. Nothing.'];
+            }            
+        } else {
+            flashlightMessage = ['You don\'t have a flashlight.'];
+        }
+
+        return {
+            flashlightMessage,
+            shouldDisplayRoomDescription
+        }
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -110,6 +199,10 @@ export default Service.extend({
     }),
 
     // ------------------- public methods -------------------
+
+    hasFlashlight() {
+        return this.persistenceHandler.getStoryInventoryItems().includes(7);
+    },
 
     reportStoryData() {
         const posX = this.persistenceHandler.getStoryPosX();
@@ -145,7 +238,7 @@ export default Service.extend({
 
         const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);//eslint-disable-line no-console
     },
 
     formatStoryData() {
@@ -189,6 +282,10 @@ export default Service.extend({
         this.persistenceHandler.clearAllUnlockedDirections();
         this.persistenceHandler.setAllUnlockedItems([]);
         this.persistenceHandler.setStoryCompletionItemsCollected([]);
+        this.persistenceHandler.setFlashlightStatus({
+            isOn: false,
+            batteryLevel: environmentValues.FLASHLIGHT_BATTERY_FULL
+        });
     },
 
     isValidDirection(enteredDirection) {
@@ -229,9 +326,12 @@ export default Service.extend({
 
     handlePositionChange(nextRoomInfo) {
 
+        // handle battery drain
+        this._handleFlashlightBatteryDrain();
+
         // warn if room is under construction
         if (isNone(nextRoomInfo.nextRoom)) {
-            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextRoomInfo.nextX}, y:${nextRoomInfo.nextY}}`);
+            console.log(`WARNING: user encountered room that doesn't exist.  Developers needs to create a room at {x:${nextRoomInfo.nextX}, y:${nextRoomInfo.nextY}}`);//eslint-disable-line no-console
             return false;
         }
 
@@ -246,10 +346,11 @@ export default Service.extend({
     },
 
     getIsRoomTrap() {
-        if (isNone(this.currentRoom.exits[environmentValues.DIRECTION_N()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_E()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_W()]) &&
-            isNone(this.currentRoom.exits[environmentValues.DIRECTION_S()])) {
+        if (this.currentRoom.isDarkTrap) {
+            return true;
+        }
+
+        if(this.currentRoom.isAirlock) {
             return true;
         }
 
@@ -257,7 +358,9 @@ export default Service.extend({
     },
 
     handleTrap() {
-        const trapDescription = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
+        const trapDescription = this._getIsGameCompleted() ?
+            this._processVariableText(this.currentRoom.completed) :
+            this._processVariableText(this.currentRoom.description);
         this.handleDeath();
 
         return [trapDescription];
@@ -295,22 +398,49 @@ export default Service.extend({
         return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
+    _getFlashlightDyingMessage() {
+        switch(this.persistenceHandler.getFlashlightStatus().batteryLevel) {
+            case 3:
+                return 'The light coming from the flashlight appears to get dimmer. Might just be your imagination.';
+            case 2:
+                return 'The flashlight flickers off. You smash the back of it with your hand and it comes back on, but now it\'s much dimmer.';
+            case 1:
+                return 'The flashlight blinks on and off. You shake it. The dim beam steadies as the batteries rattle inside.';
+            case 0:
+                return 'With an almost silent click, the flashlight goes off. Nothing you do can turn it back on.';
+        }
+    },
+
     getCurrentRoomDescription() {
         // are you dead?
         if (this.getIsRoomTrap()) {
-            return this.handleTrap();
+            // flashlight allows you to survive
+            if (!this._getUserCanSeeInTheDark()) {
+                return this.handleTrap();
+            }
         }
 
         // have you been here before?
         const roomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(this.currentRoom.id);
 
-        if (roomIsNew) {
-            return this.getFullRoomDescription();
-        } else {
-            return [ this._getIsGameCompleted()
-                ? this.currentRoom.completed :
-                `You are ${this.currentRoom.summary}.`];
+        const descriptionContent = [];
+
+        // report flashlight status if it's low
+        const lightStatus = this.persistenceHandler.getFlashlightStatus();
+        if (lightStatus.isOn && lightStatus.batteryLevel >= 0 && lightStatus.batteryLevel < 4) {
+            descriptionContent.push(this._getFlashlightDyingMessage());
+            descriptionContent.push('');
         }
+
+        if (roomIsNew) {
+            descriptionContent.push(this.getFullRoomDescription());
+        } else {
+            descriptionContent.push([ this._getIsGameCompleted()
+                ? this._processVariableText(this.currentRoom.completed) :
+                `You are ${this._processVariableText(this.currentRoom.summary)}.` ]);
+        }
+
+        return descriptionContent;
     },
 
     getCurrentRoomId() {
@@ -402,14 +532,20 @@ export default Service.extend({
         return false;
     },
 
-    getFullRoomDescription() {
-        let roomDesc = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
+    _getRoomDescriptionOnly() {
+        let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
 
         // store room as visited
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
 
         // add any present items to paragraph
         roomDesc = roomDesc.concat(` ${this._getItemDescriptions()}`);
+
+        return roomDesc;
+    },
+
+    getFullRoomDescription() {
+        const roomDesc = this._getRoomDescriptionOnly();
 
         // add empty line
         const fullDesc = [roomDesc].concat(['']);
@@ -561,6 +697,15 @@ export default Service.extend({
         return false;
     },
 
+    turnOffFlashlight() {
+        const currStatus = this.persistenceHandler.getFlashlightStatus();
+
+        this.persistenceHandler.setFlashlightStatus({
+            isOn: false,
+            batteryLevel: currStatus.batteryLevel
+        });
+    },
+
     useItem(targetItemId) {
         const item = items.getItemById(targetItemId);
 
@@ -568,6 +713,25 @@ export default Service.extend({
         if (item.id === 17) {
             this.handleDeath();
             return ['You grab the levers as if you were an actual pilot. You move them around and push some buttons, seeing if anything happens. You are slammed against the back wall as the ship accelerates into the vastness of space. After a few days of hurtling through the nothingness, you die of dehydration somewhere out by UDF 2457.'];
+        }
+
+        // handle flashlight usage
+        if (item.id === 7) {
+            const flashlightResponse = this._useFlashlight();
+
+            // are you dead?
+            if (this.getIsRoomTrap()) {
+                // flashlight allows you to survive
+                if (!this._getUserCanSeeInTheDark()) {
+                    const currTrapDescription = this._getRoomDescriptionOnly();
+
+                    return this.handleTrap().concat([currTrapDescription]);
+                }
+            }
+
+            return flashlightResponse.shouldDisplayRoomDescription ?
+                flashlightResponse.flashlightMessage.concat(['', this.getFullRoomDescription()]) :
+                flashlightResponse.flashlightMessage;
         }
 
         // reject usage of locked item

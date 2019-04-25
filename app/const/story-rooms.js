@@ -39,18 +39,18 @@ export default {
             x: 46,
             y: 47,
             summary: 'next to the pond',
-            description: 'The sun warms your face as you enjoy the picturesque view of the pond outside the entrance to the library.  The street runs east west beyond the lawn.',
+            description: 'The sun warms your face as you enjoy the picturesque view of the pond outside the entrance to the library. The street runs east west beyond the lawn.',
             completed: 'You\'re out by the pond. The breeze scuttles through the reeds at the water\'s edge.',
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'To the east, the library door is open.  The flowers flanking the entrance are well cultivated.'
+                    opened: 'To the east, the library door is open. The flowers flanking the entrance are well cultivated.'
                    },
                 W: null,
                 S: {
                     closed: null,
-                    opened: 'Heading south there is a walkway with benches.  It has recently been swept.'
+                    opened: 'Heading south there is a walkway with benches. It has recently been swept.'
                    }
             }
         },
@@ -79,7 +79,7 @@ export default {
             x: 48,
             y: 47,
             summary: 'in the reception area',
-            description: 'You are in what looks like a reception area for a long defunct corporation.  There is an empty desk in the center with a large black and yellow logo: "V.5. Department of Robotics".  Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
+            description: 'You are in what looks like a reception area for a long defunct corporation. There is an empty desk in the center with a large black and yellow logo: "V.5. Department of Robotics". Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
             completed: 'You\'re in the entrance hall for V.5. Department of Robotics.',
             exits: {
                 N: {
@@ -102,7 +102,7 @@ export default {
             x: 48,
             y: 48,
             summary: 'inside a server room',
-            description: 'Columns of floor to ceiling rack servers surround you.  Dense clusters of tiny blinking lights busy the space like an active beehive.  Most towers have well routed cables, organized in careful angled tributaries flowing into large gathered bundles that disappear into the ceiling.',
+            description: 'Columns of floor to ceiling rack servers surround you. Dense clusters of tiny blinking lights busy the space like an active beehive. Most towers have well routed cables, organized in careful angled tributaries flowing into large gathered bundles that disappear into the ceiling.',
             completed: 'Among the humming, blinking servers, you are very curious about exactly what kind of data is coming and going through here.',
             exits: {
                 N: {
@@ -162,7 +162,7 @@ export default {
             x: 50,
             y: 46,
             summary: 'among a sea of dusty computer workstations',
-            description: 'In every direction stretches an endless grid of computer monitors on small desks - each paired with a thick tan keyboard.  Not a single screen is on, everything is dusty and dark. The room is not quiet, however. There is a pulsing rhythmic industrial pounding the source of which you cannot identify accompanied by an electrical whining hum that seems to have the resonant frequency of your brain.',
+            description: 'In every direction stretches an endless grid of computer monitors on small desks - each paired with a thick tan keyboard. Not a single screen is on, everything is dusty and dark. The room is not quiet, however. There is a pulsing rhythmic industrial pounding the source of which you cannot identify accompanied by an electrical whining hum that seems to have the resonant frequency of your brain.',
             completed: 'You are surrounded by old computer work stations. You consider booting up one of the machines and playing zork.',
             exits: {
                 N: {
@@ -171,7 +171,7 @@ export default {
                    },
                 E: {
                     closed: null,
-                    opened: 'Eastward is an open security door.  To the right of the door on the wall is a small corporate identifier that reads "LABORATORY".'
+                    opened: 'Eastward is an open security door. To the right of the door on the wall is a small corporate identifier that reads "LABORATORY".'
                    },
                 W: {
                     closed: 'To the west is a solid metal door with a red light glowing above it.',
@@ -187,9 +187,9 @@ export default {
             id: 9,
             x: 50,
             y: 47,
-            summary: 'in a giant machine room.  Maybe a factory',
-            description: 'You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
-            completed: 'You imagine this is what it would look like inside a giant magic robot. You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you.  The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
+            summary: 'in a giant machine room. Maybe a factory',
+            description: 'You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you. The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
+            completed: 'You imagine this is what it would look like inside a giant magic robot. You are on a network of steel catwalks suspended above massive factory machines hundreds of feet below you. The floor of the room is below street level, barely visible beneath snaking fingers of enclosed shafts, hoses, and more levels of catwalk. Steam and dripping water cloud your view and add to the quiet symphony of unidentifiable noises.',
             exits: {
                 N: {
                     closed: null,
@@ -208,7 +208,7 @@ export default {
             x: 50,
             y: 45,
             summary: 'on the helipad. You stick close to the door, the robot is fighting an endless number of awful looking creatures. It is looking tired. You do not want to be seen.',
-            description: 'The cold wind rips through you as you step out onto a helipad.  Mind crushing sounds you have never heard reverberate off the nearby building roof structures and unsettle your stance.',
+            description: 'The cold wind rips through you as you step out onto a helipad. Mind crushing sounds you have never heard reverberate off the nearby building roof structures and unsettle your stance.',
             completed: 'On the helipad, the view is a bit of a disaster, but at least the only sound now is the quiet breeze and some chirping birds.',
             exits: {
                 N: null,
@@ -225,7 +225,7 @@ export default {
             x: 49,
             y: 48,
             summary: 'in the sewers',
-            description: 'The first thing you notice is the smell. It\'s bad in a lot of ways.  You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illumniate the sewer line just enough for you to decide that you\'d rather not linger.',
+            description: 'The first thing you notice is the smell. It\'s bad in a lot of ways. You\'re not thrilled about the ankle deep ... whatever it is you\'re sloshing through either. It is dark here. Bare bulbs strung along the low arched ceiling illuminate the sewer line just enough for you to decide that you\'d rather not linger.',
             completed: 'You\'ve found an elevated brick walkway that allows you to navigate the sewer without wading through the muck.',
             exits: {
                 N: null,
@@ -270,11 +270,21 @@ export default {
             id: 13,
             x: 50,
             y: 49,
-            summary: 'in a cave',
-            description: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
-            completed: 'You crawl down the tunnel sure that there won\'t be any aliens now. However you get stuck and starve to death sorry.',
+            summary: 'in an uncomfortably narrow cave. You\'re feeling a little claustrophobic',
+            description: {
+                dark: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+                illuminated: 'You crawl down the tunnel, and it gets tighter and tighter. You basically can\'t go any further unless you lose like 47 pounds. The Flashlight shows the path goes farther but you just don\'t fit. You aren\'t sure but you think you hear something moving beyond the reach of the light.'
+            },
+            completed: {
+                dark: 'You crawl down the tunnel as far as you can. You go a little farther than you should, get disoriented in the dark, and get stuck. You die of dehydration a couple days later.',
+                illuminated: 'You crawl down the tunnel sure that there won\'t be any aliens down here. You can\'t get that far though; the passage narrows too much for you to fit.'
+            },
+            isDarkTrap: true,
             exits: {
-                N: null,
+                N: {
+                    closed: null,
+                    opened: 'The only path back is to the north.'
+                   },
                 E: null,
                 W: null,
                 S: null
@@ -302,13 +312,13 @@ export default {
             x: 51,
             y: 48,
             summary: 'at the crash site',
-            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater.  Sunlight beams down fighting through the billowing smoke and rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
+            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater. Sunlight beams down fighting through the billowing smoke and rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
             completed: 'You step into the crash site. You wonder what the news crews will make of this madness.',
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'To the east the subway has been blocked completely by debris.  However you notice some of the rubble has been organized into a sort of doorway, with more symbols you can\'t identify scratched into the rock.'
+                    opened: 'To the east the subway has been blocked completely by debris. However you notice some of the rubble has been organized into a sort of doorway, with more symbols you can\'t identify scratched into the rock.'
                    },
                 W: {
                     closed: null,
@@ -346,7 +356,7 @@ export default {
             completed: 'The cube room still blows your mind. You take a minute and just look around. It makes you a little uncomfortable, like standing too close to the edge of a cliff.',
             exits: {
                 N: {
-                    closed: 'You don\'t remember which button on the control panel is the right one.  You\'re pretty sure if you hit the wrong button you could implode the universe.',
+                    closed: 'You don\'t remember which button on the control panel is the right one. You\'re pretty sure if you hit the wrong button you could implode the universe.',
                     opened: 'To the north is a door controlled by a complicated control panel. One button is marked "OPEN".'
                    },
                 E: {
@@ -361,22 +371,40 @@ export default {
             id: 18,
             x: 52,
             y: 48,
-            summary: 'in a creepy dark tunnel',
-            description: 'It is dark in here.',
-            completed: 'It\'s dark in here.',
+            summary: {
+                    dark: 'in a creepy dark tunnel',
+                    illuminated: 'in a creepy dark tunnel, the flashlight throws a circle of light on the floor'
+            },
+            description: {
+                dark: 'It is dark in here.',
+                illuminated: 'You sweep the comforting beam from the flashlight around you. The floor is packed gravel, and the walls are raw stone. The tunnel is definitely not natural. It is silent save for the quiet whistle of moving air somewhere, and a distant drip of slow moving water.'
+            },
+            completed: {
+                dark: 'It\'s dark in here.',
+                illuminated: 'The dark tunnel is still dark even with your flashlight glinting off the rocky walls.'
+            },
             exits: {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'You can\'t see anything in any direction.'
+                    opened: {
+                            dark: 'You can\'t see anything in any direction.',
+                            illuminated: 'You shine the flashlight eastward, and the tunnel stretches into nothingness.'
+                        }
                    },
                 W: {
                     closed: null,
-                    opened: 'It\'s so dark you can\'t even see your own hand in front of your face.'
+                    opened: {
+                            dark: 'It\'s so dark you can\'t even see your own hand in front of your face.',
+                            illuminated: 'Your circular pool of light moves to the west. Looks like a break in the stone wall in that direction.'
+                        }
                    },
                 S: {
                     closed: null,
-                    opened: 'Smells like earth.'
+                    opened: {
+                            dark: 'Smells like earth.',
+                            illuminated: 'The darkness deepens into a crawlspace heading south, claw marks scratched into the stone around the curvature of the entrance.'
+                        }
                    }
             }
         },
@@ -402,7 +430,7 @@ export default {
             x: 52,
             y: 47,
             summary: 'in ... a space garage',
-            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big.  You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
+            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big. You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
             completed: 'You take your time and look around. Everything in this garage is ridiculous.',
             isInSpace: true,
             exits: {
@@ -509,6 +537,7 @@ export default {
             summary: 'in the airlock',
             description: 'The door opens and in a split second you realize you have made a grave error. You, and everything around you are sucked into the void of space. It is quick, but a cold and lonely death.',
             completed: 'You open the airlock like a n00b. SHLOOP! Out into space you go. Sorry you died.',
+            isAirlock: true,
             exits: {
                 N: null,
                 E: null,
@@ -521,7 +550,7 @@ export default {
             x: 53,
             y: 47,
             summary: 'in the engine room',
-            description: 'This room is pretty incredible.  Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
+            description: 'This room is pretty incredible. Every surface is packed tightly with weaving cables and tubes, each feeding fuel or power to one of the dozens of indecipherable structures uniformly filling the space. In the center of the floor is a single massive object that you\'re guessing, with your extensive knowledge of alien warcraft, is the main thruster.',
             completed: 'Everything in the engine room is so cool. You admire some glowing lines and excquisitely architected cable routing.',
             isInSpace: true,
             exits: {
@@ -532,8 +561,8 @@ export default {
                 E: {
                     closed: null,
                     opened: {
-                        unknown: 'A giant steel angled door with a big red button on it, adorned with alien runes.',
-                        translated: 'A giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
+                        unknown: 'You see giant steel angled door with a big red button on it, adorned with alien runes.',
+                        translated: 'You see giant steel angled door with a big red button on it, labeled: "DANGER: AIRLOCK".'
                     }
                    },
                 W: {
@@ -565,11 +594,21 @@ export default {
             id: 27,
             x: 52,
             y: 49,
-            summary: 'in a cave',
-            description: 'You wave your hands in front of you as you proceed into the darkness. You hear something coming towards you.  Quickly. You slip as you turn to run. The clawing foot falls get closer in the dark, and you can hear it breathing loudly as you scramble to get up. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
-            completed: 'It is so dark you fail to see the 500 foot crevasse and you fall for about 15 seconds and black out before you are killed by the impact.',
+            summary: 'in a cavern, the scuffs of your feet echo off the distant walls',
+            description: {
+                dark: 'You wave your hands in front of you as you proceed into the darkness. You hear something coming towards you. Quickly. You slip as you turn to run. The clawing foot falls get closer in the dark, and you can hear it breathing loudly as you scramble to get up. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+                illuminated: 'You walk through the heavy blackness, the light playing ahead of you. You think you hear footsteps of something at the edge of your lights\' reach, but it could just be the sound of your own feet reflecting off the stone walls. You almost fall into a deep crevice in the floor as the path opens to a large cavern.'
+            },
+            completed: {
+                dark: 'It is so dark you fail to see a 500 foot crevice and you fall for about 15 seconds and black out before you are killed by the impact.',
+                illuminated: 'You walk along the dark path and the light of your flashlight reveals a huge drop off in front of you. The path ends here, in a huge cavern where the floor drops away about 500 feet.'
+            },
+            isDarkTrap: true,
             exits: {
-                N: null,
+                N: {
+                    closed: null,
+                    opened: 'To the north is the way back to safety.'
+                   },
                 E: null,
                 W: null,
                 S: null
