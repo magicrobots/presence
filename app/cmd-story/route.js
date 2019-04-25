@@ -252,6 +252,12 @@ export default Route.extend({
             this.persistenceHandler.addItemToRoom(this.storyCore.getCurrentRoomId(), targetItemId);
             // remove item from user inventory
             this.persistenceHandler.removeStoryInventoryItem(targetItemId);
+
+            // if it's the flashlight, turn it off automagically
+            if (targetItemId === 7) {
+                this.storyCore.turnOffFlashlight();
+            }
+
             // report to user
             this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
         } else {

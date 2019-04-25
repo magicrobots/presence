@@ -270,9 +270,15 @@ export default {
             id: 13,
             x: 50,
             y: 49,
-            summary: 'in a cave',
-            description: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
-            completed: 'You crawl down the tunnel sure that there won\'t be any aliens now. However you get stuck and starve to death sorry.',
+            summary: 'in an uncomfortably narrow cave. You\'re feeling a little claustrophobic',
+            description: {
+                dark: 'You crawl down the tunnel, and it gets tighter and tighter. You are just about to turn around when you hear something scrambling towards you. There\'s no space to turn around and you can\'t back up quickly enough. The clawing foot falls get closer in the dark, and you can hear it breathing loudly. You see a glint of a great number of eyes and a wall of teeth and then you are eaten by an alien.',
+                illuminated: 'You crawl down the tunnel, and it gets tighter and tighter. You basically can\'t go any further unless you lose like 47 pounds. The Flashlight shows the path goes farther but you just don\'t fit. You aren\'t sure but you think you hear something moving beyond the reach of the light.'
+            },
+            completed: {
+                dark: 'You crawl down the tunnel as far as you can. You go a little farther than you should, get disoriented in the dark, and get stuck. You die of dehydration a couple days later.',
+                illuminated: 'You crawl down the tunnel sure that there won\'t be any aliens down here. You can\'t get that far though; the passage narrows too much for you to fit.'
+            },
             isDarkTrap: true,
             exits: {
                 N: {
@@ -531,6 +537,7 @@ export default {
             summary: 'in the airlock',
             description: 'The door opens and in a split second you realize you have made a grave error. You, and everything around you are sucked into the void of space. It is quick, but a cold and lonely death.',
             completed: 'You open the airlock like a n00b. SHLOOP! Out into space you go. Sorry you died.',
+            isAirlock: true,
             exits: {
                 N: null,
                 E: null,

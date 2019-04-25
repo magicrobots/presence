@@ -350,11 +350,17 @@ export default Service.extend({
             return true;
         }
 
+        if(this.currentRoom.isAirlock) {
+            return true;
+        }
+
         return false;
     },
 
     handleTrap() {
-        const trapDescription = this._getIsGameCompleted() ? this.currentRoom.completed : this.currentRoom.description;
+        const trapDescription = this._getIsGameCompleted() ?
+            this._processVariableText(this.currentRoom.completed) :
+            this._processVariableText(this.currentRoom.description);
         this.handleDeath();
 
         return [trapDescription];
@@ -689,6 +695,15 @@ export default Service.extend({
         }
 
         return false;
+    },
+
+    turnOffFlashlight() {
+        const currStatus = this.persistenceHandler.getFlashlightStatus();
+
+        this.persistenceHandler.setFlashlightStatus({
+            isOn: false,
+            batteryLevel: currStatus.batteryLevel
+        });
     },
 
     useItem(targetItemId) {
