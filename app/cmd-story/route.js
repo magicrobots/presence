@@ -463,7 +463,7 @@ export default Route.extend({
     },
 
     xp() {
-        this.inputProcessor.handleFunctionFromApp([`User XP: ${this.storyCore.Xp}`]);
+        this.inputProcessor.handleFunctionFromApp([`Your XP: ${this.storyCore.xp} / ${this.storyCore.maxXp}`]);
     },
 
     report() {
