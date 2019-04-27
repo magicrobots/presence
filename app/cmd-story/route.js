@@ -43,9 +43,9 @@ export default Route.extend({
         }
     }),
 
-    isNewStory: computed('storyCore.Xp', {
+    isNewStory: computed('storyCore.xp', {
         get() {
-            const xp = this.storyCore.Xp;
+            const xp = this.storyCore.xp;
             return xp === undefined || xp === 0 || xp === 1;
         }
     }),
@@ -478,7 +478,7 @@ export default Route.extend({
 
         // get max XP:
         const maxXp = this.storyCore.maxXp;
-        const currXp = this.storyCore.Xp;
+        const currXp = this.storyCore.xp;
 
         // deaths:
         const deathCount = this.persistenceHandler.getStoryDeaths();

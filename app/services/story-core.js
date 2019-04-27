@@ -192,7 +192,7 @@ export default Service.extend({
         }
     }),
 
-    Xp: computed('persistenceHandler.magicRobotsData.{story-visited-rooms,story-room-unlocked-directions,story-unlocked-items,story-completion-items}', {
+    xp: computed('persistenceHandler.magicRobotsData.{story-visited-rooms,story-room-unlocked-directions,story-unlocked-items,story-completion-items}', {
         get() {
             const visitedRoomXp = this.persistenceHandler.getStoryVisitedRooms().length * XP_PER_MOVE;
             const unlockedItemXp = this.persistenceHandler.getAllUnlockedItems().length * XP_PER_UNLOCK;
