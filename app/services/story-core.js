@@ -405,18 +405,14 @@ export default Service.extend({
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
 
-        // -------------- test adding this stuff
-
+        // store that you've been to room you died in
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
-
-        // -------------- test adding this stuff
 
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
         this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);
 
-        // -------------- test adding this stuff
-
+        // store that you've been to the respawn location
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
     },
 
