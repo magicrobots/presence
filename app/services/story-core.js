@@ -21,12 +21,6 @@ export default Service.extend({
     
     // ------------------- private methods -------------------
 
-    _increaseXP(amount) {
-        const oldXP = this.persistenceHandler.getStoryXP();
-        const newXP = oldXP + amount;
-        this.persistenceHandler.setStoryXP(newXP);
-    },
-
     _processVariableText(text) {
         // if text is an object
         if (isPresent(text.translated)) {
@@ -198,6 +192,37 @@ export default Service.extend({
         }
     }),
 
+    Xp: computed('persistenceHandler.magicRobotsData.{story-visited-rooms,story-room-unlocked-directions,story-unlocked-items,story-completion-items}', {
+        get() {
+            const visitedRoomXp = this.persistenceHandler.getStoryVisitedRooms().length * XP_PER_MOVE;
+            const unlockedItemXp = this.persistenceHandler.getAllUnlockedItems().length * XP_PER_UNLOCK;
+            const unlockedDirectionXp = this.persistenceHandler.getAllUnlockedExits().length * XP_PER_UNLOCK;
+            const completionItemXp = this.persistenceHandler.getStoryCompletionItemsCollected().length * XP_PER_COMPLETION_ITEM;
+
+            return visitedRoomXp + unlockedItemXp + completionItemXp + unlockedDirectionXp;
+        }
+    }),
+
+    maxXp: computed({
+        get() {
+            const exploreXp = rooms.rooms.length * XP_PER_MOVE;
+
+            // add active unlock xp. Init with fake unlock for robot's fake unlock.
+            let useXp = XP_PER_UNLOCK;
+            items.items.forEach((currItem) => {
+                if (isPresent(currItem.use)) {
+                    useXp += XP_PER_UNLOCK;
+                }
+            });
+
+            const completionItemXp = environmentValues.COMPLETION_ITEM_IDS.length * XP_PER_COMPLETION_ITEM; 
+
+            return exploreXp +
+                useXp + 
+                completionItemXp;
+        }
+    }),
+
     // ------------------- public methods -------------------
 
     hasFlashlight() {
@@ -207,7 +232,6 @@ export default Service.extend({
     reportStoryData() {
         const posX = this.persistenceHandler.getStoryPosX();
         const posY = this.persistenceHandler.getStoryPosY();
-        const xp = this.persistenceHandler.getStoryXP();
         const visited = this.persistenceHandler.getStoryVisitedRooms();
         const inventory = this.persistenceHandler.getStoryInventoryItems();
 
@@ -238,13 +262,12 @@ export default Service.extend({
 
         const unlockedItems = this.persistenceHandler.getAllUnlockedItems();
 
-        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);//eslint-disable-line no-console
+        console.log(`RoomID: ${this.currentRoom.id} (${posX}, ${posY}), XP: ${this.xp}, visited rooms: [${visited}], inventory: [${inventory}], room inventories: [${roomInventoriesReport}], unlocked exits: [${unlockedExitsString}], unlocked items: [${unlockedItems}]`);//eslint-disable-line no-console
     },
 
     formatStoryData() {
         // TODO: find a better way to store init values for everything
         // initialize defaults / start over
-        this.persistenceHandler.setStoryXP(0);
         this.persistenceHandler.setStoryDeaths(0);
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
@@ -335,12 +358,6 @@ export default Service.extend({
             return false;
         }
 
-        // reward user for exploring
-        const nextRoomIsNew = !this.persistenceHandler.getStoryVisitedRooms().includes(nextRoomInfo.nextRoom.id);
-        if (nextRoomIsNew) {
-            this._increaseXP(XP_PER_MOVE);
-        }
-
         // store that user has gone to the next room
         this.persistenceHandler[nextRoomInfo.positionFunctionNameSet](nextRoomInfo.newCoord);
     },
@@ -361,6 +378,7 @@ export default Service.extend({
         const trapDescription = this._getIsGameCompleted() ?
             this._processVariableText(this.currentRoom.completed) :
             this._processVariableText(this.currentRoom.description);
+
         this.handleDeath();
 
         return [trapDescription];
@@ -387,9 +405,19 @@ export default Service.extend({
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
         this._resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
 
+        // -------------- test adding this stuff
+
+        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
+
+        // -------------- test adding this stuff
+
         // respawn
         this.persistenceHandler.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
-        this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);        
+        this.persistenceHandler.setStoryPosY(environmentValues.RESPAWN_COORDS.y);
+
+        // -------------- test adding this stuff
+
+        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
     },
 
     handleRobotAttack() {
@@ -628,9 +656,6 @@ export default Service.extend({
             const unlockItemId = currDoc.use.unlocks.item;
             const isNewDoc = !this.persistenceHandler.getAllUnlockedItems().includes(unlockItemId);
             if (isNewDoc) {
-                // increase XP
-                this._increaseXP(XP_PER_UNLOCK);
-
                 // store unlock
                 this.persistenceHandler.unlockItem(unlockItemId);
 
@@ -747,11 +772,9 @@ export default Service.extend({
 
         if (isPresent(item.use)) {
 
-            // increase XP if they haven't done this before
+            // store unlocked status
             const isNewUnlock = !this.persistenceHandler.getIsUnlockedDirectionFromRoom(item.use.unlocks.room, item.use.unlocks.direction);
             if (isNewUnlock) {
-                this._increaseXP(XP_PER_UNLOCK);
-
                 // store unlock change
                 this.persistenceHandler.setIsUnlockedDirectionInRoom(item.use.unlocks.room, item.use.unlocks.direction);
 
@@ -774,30 +797,7 @@ export default Service.extend({
         return [`${item.name} is not a useable item.`];
     },
 
-    getMaxPossibleXp() {
-        // minus 1 here because initial room gives zero XP
-        const roomXp = (rooms.rooms.length - 1) * XP_PER_MOVE;
-        let useXp = 0;
-
-        // add active unlock xp
-        items.items.forEach((currItem) => {
-            if (isPresent(currItem.use)) {
-                useXp += XP_PER_UNLOCK;
-            }
-        });
-
-        // add completion item delivery xp
-        const completionItemXp = environmentValues.COMPLETION_ITEM_IDS.length * XP_PER_COMPLETION_ITEM;
-
-        return roomXp +
-            useXp +
-            completionItemXp;
-    },
-
     handleCompletionEvent(completionItemId) {
-        // increase XP
-        this._increaseXP(XP_PER_COMPLETION_ITEM);
-
         // remove item from user inventory
         this.persistenceHandler.removeStoryInventoryItem(completionItemId);
 
