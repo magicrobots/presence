@@ -207,7 +207,7 @@ export default {
             id: 10,
             x: 50,
             y: 45,
-            summary: 'on the helipad. You stick close to the door, the robot is fighting an endless number of awful looking creatures. It is looking tired. You do not want to be seen.',
+            summary: 'on the helipad. You stick close to the door, the robot is fighting an endless number of awful looking creatures. It is looking tired. You do not want to be seen',
             description: 'The cold wind rips through you as you step out onto a helipad. Mind crushing sounds you have never heard reverberate off the nearby building roof structures and unsettle your stance.',
             completed: 'On the helipad, the view is a bit of a disaster, but at least the only sound now is the quiet breeze and some chirping birds.',
             exits: {

@@ -11,7 +11,6 @@ const KEY_PROMPT_COLOR = 'prompt-color';
 // story level
 const KEY_STORY_POS_X = 'story-pos-x';
 const KEY_STORY_POS_Y = 'story-pos-y';
-const KEY_STORY_XP = 'story-xp';
 const KEY_STORY_VISITED_ROOMS = 'story-visited-rooms';
 const KEY_STORY_INVENTORY_ITEMS = 'story-inventory-items';
 const KEY_STORY_ROOM_INVENTORIES = 'story-room-inventories';
@@ -78,15 +77,6 @@ export default Service.extend({
 
     getStoryPosY() {
         return get(this._getStorageObject(), KEY_STORY_POS_Y);
-    },
-    
-    setStoryXP(newXP) {
-        set(this, `magicRobotsData.${KEY_STORY_XP}`, newXP);
-        this._setStorageObject();
-    },
-
-    getStoryXP() {
-        return get(this._getStorageObject(), KEY_STORY_XP);
     },
     
     setStoryDeaths(newDeaths) {

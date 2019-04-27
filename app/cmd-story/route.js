@@ -34,7 +34,7 @@ export default Route.extend({
 
     // ------------------- computed properties -------------------
 
-    welcomeMessage: computed('persistenceHandler.magicRobotsData.story-xp', {
+    welcomeMessage: computed('isNewStory', 'persistenceHandler.magicRobotsData.username', {
         get() {
             const username = this.persistenceHandler.getUsername();
             return this.isNewStory ?
@@ -43,10 +43,10 @@ export default Route.extend({
         }
     }),
 
-    isNewStory: computed('persistenceHandler.magicRobotsData.story-xp', {
+    isNewStory: computed('storyCore.xp', {
         get() {
-            const xp = this.persistenceHandler.getStoryXP();
-            return xp === undefined || xp === 0;
+            const xp = this.storyCore.xp;
+            return xp === undefined || xp === 0 || xp === 1;
         }
     }),
 
@@ -463,7 +463,7 @@ export default Route.extend({
     },
 
     xp() {
-        this.inputProcessor.handleFunctionFromApp([`User XP: ${this.persistenceHandler.getStoryXP()}`]);
+        this.inputProcessor.handleFunctionFromApp([`Your XP: ${this.storyCore.xp} / ${this.storyCore.maxXp}`]);
     },
 
     report() {
@@ -477,8 +477,8 @@ export default Route.extend({
         const flashlightStatus = this._showFlashlightStatus();
 
         // get max XP:
-        const maxXp = this.storyCore.getMaxPossibleXp();
-        const currXp = this.persistenceHandler.getStoryXP();
+        const maxXp = this.storyCore.maxXp;
+        const currXp = this.storyCore.xp;
 
         // deaths:
         const deathCount = this.persistenceHandler.getStoryDeaths();
@@ -518,7 +518,7 @@ export default Route.extend({
         }
 
         // result
-        const result = flashlightStatus.concat([`XP: ${currXp}`, '', 'Progress:', barProgress, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport));
+        const result = flashlightStatus.concat([`XP: ${currXp} / ${maxXp}`, '', 'Progress:', barProgress, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport));
         if (maxXp === currXp) {
             result.push('');
             result.push('You really get around.');
