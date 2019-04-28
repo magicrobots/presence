@@ -436,7 +436,10 @@ export default Route.extend({
         }
     },
 
-    where: aliasMethod('look'),
+    where() {
+        this.inputProcessor.handleFunctionFromApp(this.storyCore.whereAmI());
+    },
+
     look() {
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {

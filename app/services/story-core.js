@@ -181,6 +181,76 @@ export default Service.extend({
         }
     },
 
+    _resetItemLocationOnDeath(itemResetObject) {
+        if (!this.persistenceHandler.getStoryInventoryItems().includes(itemResetObject.itemId)) {
+            const currRoomLocationForItem = this._findRoomThatContainsItem(itemResetObject.itemId);
+            if (isNone(currRoomLocationForItem)) {
+                return;
+            }
+            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(itemResetObject.itemId), itemResetObject.itemId);
+            this.persistenceHandler.addItemToRoom(itemResetObject.roomId, itemResetObject.itemId);
+        }
+    },
+
+    _getFlashlightDyingMessage() {
+        switch(this.persistenceHandler.getFlashlightStatus().batteryLevel) {
+            case 3:
+                return 'The light coming from the flashlight appears to get dimmer. Might just be your imagination.';
+            case 2:
+                return 'The flashlight flickers off. You smash the back of it with your hand and it comes back on, but now it\'s much dimmer.';
+            case 1:
+                return 'The flashlight blinks on and off. You shake it. The dim beam steadies as the batteries rattle inside.';
+            case 0:
+                return 'With an almost silent click, the flashlight goes off. Nothing you do can turn it back on.';
+        }
+    },    
+
+    _getRoomDescriptionOnly() {
+        let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
+
+        // store room as visited
+        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
+
+        // add any present items to paragraph
+        roomDesc = roomDesc.concat(` ${this._getItemDescriptions()}`);
+
+        return roomDesc;
+    },
+
+    _handleAllItemsGiven() {
+        // remove robot from helipad
+        this.persistenceHandler.removeItemFromRoom(10, 10);
+
+        return 'The robot looks at you for a moment, then jumps up into the air and fires a bunch of lasers into a nearby building. It pauses for a moment, then flies at horrifying speed towards some distant alien nest to eviscerate it. You stare after it for a few minutes, and realize for the first time in a long time that you are surrounded by quiet. It\'s really nice. You decide to go get some donuts.';
+    },
+
+    _getItemDescriptions() {
+        const roomInventory = this.getRoomInventory();
+        
+        if (roomInventory.length > 0) {
+            if (roomInventory.length > MAX_THINGS_TO_LIST) {
+                // too many things to show descriptions
+
+                return 'There is a bunch of stuff.';
+            } else {
+                let itemDescriptions = '';
+                roomInventory.forEach((currItem, i, roomInventory) => {
+                    const item = items.getItemById(currItem);
+                    itemDescriptions = itemDescriptions.concat(item.description);
+
+                    // add space if it's not that last one
+                    if (i < roomInventory.length - 1) {
+                        itemDescriptions = itemDescriptions.concat(' ');
+                    }
+                });
+
+                return itemDescriptions;
+            }
+        }
+
+        return '';
+    },
+
     // ------------------- computed properties -------------------
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
@@ -384,17 +454,6 @@ export default Service.extend({
         return [trapDescription];
     },
 
-    _resetItemLocationOnDeath(itemResetObject) {
-        if (!this.persistenceHandler.getStoryInventoryItems().includes(itemResetObject.itemId)) {
-            const currRoomLocationForItem = this._findRoomThatContainsItem(itemResetObject.itemId);
-            if (isNone(currRoomLocationForItem)) {
-                return;
-            }
-            this.persistenceHandler.removeItemFromRoom(this._findRoomThatContainsItem(itemResetObject.itemId), itemResetObject.itemId);
-            this.persistenceHandler.addItemToRoom(itemResetObject.roomId, itemResetObject.itemId);
-        }
-    },
-
     handleDeath() {
         // increment deaths
         const currDeaths = this.persistenceHandler.getStoryDeaths();
@@ -422,17 +481,8 @@ export default Service.extend({
         return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
-    _getFlashlightDyingMessage() {
-        switch(this.persistenceHandler.getFlashlightStatus().batteryLevel) {
-            case 3:
-                return 'The light coming from the flashlight appears to get dimmer. Might just be your imagination.';
-            case 2:
-                return 'The flashlight flickers off. You smash the back of it with your hand and it comes back on, but now it\'s much dimmer.';
-            case 1:
-                return 'The flashlight blinks on and off. You shake it. The dim beam steadies as the batteries rattle inside.';
-            case 0:
-                return 'With an almost silent click, the flashlight goes off. Nothing you do can turn it back on.';
-        }
+    whereAmI() {
+        return [`You are ${this._processVariableText(this.currentRoom.summary)}.`];
     },
 
     getCurrentRoomDescription() {
@@ -554,18 +604,6 @@ export default Service.extend({
         }
 
         return false;
-    },
-
-    _getRoomDescriptionOnly() {
-        let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
-
-        // store room as visited
-        this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
-
-        // add any present items to paragraph
-        roomDesc = roomDesc.concat(` ${this._getItemDescriptions()}`);
-
-        return roomDesc;
     },
 
     getFullRoomDescription() {
@@ -836,41 +874,5 @@ export default Service.extend({
         }
 
         return returnLines;
-    },
-
-    // ------------------- private methods -------------------
-
-    _handleAllItemsGiven() {
-        // remove robot from helipad
-        this.persistenceHandler.removeItemFromRoom(10, 10);
-
-        return 'The robot looks at you for a moment, then jumps up into the air and fires a bunch of lasers into a nearby building. It pauses for a moment, then flies at horrifying speed towards some distant alien nest to eviscerate it. You stare after it for a few minutes, and realize for the first time in a long time that you are surrounded by quiet. It\'s really nice. You decide to go get some donuts.';
-    },
-
-    _getItemDescriptions() {
-        const roomInventory = this.getRoomInventory();
-        
-        if (roomInventory.length > 0) {
-            if (roomInventory.length > MAX_THINGS_TO_LIST) {
-                // too many things to show descriptions
-
-                return 'There is a bunch of stuff.';
-            } else {
-                let itemDescriptions = '';
-                roomInventory.forEach((currItem, i, roomInventory) => {
-                    const item = items.getItemById(currItem);
-                    itemDescriptions = itemDescriptions.concat(item.description);
-
-                    // add space if it's not that last one
-                    if (i < roomInventory.length - 1) {
-                        itemDescriptions = itemDescriptions.concat(' ');
-                    }
-                });
-
-                return itemDescriptions;
-            }
-        }
-
-        return '';
     }
 });
