@@ -34,10 +34,11 @@ export default {
         },
         {
             id: 2,
-            type: environmentValues.ITEM_TYPE_THING,
+            type: environmentValues.ITEM_TYPE_FOOD,
             name: 'sandwich',
             description: 'There\'s a sandwich on a paper plate on the ground.',
             details: 'It\'s half eaten. There is some unidentifiable meat, or meat substitute along with some wilted undescernible vegetables. The paper plate it sits on is transparent with grease.',
+            onEat: 'You eat the sandwich. You aren\'t sure if that was a good idea or not.',
             use: null,
             isKey: null,
             weight: 4
@@ -200,7 +201,7 @@ export default {
         {
             id: 16,
             type: environmentValues.ITEM_TYPE_THING,
-            name: 'liquid',
+            name: 'vial',
             description: 'A vial of purple fizzy liquid sits on a table.',
             details: 'Looks like grape soda, but sparkles - just holding the container makes your fingers tingle like the feeling of pop rocks.',
             use: null,

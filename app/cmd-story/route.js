@@ -352,6 +352,28 @@ export default Route.extend({
         }
     },
 
+    eat() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const itemType = this.storyCore.getItemTypeById(targetItemId);
+
+        // eat it
+        if (localInventories.includes(targetItemId) &&
+            itemType === environmentValues.ITEM_TYPE_FOOD) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.eatObject(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                this.inputProcessor.handleFunctionFromApp([`If you had a ${targetItemName}, you'd eat it. But you don't have a ${targetItemName}.`]);
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to eat?`]);
+            }
+        }
+    },
+
     give() {
         const args = this.inputProcessor.currentArgs;
         const targetItemName = args[0];
@@ -595,7 +617,8 @@ export default Route.extend({
             'clear',
             'quit',
             'help',
-            'turn'
+            'turn',
+            'eat'
         ]
 
         // check for item completion

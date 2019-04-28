@@ -42,7 +42,6 @@ export default Service.extend({
     },
 
     _getUserCanSeeInTheDark() {
-
         // make sure user has flashlight, it's working, and it's on.
 
         return this.hasFlashlight() &&
@@ -702,6 +701,15 @@ export default Service.extend({
         }
 
         return [`You can't read ${currDoc.name}`];
+    },
+
+    eatObject(targetItemId) {
+        const currFood = items.getItemById(targetItemId);
+
+        // delete object from world
+        this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, targetItemId);
+
+        return [currFood.onEat];
     },
 
     getItemIsLocked(item) {

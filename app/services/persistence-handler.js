@@ -125,6 +125,13 @@ export default Service.extend({
         this.setStoryInventoryItems(currItems);
     },
 
+    removeItemFromWorld(roomId, itemId) {
+        // remove from inventory
+        this.removeStoryInventoryItem(itemId);
+        // remove from room
+        this.removeItemFromRoom(roomId, itemId);
+    },
+
     removeStoryInventoryItem(dropItem) {
         let currItems = this.getStoryInventoryItems();
         if (isPresent(currItems)) {
