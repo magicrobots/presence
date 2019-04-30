@@ -367,7 +367,15 @@ export default Route.extend({
             this.inputProcessor.handleFunctionFromApp(this.storyCore.eatObject(targetItemId));
         } else {
             if(isPresent(targetItemName)) {
-                this.inputProcessor.handleFunctionFromApp([`If you had a ${targetItemName}, you'd eat it. But you don't have a ${targetItemName}.`]);
+                // if it's the cake
+                if (localInventories.includes(targetItemId) &&
+                    targetItemId === 11) {
+                    this.inputProcessor.handleFunctionFromApp(['You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.']);
+                } else if (localInventories.includes(targetItemId)) {
+                    this.inputProcessor.handleFunctionFromApp([`You can't eat a ${targetItemName}. That would be crazy.`]);
+                } else {
+                    this.inputProcessor.handleFunctionFromApp([`If you had a ${targetItemName}, you'd eat it. But you don't have a ${targetItemName}.`]);
+                }
             } else {
                 this.inputProcessor.handleFunctionFromApp([`What do you want to eat?`]);
             }
