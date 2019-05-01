@@ -19,6 +19,7 @@ const KEY_STORY_UNLOCKED_ITEMS = 'story-unlocked-items';
 const KEY_STORY_DEATH_COUNTER = 'story-death-counter';
 const KEY_STORY_COMPLETION_ITEMS = 'story-completion-items';
 const KEY_FLASHLIGHT_STATUS = 'story-flashlight-status';
+const KEY_CAKE_STATUS = 'story-cake-status';
 
 export default Service.extend({
     init() {
@@ -284,5 +285,14 @@ export default Service.extend({
 
     getFlashlightStatus() {
         return get(this._getStorageObject(), KEY_FLASHLIGHT_STATUS);
+    },
+
+    setCakeEaten(newCakeStatus) {
+        set(this, `magicRobotsData.${KEY_CAKE_STATUS}`, newCakeStatus);
+        this._setStorageObject();
+    },
+
+    getCakeEaten() {
+        return get(this._getStorageObject(), KEY_CAKE_STATUS);
     }
 });

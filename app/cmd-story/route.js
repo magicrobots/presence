@@ -370,7 +370,13 @@ export default Route.extend({
                 // if it's the cake
                 if (localInventories.includes(targetItemId) &&
                     targetItemId === 11) {
-                    this.inputProcessor.handleFunctionFromApp(['You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.']);
+                    
+                    // if you're in space you can eat the cake
+                    if (this.storyCore.getIsRoomInSpace()) {
+                        this.inputProcessor.handleFunctionFromApp(this.storyCore.eatCake());
+                    } else {
+                        this.inputProcessor.handleFunctionFromApp(['You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.']);
+                    }
                 } else if (localInventories.includes(targetItemId)) {
                     this.inputProcessor.handleFunctionFromApp([`You can't eat a ${targetItemName}. That would be crazy.`]);
                 } else {
@@ -557,10 +563,19 @@ export default Route.extend({
             result.push('You really get around.');
             result.push(' [x] explorer');
         }
+
+        // cake
+        if (this.persistenceHandler.getCakeEaten()) {
+            result.push('');
+            result.push('You ate the cake.');
+            result.push(' [x] happiness');
+        }
+
+        // share response
         this.inputProcessor.handleFunctionFromApp(result);
     },
 
-    formatstorydata() {
+    format() {
         // resets story
         this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage, ''].concat(this.storyCore.getCurrentRoomDescription()));
@@ -589,6 +604,7 @@ export default Route.extend({
             '  inventory . Lists items you possess.',
             '  examine ... Describes items in detail.',
             '  progress .. Displays progress through story.',
+            '  format .... Resets your game if you want to start again. Careful!',
             '',
             'Have fun!']);
     },
