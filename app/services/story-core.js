@@ -42,7 +42,6 @@ export default Service.extend({
     },
 
     _getUserCanSeeInTheDark() {
-
         // make sure user has flashlight, it's working, and it's on.
 
         return this.hasFlashlight() &&
@@ -343,6 +342,7 @@ export default Service.extend({
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
         this.persistenceHandler.setStoryInventoryItems([3]);
+        this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
             {roomId: 1, inventory: [1]},
             {roomId: 2, inventory: [2, 5]},
@@ -702,6 +702,26 @@ export default Service.extend({
         }
 
         return [`You can't read ${currDoc.name}`];
+    },
+
+    eatObject(targetItemId) {
+        const currFood = items.getItemById(targetItemId);
+
+        // delete object from world
+        this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, targetItemId);
+
+        return [currFood.onEat];
+    },
+
+    eatCake() {
+
+        // delete cake from world
+        this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, 11);
+
+        // store cake eaten achievement for status display
+        this.persistenceHandler.setCakeEaten(true);
+
+        return ['You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.', '', 'It is beautiful. You have a litte frosting on your thumb. It ssmells of fresh melted butter and rich milk chocolate. You close your eyes and take a bite. This cake is not a lie. It is delicious and perfect and you decide that it is probable that every decision you have ever made, every path you\'ve taken has been purposeful, to lead you to this very moment. God damn this is some good cake.' ];
     },
 
     getItemIsLocked(item) {

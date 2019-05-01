@@ -352,6 +352,42 @@ export default Route.extend({
         }
     },
 
+    eat() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const itemType = this.storyCore.getItemTypeById(targetItemId);
+
+        // eat it
+        if (localInventories.includes(targetItemId) &&
+            itemType === environmentValues.ITEM_TYPE_FOOD) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.eatObject(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                // if it's the cake
+                if (localInventories.includes(targetItemId) &&
+                    targetItemId === 11) {
+                    
+                    // if you're in space you can eat the cake
+                    if (this.storyCore.getIsRoomInSpace()) {
+                        this.inputProcessor.handleFunctionFromApp(this.storyCore.eatCake());
+                    } else {
+                        this.inputProcessor.handleFunctionFromApp(['You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.']);
+                    }
+                } else if (localInventories.includes(targetItemId)) {
+                    this.inputProcessor.handleFunctionFromApp([`You can't eat a ${targetItemName}. That would be crazy.`]);
+                } else {
+                    this.inputProcessor.handleFunctionFromApp([`If you had a ${targetItemName}, you'd eat it. But you don't have a ${targetItemName}.`]);
+                }
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to eat?`]);
+            }
+        }
+    },
+
     give() {
         const args = this.inputProcessor.currentArgs;
         const targetItemName = args[0];
@@ -527,10 +563,19 @@ export default Route.extend({
             result.push('You really get around.');
             result.push(' [x] explorer');
         }
+
+        // cake
+        if (this.persistenceHandler.getCakeEaten()) {
+            result.push('');
+            result.push('You ate the cake.');
+            result.push(' [x] happiness');
+        }
+
+        // share response
         this.inputProcessor.handleFunctionFromApp(result);
     },
 
-    formatstorydata() {
+    format() {
         // resets story
         this.storyCore.formatStoryData();
         this.inputProcessor.handleFunctionFromApp([this.welcomeMessage, ''].concat(this.storyCore.getCurrentRoomDescription()));
@@ -559,6 +604,7 @@ export default Route.extend({
             '  inventory . Lists items you possess.',
             '  examine ... Describes items in detail.',
             '  progress .. Displays progress through story.',
+            '  format .... Resets your game if you want to start again. Careful!',
             '',
             'Have fun!']);
     },
@@ -595,7 +641,8 @@ export default Route.extend({
             'clear',
             'quit',
             'help',
-            'turn'
+            'turn',
+            'eat'
         ]
 
         // check for item completion
