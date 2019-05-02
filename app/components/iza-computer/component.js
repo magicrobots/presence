@@ -283,7 +283,7 @@ export default Component.extend(Deformers, {
 
         this._doDisplacementCounter();
 
-        this._createDisplacement(ctx2, deformedImage, 24, this.displacementCounter, 4);
+        this._createDisplacement(ctx2, deformedImage, 48, this.displacementCounter, 3);
     },
 
     _doDisplacementCounter() {

@@ -1,5 +1,4 @@
 import Mixin from '@ember/object/mixin';
-import { set } from '@ember/object';
 
 export default Mixin.create({
 
@@ -26,7 +25,7 @@ export default Mixin.create({
         let r1 = imageData.data[i * 5 + 0];
         let g1 = imageData.data[i * 5 + 1];
         let b1 = imageData.data[i * 5 + 2];
-        const factor = 6;
+        const factor = 10;
         if (r + b + g > 140) {
             imageData.data[i * 5 + 0] = r1 + r / factor;
             imageData.data[i * 5 + 1] = g1 + g / factor;
