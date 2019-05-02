@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import { set, computed, observer } from '@ember/object';
 import { htmlSafe } from '@ember/string';
-import { isPresent } from '@ember/utils';
+import { isPresent, isNone } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import Deformers from '../../mixins/deformers';
@@ -270,19 +270,43 @@ export default Component.extend(Deformers, {
         let deformedImage = this.originalScreenBitmap;
 
         // chain pixel modifications
-        deformedImage = this.pixelize(deformedImage);
-        deformedImage = this.glowEdges(deformedImage);
-        deformedImage = this.pixelize(deformedImage);
-        deformedImage = this.glowEdges(deformedImage);
+        deformedImage = this.everything(deformedImage);        
 
         // make new image for display using contents of deformed image data
         let newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
-        for(let i = 0; i < newImageData.data.length; i += 1) {
+        for (let i = 0; i < newImageData.data.length; i++) {
             newImageData.data[i] = deformedImage.data[i];
         }
 
         // draw deformed image
         ctx2.putImageData(newImageData, 0, 0);
+
+        this._doDisplacementCounter();
+
+        this._createDisplacement(ctx2, deformedImage, 24, this.displacementCounter, 4);
+    },
+
+    _doDisplacementCounter() {
+
+        if (isNone(this.displacementCounter)) {
+            set(this, 'displacementCounter', 0);
+        }
+        if (this.displacementCounter > this.canvasHeight * 2) {
+            set(this, 'displacementCounter', 0);
+        }
+        set(this, 'displacementCounter', this.displacementCounter + 2);
+    },
+
+    _createDisplacement(ctx2, deformedImage, dHeight, offset, displacement) {
+
+        let newImageData1 = ctx2.createImageData(this.canvasWidth, dHeight);
+        
+        for (let i = 0; i < newImageData1.data.length; i++) {
+            const deformedPixel = i + (offset * this.canvasWidth * 4);
+            newImageData1.data[i] = deformedImage.data[deformedPixel];
+        }
+
+        ctx2.putImageData(newImageData1, displacement, offset);
     },
 
     _fitDisplayLinesInContainerWidth() {
