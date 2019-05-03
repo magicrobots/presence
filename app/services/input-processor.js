@@ -35,10 +35,12 @@ export default keyFunctions.extend({
     _doAnalytics() {
         if (typeof window.ga !== 'function') { return; }
         const username = this.persistenceHandler.getUsername();
+        const context = this.activeApp || 'root';
+        const param2 = `user: ${username} | app: ${context}`;
 
         window.ga('send',
             'event',
-            `${username} | ${this.PROMPT_LINE_2}`,
+            param2,
             this.currentCommand || 'n/a'
         );
     },
@@ -85,10 +87,11 @@ export default keyFunctions.extend({
             commandName = args.shift();
         }
 
-        this._doAnalytics();
-
+        // don't do anything if the user is rude
         if (this._commandHasSwears(enteredWords)) {
             this._handleFilthyInput();
+            this._doAnalytics();
+
             return;
         }
 
@@ -117,6 +120,8 @@ export default keyFunctions.extend({
                 this._handleInvalidInput(commandName);
             }
         }
+
+        this._doAnalytics();
     },
 
     _commandHasSwears(enteredWords) {
