@@ -270,7 +270,7 @@ export default Component.extend(Deformers, {
         let deformedImage = this.originalScreenBitmap;
 
         // chain pixel modifications
-        deformedImage = this.everything(deformedImage);        
+        deformedImage = this.everything(deformedImage);
 
         // make new image for display using contents of deformed image data
         let newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
@@ -282,7 +282,9 @@ export default Component.extend(Deformers, {
         ctx2.putImageData(newImageData, 0, 0);
 
         this._doDisplacementCounter();
-        this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, 3);
+        const maxDisplacement = this.canvasWidth / 3;
+        const largeDisplacement = Math.ceil(Math.random() * maxDisplacement) - (maxDisplacement / 2);
+        this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, largeDisplacement);
         this._createDisplacement(ctx2, deformedImage, 2, this.displacementCounter, 1);
     },
 

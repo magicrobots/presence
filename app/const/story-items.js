@@ -41,7 +41,7 @@ export default {
             onEat: 'You eat the sandwich. You aren\'t sure if that was a good idea or not.',
             use: null,
             isKey: null,
-            weight: 4
+            weight: 2
         },
         {
             id: 3,
@@ -170,7 +170,7 @@ export default {
             id: 13,
             type: environmentValues.ITEM_TYPE_THING,
             name: 'disk',
-            description: 'A 3.5" High Density floppy disk sits on a shelf. Its label reads: "?"',
+            description: 'A 3.5" High Density floppy disk sits on a shelf. Its label reads: "COORDS"',
             details: 'It\'s just a normal floppy disk, with average physical wear. It\'s unlocked, and scrawled across the lines of the label in hurried sharpie is a big black question mark. High Density 1.44 MB',
             use: null,
             isKey: null,
