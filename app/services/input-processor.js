@@ -99,6 +99,15 @@ export default keyFunctions.extend({
         if (isPresent(this.overrideScope)) {
             // if command is at app scope, find it
             if (isPresent(this.overrideScope[commandName])) {
+
+                // handle enter bug
+                if (commandName === 'enter' ||
+                    commandName === 'exit') {
+
+                    this._handleInvalidInput(commandName.toUpperCase());
+                    return;
+                }
+
                 this.overrideScope[commandName]();
             } else {
 
