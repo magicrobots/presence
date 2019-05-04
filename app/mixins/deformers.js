@@ -12,7 +12,7 @@ export default Mixin.create({
         for (let i = 0; i < l; i++) {
             this._shiftPixel(i, imageData);
             this._pixelizeBit(i, imageData);
-            this._glowEdgesBit(i, imageData);
+            // this._glowEdgesBit(i, imageData);
         }
 
         return imageData;

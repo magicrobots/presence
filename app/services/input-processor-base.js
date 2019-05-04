@@ -12,6 +12,7 @@ export default Service.extend({
     INACTIVE_SCROLLED_COLOR: '#555555',
     DEFAULT_SCROLLED_COLOR: '#878787',
     DEFAULT_FEEDBACK_COLOR: '#FFFFFF',
+    CURSOR_BLINK_LENGTH: 300,
 
     currentCommand: '',
     currentArgs: undefined,

@@ -282,8 +282,8 @@ export default Component.extend(Deformers, {
         ctx2.putImageData(newImageData, 0, 0);
 
         this._doDisplacementCounter();
-
-        this._createDisplacement(ctx2, deformedImage, 48, this.displacementCounter, 3);
+        this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, 3);
+        this._createDisplacement(ctx2, deformedImage, 2, this.displacementCounter, 1);
     },
 
     _doDisplacementCounter() {
@@ -291,7 +291,7 @@ export default Component.extend(Deformers, {
         if (isNone(this.displacementCounter)) {
             set(this, 'displacementCounter', 0);
         }
-        if (this.displacementCounter > this.canvasHeight * 2) {
+        if (this.displacementCounter > this.canvasHeight) {
             set(this, 'displacementCounter', 0);
         }
         set(this, 'displacementCounter', this.displacementCounter + 2);

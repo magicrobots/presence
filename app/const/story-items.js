@@ -90,7 +90,7 @@ export default {
             use: {
                 unlocks: {room: environmentValues.ROOM_NULL(), direction: environmentValues.DIRECTION_NULL()},
                 response: {
-                    first: 'You insert the dollar bill into the tray and the mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration and you clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
+                    first: 'You insert the dollar bill into the tray and the mechanism pulls it in powerfully with an electronic whine. It ejects the bill immediately. You try again. Nope. Third time? Sorry. Your excited anticipation of a tasty treat is converted into frustration. You ball up your fist and clonk the machine on its side. You are rewarded with nothing more than a hollow clang and a sore hand.',
                     subsequent: 'You feed the bill into the tray again. Zeep zoop. Nothing. You are annoyed.'
                 }
             },
