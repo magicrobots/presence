@@ -61,6 +61,7 @@ export default keyFunctions.extend({
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
         if (commandWithNoWhitespace !== '') {
+            this.currCommandIndex = -1;
             this.commandHistory.unshift(this.currentCommand);
         }
         
