@@ -352,6 +352,41 @@ export default Route.extend({
         }
     },
 
+    feed() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1].toLowerCase() : args[0].toLowerCase();
+        const currentRoomId = this.storyCore.getCurrentRoomId();
+        
+        // do activity based on location
+        if (currentRoomId === 2) {
+            // if you're by the pond you can feed the ducks.
+            if (targetItemName === 'ducks' || targetItemName === 'geese' || targetItemName === 'fish') {
+                this.inputProcessor.handleFunctionFromApp(this.storyCore.feedDucks());
+                return;
+            }
+        }
+
+        if (currentRoomId === 10) {
+            // if you're on the helipad you can feed the robot
+            if (targetItemName === 'robot') {
+                this.inputProcessor.handleFunctionFromApp(this.storyCore.feedRobot());
+                return;
+            }
+        }
+
+        if (currentRoomId === 13 || currentRoomId === 27) {
+            // if you're in the caves you can feed the aliens
+            if (targetItemName === 'alien' || targetItemName === 'aliens') {
+                this.inputProcessor.handleFunctionFromApp(this.storyCore.feedAliens());
+                return;
+            }
+        }
+
+        this.inputProcessor.handleFunctionFromApp([`That's very nice of you but you can't feed the ${targetItemName}.`]);
+    },
+
     eat() {
         const args = this.inputProcessor.currentArgs;
 

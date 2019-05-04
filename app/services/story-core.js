@@ -683,6 +683,46 @@ export default Service.extend({
         return isPresent(item) ? item.type : null;
     },
 
+    feedDucks() {
+        // if you've got the sandwich
+        if (this.persistenceHandler.getStoryInventoryItems().includes(2)) {
+            // delete sandwich from story
+            this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, 2);
+
+            return ['You take bits of the sandwich and toss them in the water. Some little fishies come and nibble at them, and dart away when the ducks and geese paddle over and scoop them from the pond surface. It\'s soothing.',
+                '',
+                'The sandwich grows smaller and smaller and eventually is gone completely as you pluck pieces away for your new feathered friends.' ];
+        } else {
+            return ['If only you had some bread.'];
+        }
+    },
+
+    feedRobot() {
+        // if you've got the wrench
+        if (this.persistenceHandler.getStoryInventoryItems().includes(9)) {
+            // delete wrench from story
+            this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, 9);
+
+            return ['The wrench is really heavy so you need both hands to hold it out and waggle it like a giant metal cheeto. "Hungry? Want a yummy wrench?" you say, feeling kind of idiotic.',
+                '',
+                'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side, a long spider leg looking grasping appendage unfolds from within, and it lifts the wrench from your grasp like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
+                '',
+                'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which I kid you not, is a smilie face emoji.' ];
+        } else {
+            return ['What do you think a giant robot would like as a snack?'];
+        }
+    },
+
+    feedAliens() {
+        this.handleDeath();
+
+        return ['You make kissy noises trying to attract whatever you can\'t see as if it were a cute puppy.',
+            '',
+            '"Hey out there! Want a snack?" - you pat your pockets looking for a candy bar or something. You hear something shuffling in the dark. You reach out and turn off the light wondering if it\'s scared.',
+            '',
+            'The moment you click the light off, you hear a hiss and scrambling claws and before you can click the light back on or defend yourself you are eaten by an alien. You have succesfully fed the aliens.' ];
+    },
+
     readDocument(targetItemId) {
         const currDoc = items.getItemById(targetItemId);
 

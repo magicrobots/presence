@@ -19,23 +19,23 @@ export default Mixin.create({
     },
 
     _shiftPixel(i, imageData) {
+        const positionFactor = 5;
         let r = imageData.data[i * 4 + 0];
         let g = imageData.data[i * 4 + 1];
         let b = imageData.data[i * 4 + 2];
-        let r1 = imageData.data[i * 5 + 0];
-        let g1 = imageData.data[i * 5 + 1];
-        let b1 = imageData.data[i * 5 + 2];
-        const factor = 10;
+        let r1 = imageData.data[i * positionFactor + 0];
+        let g1 = imageData.data[i * positionFactor + 1];
+        let b1 = imageData.data[i * positionFactor + 2];
+        const factor = 7;
         if (r + b + g > 140) {
-            imageData.data[i * 5 + 0] = r1 + r / factor;
-            imageData.data[i * 5 + 1] = g1 + g / factor;
-            imageData.data[i * 5 + 2] = b1 + b / factor;
+            imageData.data[i * positionFactor + 0] = r1 + r / factor;
+            imageData.data[i * positionFactor + 1] = g1 + g / factor;
+            imageData.data[i * positionFactor + 2] = b1 + b / factor;
         } else {
-            imageData.data[i * 5 + 0] = r1 - r / factor;
-            imageData.data[i * 5 + 1] = g1 - g / factor;
-            imageData.data[i * 5 + 2] = b1 - b / factor;
+            imageData.data[i * positionFactor + 0] = r1 - r / factor;
+            imageData.data[i * positionFactor + 1] = g1 - g / factor;
+            imageData.data[i * positionFactor + 2] = b1 - b / factor;
         }
-
     },
 
     _pixelizeBit(i, imageData) {
