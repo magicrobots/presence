@@ -148,6 +148,11 @@ export default Route.extend({
         // see if user entered a direction
         const chosenDirection = this._parseDirectionFromEntries(this.inputProcessor.currentArgs);
 
+        if (isEmpty(chosenDirection)) {
+            this.inputProcessor.handleFunctionFromApp(['Please enter a valid direction to go in.']);
+            return;
+        }
+
         // if it's a valid direction, update position
         if (this.storyCore.isValidDirection(chosenDirection)) {
             const nextRoomInfo = this.storyCore.getNextRoomInfo(chosenDirection);
