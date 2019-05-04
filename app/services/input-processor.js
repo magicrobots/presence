@@ -24,7 +24,7 @@ export default keyFunctions.extend({
             } else {
                 set(scope, 'isPromptCursorVisible', false);
             }
-        }, 500));
+        }, this.CURSOR_BLINK_LENGTH));
     },
 
     _getIsKeyboardActive() {
