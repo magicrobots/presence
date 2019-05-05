@@ -428,6 +428,36 @@ export default Route.extend({
         }
     },
 
+    drink() {
+        const args = this.inputProcessor.currentArgs;
+
+        // remove 'the' if it's in there
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+        const localInventories = this._getLocalAndPersonalInventories();
+        const targetItemId = this.storyCore.getItemIdByName(targetItemName);
+        const itemType = this.storyCore.getItemTypeById(targetItemId);
+
+        // drink it
+        if (localInventories.includes(targetItemId) &&
+            itemType === environmentValues.ITEM_TYPE_DRINK) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.drinkObject(targetItemId));
+        } else {
+            if(isPresent(targetItemName)) {
+                // if it's the poison
+                if (localInventories.includes(targetItemId) &&
+                    targetItemId === 16) {
+                    this.inputProcessor.handleFunctionFromApp(this.storyCore.drinkPoison(targetItemId));
+                } else if (localInventories.includes(targetItemId)) {
+                    this.inputProcessor.handleFunctionFromApp([`You can't drink ${targetItemName}. That's preposterous.`]);
+                } else {
+                    this.inputProcessor.handleFunctionFromApp([`If you had some ${targetItemName}, you'd drink it. But you don't have any ${targetItemName}.`]);
+                }
+            } else {
+                this.inputProcessor.handleFunctionFromApp([`What do you want to drink?`]);
+            }
+        }
+    },
+
     give() {
         const args = this.inputProcessor.currentArgs;
         const targetItemName = args[0];
@@ -682,7 +712,8 @@ export default Route.extend({
             'quit',
             'help',
             'turn',
-            'eat'
+            'eat',
+            'drink'
         ]
 
         // check for item completion
