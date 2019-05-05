@@ -344,14 +344,14 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
-            {roomId: 1, inventory: [1]},
+            {roomId: 1, inventory: [1, 23]},
             {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
             {roomId: 5, inventory: [7, 8]},
             {roomId: 6, inventory: [20]},
             {roomId: 7, inventory: []},
-            {roomId: 8, inventory: []},
+            {roomId: 8, inventory: [21]},
             {roomId: 9, inventory: [9]},
             {roomId: 10, inventory: [10]},
             {roomId: 11, inventory: []},
@@ -362,7 +362,7 @@ export default Service.extend({
             {roomId: 16, inventory: [13, 15]},
             {roomId: 17, inventory: []},
             {roomId: 18, inventory: []},
-            {roomId: 19, inventory: [14]},
+            {roomId: 19, inventory: [14, 22]},
             {roomId: 20, inventory: []},
             {roomId: 21, inventory: [16]},
             {roomId: 22, inventory: []},
@@ -684,14 +684,21 @@ export default Service.extend({
     },
 
     feedDucks() {
-        // if you've got the sandwich
-        if (this.persistenceHandler.getStoryInventoryItems().includes(2)) {
-            // delete sandwich from story
-            this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, 2);
+        // if you've got the sandwich or pretzel
+        const hasPretzel = this.persistenceHandler.getStoryInventoryItems().includes(22);
+        const hasSandwich = this.persistenceHandler.getStoryInventoryItems().includes(2);
+        const hasBread = hasPretzel || hasSandwich;
+            
+        if (hasBread) {
+            const activeBreadId = hasSandwich ? 2 : 22;
+            const activeBreadName = items.getItemById(activeBreadId).name;
 
-            return ['You take bits of the sandwich and toss them in the water. Some little fishies come and nibble at them, and dart away when the ducks and geese paddle over and scoop them from the pond surface. It\'s soothing.',
+            // delete food from story
+            this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, activeBreadId);
+
+            return [`You take bits of the ${activeBreadName} and toss them in the water. Some little fishies come and nibble at them, and dart away when the ducks and geese paddle over and scoop them from the pond surface. It's soothing.`,
                 '',
-                'The sandwich grows smaller and smaller and eventually is gone completely as you pluck pieces away for your new feathered friends.' ];
+                `The ${activeBreadName} grows smaller and smaller and eventually is gone completely as you pluck pieces away for your new feathered friends.` ];
         } else {
             return ['If only you had some bread.'];
         }
