@@ -57,6 +57,7 @@ export default {
     ITEM_TYPE_THING: 'thing',
     ITEM_TYPE_DOC: 'document',
     ITEM_TYPE_FOOD: 'food',
+    ITEM_TYPE_DRINK: 'drink',
 
     RESPAWN_COORDS: {x:45, y:48},
     COMPLETION_ITEM_IDS: [13, 18, 19],

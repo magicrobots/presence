@@ -204,6 +204,7 @@ export default {
             name: 'vial',
             description: 'A vial of purple fizzy liquid sits on a table.',
             details: 'Looks like grape soda, but sparkles - just holding the container makes your fingers tingle like the feeling of pop rocks.',
+            onDrink: 'You pop the top off of the vial of fluid, and it goes flying like a champagne cork. It smells like joy. It is fizzing like fireworks, its surface dancing in the tiny container. You can\'t help but toss your head back and pour the whole thing down your throat. YUM! It is delicious. Except your insides immediately explode and you crumple to the floor in a heap.',
             use: null,
             isKey: null,
             weight: 1
@@ -237,6 +238,17 @@ export default {
             use: null,
             isKey: null,
             weight: 7
+        },
+        {
+            id: 20,
+            type: environmentValues.ITEM_TYPE_DRINK,
+            name: 'water',
+            description: 'A bottle of water stands upright on a table.',
+            details: 'Upon close inspection it looks like your every day normal plastic bottle of water. Clear, full, tamper proof seal intact.',
+            onDrink: 'You unscrew the cap and it clicks as it releases the plastic ring attached to the bottle. You take some glugs. It\'s fresh and clean and delicious. You slam the whole thing before you know it, you didn\'t realize how thirsty you were.',
+            use: null,
+            isKey: null,
+            weight: 2
         }
     ]
 }

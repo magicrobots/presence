@@ -349,7 +349,7 @@ export default Service.extend({
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
             {roomId: 5, inventory: [7, 8]},
-            {roomId: 6, inventory: []},
+            {roomId: 6, inventory: [20]},
             {roomId: 7, inventory: []},
             {roomId: 8, inventory: []},
             {roomId: 9, inventory: [9]},
@@ -705,7 +705,7 @@ export default Service.extend({
 
             return ['The wrench is really heavy so you need both hands to hold it out and waggle it like a giant metal cheeto. "Hungry? Want a yummy wrench?" you say, feeling kind of idiotic.',
                 '',
-                'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side, a long spider leg looking grasping appendage unfolds from within, and it lifts the wrench from your grasp like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
+                'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side and a long spider looking grasping appendage unfolds from within, and it lifts the wrench from your hands like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
                 '',
                 'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which I kid you not, is a smilie face emoji.' ];
         } else {
@@ -751,6 +751,28 @@ export default Service.extend({
         this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, targetItemId);
 
         return [currFood.onEat];
+    },
+
+    drinkObject(targetItemId) {
+        const currDrink = items.getItemById(targetItemId);
+
+        // delete object from world
+        this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, targetItemId);
+
+        return [currDrink.onDrink];
+    },
+
+    drinkPoison(targetItemId) {
+        const currDrink = items.getItemById(targetItemId);
+
+        // delete object from world
+        this.persistenceHandler.removeItemFromWorld(this.currentRoom.id, targetItemId);
+
+        // die
+        this.handleDeath();
+
+        // report
+        return [currDrink.onDrink];
     },
 
     eatCake() {
