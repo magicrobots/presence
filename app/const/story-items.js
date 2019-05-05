@@ -249,6 +249,39 @@ export default {
             use: null,
             isKey: null,
             weight: 2
+        },
+        {
+            id: 21,
+            type: environmentValues.ITEM_TYPE_DRINK,
+            name: 'coffee',
+            description: 'Nearby sits a mug filled with what looks like coffee.',
+            details: 'You sniff it. Yup, it\'s coffee. Black. There doesn\'t appear to be any mold growing on it. You wonder how long it has been here, and who made it. It is cold.',
+            onDrink: 'Ah screw it, what could possibly go wrong. You grab the mug around the outer edge, not by the handle, and take a sip. It\'s fine. You pour the rest down your throat and look forward to being caffeinated. It\'s been a long ass day.',
+            use: null,
+            isKey: null,
+            weight: 2
+        },
+        {
+            id: 22,
+            type: environmentValues.ITEM_TYPE_FOOD,
+            name: 'pretzel',
+            description: 'There\'s a napkin on one of the few clean flat surfaces upon which sits a big soft looking pretzel.',
+            details: 'No mustard or anything, just some nice large perfect cubes of salt clinging to the shiny dark surface of the dough. It actually looks pretty good. Probably not fresh. But who knows.',
+            onEat: 'You pick it up and take a bite. Nothing special, but it\'s not bad. You realize you\'re kinda hungry so you just mow through the whole thing. You wish this was like Alice\'s wonderland and you would grow to a towering 30 feet tall. Unfortunately this is reality of course.',
+            use: null,
+            isKey: null,
+            weight: 1
+        },
+        {
+            id: 23,
+            type: environmentValues.ITEM_TYPE_FOOD,
+            name: 'butterfinger',
+            description: 'Your Butterfinger sits on the desk. Half eaten.',
+            details: 'The wrapper is still complete, just split and rolled expertly back to allow access to the remaining portion of your favorite candy bar ever.',
+            onEat: 'You aren\'t new to this. You cram the rest of the bar into your mouth in one bite. HOMPTH. God damn that was good. You pocket the wrapper till you find a trash can.',
+            use: null,
+            isKey: null,
+            weight: 1
         }
     ]
 }
