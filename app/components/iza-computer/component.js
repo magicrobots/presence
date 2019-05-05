@@ -293,13 +293,20 @@ export default Component.extend(Deformers, {
         if (isNone(this.displacementCounter)) {
             set(this, 'displacementCounter', 0);
         }
-        if (this.displacementCounter > this.canvasHeight) {
+
+        if (this.displacementCounter > this.canvasHeight * 3) {
             set(this, 'displacementCounter', 0);
         }
+
         set(this, 'displacementCounter', this.displacementCounter + 2);
     },
 
     _createDisplacement(ctx2, deformedImage, dHeight, offset, displacement) {
+
+        // if offset is beyond scope of screen just return
+        if (offset > this.canvasHeight) {
+            return;
+        }
 
         let newImageData1 = ctx2.createImageData(this.canvasWidth, dHeight);
         
