@@ -18,7 +18,7 @@ export default {
             id: 1,
             x: 47,
             y: 47,
-            summary: 'in the silence of the beautiful library',
+            summary: 'enjoying the silence of the beautiful library',
             description: 'Smells like old paper and leather bindings. You\'re in the library surrounded by vacant desks, everything tidy but clearly there has been plenty of recent activity.',
             completed: 'You are in the library, sun is streaming through the windows, bright shafts of light falling squarely upon the gleaming tabletops.',
             exits: {
@@ -78,7 +78,7 @@ export default {
             id: 4,
             x: 48,
             y: 47,
-            summary: 'in the empty vastness of the reception area for V.5. Department of Robotics',
+            summary: 'entering the sterile reception area for V.5. Department of Robotics',
             description: 'You are in what looks like a reception area for a long defunct corporation. There is an empty desk in the center with a large black and yellow logo: "V.5. Department of Robotics". Each step you take disturbs a noticeably thick layer of dust on the industrial floor, sending lazy floating particles into the sunbeams cascading through the skylight.  You start to feel strangely alone.',
             completed: 'You\'re in the entrance hall for V.5. Department of Robotics.',
             exits: {
@@ -128,7 +128,7 @@ export default {
                 N: null,
                 E: {
                     closed: null,
-                    opened: 'There is bright hallway leading east.'
+                    opened: 'There is a bright hallway leading east.'
                    },
                 W: null,
                 S: {
@@ -312,7 +312,7 @@ export default {
             x: 51,
             y: 48,
             summary: 'still in awe of the chaotic destruction of the crash site',
-            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater. Sunlight beams down fighting through the billowing smoke and rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
+            description: 'You can\'t really believe what you\'re seeing. The subway line is perforated by something that has crashed through the ceiling into a massive crater. Sunlight beams down fighting through the billowing smoke, rent steel girders and twisted fingers of rebar above. In the center of it all is ... something. It could be a craft, a munition, or maybe a massive meteorite. There is rubble and ruin everywhere.',
             completed: 'You step into the crash site. You wonder what the news crews will make of this madness.',
             exits: {
                 N: null,
@@ -413,7 +413,7 @@ export default {
             x: 53,
             y: 48,
             summary: 'in the cavern with the weird machines hooked up to each other',
-            description: 'You find yourself in some sort of underground workspace. There doesn\'t seem to be anyone, or anyTHING around. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. These are things you have never seen before in any context. There are what look like computer parts strewn about.',
+            description: 'You find yourself in some sort of underground workspace. There doesn\'t seem to be anyone around. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. These are things you have never seen before in any context. There are what look like computer parts strewn about.',
             completed: 'You are in some sort of underground workspace. There\'s a perfect glowing orb providing dim light and casting long shadows up the walls. There are a number of machines sitting heavy in the earth connected to each other by strings of wiring and thick cords running along the ground. There are what look like computer parts strewn about.',
             exits: {
                 N: null,
