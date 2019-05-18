@@ -430,7 +430,7 @@ export default {
             x: 52,
             y: 47,
             summary: 'in ... a space garage',
-            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big. You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with strange items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelves edge. Weirdly, You have lost all sense of direction.',
+            description: 'You just about lose your mind as you absorb your surroundings. You must be on some alien space ship. The architecture is not built to your scale, it\'s all just a little bit too big. You feel like Alice in Wonderland. This area is very well organized; everywhere you look are grids of shelves holding different sized containers, each filled with unfamiliar items. The walls are adorned with strange tools or weapons arranged in a perfectly balanced layout. No area is empty, but it is not cluttered. The ceiling glows a bright green, and there are bars of brilliant but flat light along each shelf\'s edge. Weirdly, You have lost all sense of direction.',
             completed: 'You take your time and look around. Everything in this garage is ridiculous.',
             isInSpace: true,
             exits: {

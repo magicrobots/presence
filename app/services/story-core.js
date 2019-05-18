@@ -478,7 +478,7 @@ export default Service.extend({
     handleRobotAttack() {
         this.handleDeath();
 
-        return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
+        return ['The massive being considers you for a moment. All of a sudden, something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
     whereAmI() {
@@ -728,6 +728,16 @@ export default Service.extend({
             '"Hey out there! Want a snack?" - you pat your pockets looking for a candy bar or something. You hear something shuffling in the dark. You reach out and turn off the light wondering if it\'s scared.',
             '',
             'The moment you click the light off, you hear a hiss and scrambling claws and before you can click the light back on or defend yourself you are eaten by an alien. You have succesfully fed the aliens.' ];
+    },
+
+    attackAlien() {
+        this.handleDeath();
+
+        return ['Making do with what you\'ve got you figure you can take this thing. It doesn\'t sound that big.',
+            '',
+            'You steel your nerves and try to go on the offensive. Each time you lunge forward, or creep towards it, or run full speed at it, you find it has agility far greater than your own. You still haven\'t even seen what it looks like. You are starting to wonder if it\'s all in your head and there isn\'t even anything there. You shut off the light to see if that will lure it closer.',
+            '',
+            'The thing comes at you as fast as the darkness does. You barely have time to react as you are gruesomely eaten by the alien. Sorry it didn\'t work out.'];
     },
 
     readDocument(targetItemId) {
