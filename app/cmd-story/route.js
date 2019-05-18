@@ -282,9 +282,14 @@ export default Route.extend({
         this._handlePotentiallyFatalMistake();
     },
 
+    throw() {
+        this.drop(true);
+    },
+
     discard: aliasMethod('drop'),
-    drop() {
+    drop(isThrow) {
         const args = this.inputProcessor.currentArgs;
+        const actionWord = isThrow ? 'throw' : 'drop';
 
         // remove 'the' if it's in there
         const targetItemName = args[0] === 'the' ? args[1] : args[0];
@@ -305,12 +310,17 @@ export default Route.extend({
             }
 
             // report to user
-            this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
+            const response = [`You ${actionWord} the ${targetItemName}`];
+            if (isThrow) {
+                response.push('');
+                response.push('It doesn\'t go very far. You feel a little silly.');
+            }
+            this.inputProcessor.handleFunctionFromApp(response);
         } else {
             if(isPresent(targetItemName)) {
                 this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
             } else {
-                this.inputProcessor.handleFunctionFromApp([`What do you want to drop?`]);
+                this.inputProcessor.handleFunctionFromApp([`What do you want to ${actionWord}?`]);
             }
         }
 
@@ -776,7 +786,8 @@ export default Route.extend({
             'wave',
             'stab',
             'attack',
-            'kill'
+            'kill',
+            'throw'
         ]
 
         // check for item completion
