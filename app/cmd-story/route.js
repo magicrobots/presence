@@ -168,6 +168,42 @@ export default Route.extend({
         }
     },
 
+    stab: aliasMethod('kill'),
+    attack: aliasMethod('kill'),
+    kill() {
+        const args = this.inputProcessor.currentArgs;
+        const targetItemName = args[0] === 'the' ? args[1] : args[0];
+
+        if (isEmpty(targetItemName)) {
+            this.inputProcessor.handleFunctionFromApp(['What do you want to attack?']);
+            return;
+        }
+
+        if (targetItemName === 'robot' && this.storyCore.getCurrentRoomId() === 10) {
+            const attackRobotResponses = [
+                'Seriously? It\'s a robot the size of a building. Don\'t be ridiculous.',
+                'Hahahahah what are you gonna destroy it with harsh language? Stop it.',
+                'You settle into your fighting stance and then immediately think better of your decision to go on the offensive. You actually feel pretty silly for even having considered it. Look at this thing.'
+                ];
+            
+            this.inputProcessor.handleFunctionFromApp([environmentHelpers.getRandomResponseFromList(attackRobotResponses)]);
+
+        } else if (['yourself','self'].includes(targetItemName)) {
+            this.inputProcessor.handleFunctionFromApp(['Come on now it\'s not that bad.']);
+
+        } else if (['alien', 'aliens'].includes(targetItemName) && [13,27].includes(this.storyCore.getCurrentRoomId())) {
+            this.inputProcessor.handleFunctionFromApp(this.storyCore.attackAlien());
+
+        } else if (['ducks','geese','fish'].includes(targetItemName) && this.storyCore.getCurrentRoomId() === 2) {
+            this.inputProcessor.handleFunctionFromApp(['That would just be cruel.']);
+
+        } else {
+            const firstLetter = targetItemName.charAt(0);
+            const article = ['a', 'e', 'i', 'o', 'u'].includes(firstLetter.toLowerCase()) ? 'an' : 'a';
+            this.inputProcessor.handleFunctionFromApp([`Try talking like that when there's ${article} ${targetItemName} around.`]);
+        }
+    },
+
     exits() {
         this.inputProcessor.handleFunctionFromApp([this.storyCore.getExitDescriptions()]);
     },
@@ -232,7 +268,12 @@ export default Route.extend({
             }
         } else {
             if(isPresent(targetItemName)) {
-                this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+                // if you already have it
+                if (this.persistenceHandler.getStoryInventoryItems().includes(targetItemId)) {
+                    this.inputProcessor.handleFunctionFromApp([`You already have the ${targetItemName}.`]);
+                } else {
+                    this.inputProcessor.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+                }
             } else {
                 this.inputProcessor.handleFunctionFromApp([`What do you want to take?`]);
             }
@@ -241,9 +282,14 @@ export default Route.extend({
         this._handlePotentiallyFatalMistake();
     },
 
+    throw() {
+        this.drop(true);
+    },
+
     discard: aliasMethod('drop'),
-    drop() {
+    drop(isThrow) {
         const args = this.inputProcessor.currentArgs;
+        const actionWord = isThrow ? 'throw' : 'drop';
 
         // remove 'the' if it's in there
         const targetItemName = args[0] === 'the' ? args[1] : args[0];
@@ -264,12 +310,17 @@ export default Route.extend({
             }
 
             // report to user
-            this.inputProcessor.handleFunctionFromApp([`You drop the ${targetItemName}`]);
+            const response = [`You ${actionWord} the ${targetItemName}`];
+            if (isThrow) {
+                response.push('');
+                response.push('It doesn\'t go very far. You feel a little silly.');
+            }
+            this.inputProcessor.handleFunctionFromApp(response);
         } else {
             if(isPresent(targetItemName)) {
                 this.inputProcessor.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
             } else {
-                this.inputProcessor.handleFunctionFromApp([`What do you want to drop?`]);
+                this.inputProcessor.handleFunctionFromApp([`What do you want to ${actionWord}?`]);
             }
         }
 
@@ -310,6 +361,22 @@ export default Route.extend({
         }
 
         this.inputProcessor.handleFunctionFromApp([`You don't know how to talk to ${responseObjectName}.`]);
+    },
+
+    wave() {
+        const args = this.inputProcessor.currentArgs;
+
+        let responseObjectName = '';
+
+        if (args[0] === 'to' || args[0] === 'at') {
+            responseObjectName = args[1] === 'the' ? args[2] : args[1];
+        }
+
+        const response = (isPresent(responseObjectName)) ? 
+            `You wave at the ${responseObjectName}. It doesn't wave back. You're a little disappointed but you were also kind of expecting it.` :
+            'You wave your hand back and forth above your head.';
+
+        this.inputProcessor.handleFunctionFromApp([response]);
     },
 
     turn() {
@@ -546,6 +613,7 @@ export default Route.extend({
         this.inputProcessor.handleFunctionFromApp(this.storyCore.whereAmI());
     },
 
+    surroundings: aliasMethod('look'),
     look() {
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {
@@ -713,7 +781,13 @@ export default Route.extend({
             'help',
             'turn',
             'eat',
-            'drink'
+            'drink',
+            'surroundings',
+            'wave',
+            'stab',
+            'attack',
+            'kill',
+            'throw'
         ]
 
         // check for item completion

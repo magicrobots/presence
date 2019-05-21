@@ -344,17 +344,17 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
-            {roomId: 1, inventory: [1, 23]},
+            {roomId: 1, inventory: [1, 23, 25]},
             {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
             {roomId: 5, inventory: [7, 8]},
             {roomId: 6, inventory: [20]},
             {roomId: 7, inventory: []},
-            {roomId: 8, inventory: [21]},
+            {roomId: 8, inventory: [21, 24]},
             {roomId: 9, inventory: [9]},
             {roomId: 10, inventory: [10]},
-            {roomId: 11, inventory: []},
+            {roomId: 11, inventory: [26]},
             {roomId: 12, inventory: []},
             {roomId: 13, inventory: []},
             {roomId: 14, inventory: []},
@@ -478,7 +478,7 @@ export default Service.extend({
     handleRobotAttack() {
         this.handleDeath();
 
-        return ['The massive being doesn\'t even realize you\'re there. Something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
+        return ['The massive being considers you for a moment. All of a sudden, something that looks like a wingless mosquito the size of a horse attacks the robot and as it turns in defense, it knocks you off the helipad and you fall to your death.'];
     },
 
     whereAmI() {
@@ -730,6 +730,16 @@ export default Service.extend({
             'The moment you click the light off, you hear a hiss and scrambling claws and before you can click the light back on or defend yourself you are eaten by an alien. You have succesfully fed the aliens.' ];
     },
 
+    attackAlien() {
+        this.handleDeath();
+
+        return ['Making do with what you\'ve got you figure you can take this thing. It doesn\'t sound that big.',
+            '',
+            'You steel your nerves and try to go on the offensive. Each time you lunge forward, or creep towards it, or run full speed at it, you find it has agility far greater than your own. You still haven\'t even seen what it looks like. You are starting to wonder if it\'s all in your head and there isn\'t even anything there. You shut off the light to see if that will lure it closer.',
+            '',
+            'The thing comes at you as fast as the darkness does. You barely have time to react as you are gruesomely eaten by the alien. Sorry it didn\'t work out.'];
+    },
+
     readDocument(targetItemId) {
         const currDoc = items.getItemById(targetItemId);
 
@@ -748,7 +758,7 @@ export default Service.extend({
             }
         }
 
-        return [`You can't read ${currDoc.name}`];
+        return [`The ${currDoc.name} says:`, ''].concat(currDoc.content);
     },
 
     eatObject(targetItemId) {
@@ -790,7 +800,7 @@ export default Service.extend({
         // store cake eaten achievement for status display
         this.persistenceHandler.setCakeEaten(true);
 
-        return ['You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.', '', 'It is beautiful. You have a litte frosting on your thumb. It ssmells of fresh melted butter and rich milk chocolate. You close your eyes and take a bite. This cake is not a lie. It is delicious and perfect and you decide that it is probable that every decision you have ever made, every path you\'ve taken has been purposeful, to lead you to this very moment. God damn this is some good cake.' ];
+        return ['You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.', '', 'It is beautiful. You have a litte frosting on your thumb. It smells of fresh melted butter and rich milk chocolate. You close your eyes and take a bite. This cake is not a lie. It is delicious and perfect and you decide that every decision you ever made, every path you\'ve ever taken has been purposeful, to lead you to this very moment. God damn this is some good cake.' ];
     },
 
     getItemIsLocked(item) {
