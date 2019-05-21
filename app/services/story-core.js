@@ -344,17 +344,17 @@ export default Service.extend({
         this.persistenceHandler.setStoryInventoryItems([3]);
         this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
-            {roomId: 1, inventory: [1, 23]},
+            {roomId: 1, inventory: [1, 23, 25]},
             {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
             {roomId: 5, inventory: [7, 8]},
             {roomId: 6, inventory: [20]},
             {roomId: 7, inventory: []},
-            {roomId: 8, inventory: [21]},
+            {roomId: 8, inventory: [21, 24]},
             {roomId: 9, inventory: [9]},
             {roomId: 10, inventory: [10]},
-            {roomId: 11, inventory: []},
+            {roomId: 11, inventory: [26]},
             {roomId: 12, inventory: []},
             {roomId: 13, inventory: []},
             {roomId: 14, inventory: []},
@@ -366,7 +366,7 @@ export default Service.extend({
             {roomId: 20, inventory: []},
             {roomId: 21, inventory: [16]},
             {roomId: 22, inventory: []},
-            {roomId: 23, inventory: []},
+            {roomId: 23, inventory: [27]},
             {roomId: 24, inventory: []},
             {roomId: 25, inventory: [19]},
             {roomId: 26, inventory: [18, 17]},
@@ -758,7 +758,7 @@ export default Service.extend({
             }
         }
 
-        return [`You can't read ${currDoc.name}`];
+        return [`The ${currDoc.name} says:`, ''].concat(currDoc.content);
     },
 
     eatObject(targetItemId) {
@@ -800,7 +800,7 @@ export default Service.extend({
         // store cake eaten achievement for status display
         this.persistenceHandler.setCakeEaten(true);
 
-        return ['You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.', '', 'It is beautiful. You have a litte frosting on your thumb. It ssmells of fresh melted butter and rich milk chocolate. You close your eyes and take a bite. This cake is not a lie. It is delicious and perfect and you decide that it is probable that every decision you have ever made, every path you\'ve taken has been purposeful, to lead you to this very moment. God damn this is some good cake.' ];
+        return ['You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.', '', 'It is beautiful. You have a litte frosting on your thumb. It smells of fresh melted butter and rich milk chocolate. You close your eyes and take a bite. This cake is not a lie. It is delicious and perfect and you decide that every decision you ever made, every path you\'ve ever taken has been purposeful, to lead you to this very moment. God damn this is some good cake.' ];
     },
 
     getItemIsLocked(item) {
