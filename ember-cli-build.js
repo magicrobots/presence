@@ -9,7 +9,7 @@ module.exports = function(defaults) {
     },
 
     fingerprint: {
-      exclude: ['assets/robots/']
+      exclude: ['assets/robots/', 'assets/shop/']
     },
 
     'ember-cli-babel': {
