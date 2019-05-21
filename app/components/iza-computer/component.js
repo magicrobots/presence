@@ -282,7 +282,7 @@ export default Component.extend(Deformers, {
         ctx2.putImageData(newImageData, 0, 0);
 
         this._doDisplacementCounter();
-        const maxDisplacement = this.canvasWidth / 3;
+        const maxDisplacement = this.canvasWidth / 10;
         const largeDisplacement = Math.ceil(Math.random() * maxDisplacement) - (maxDisplacement / 2);
         this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, largeDisplacement);
         this._createDisplacement(ctx2, deformedImage, 2, this.displacementCounter, 1);
