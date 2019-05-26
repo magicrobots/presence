@@ -9,6 +9,8 @@ export default Route.extend({
 
     currentBotIndex: 0,
     robotImages: Object.freeze([
+        'pond.jpg',
+        'cave.jpg',
         'beach.jpg',
         'atst.jpg',
         'classic.jpg',

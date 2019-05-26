@@ -9,8 +9,13 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: ['MAGIC ROBOTS is a lifestyle brand.',
-                'Celebrate the beauty in balance of digital and analog.']
+            response: ['MAGIC ROBOTS is the private arm of the V.5. Department of Robotics (v5DoR).',
+                '',
+                '10-15 years ago Robot sightings became less and less frequent. Many assumed they had disappeared.',
+                '',
+                'This was not true, of course. Our close monitoring and continued communication with the Robots never faltered, regardless of a media spotlight. Our hard work continued.',
+                '',
+                'Public perception of lack of need however, effected the v5DoR to lose public funding. MAGIC ROBOTS was formed as a private entity to help fund the v5DoR\'s efforts. We chose fashion and street wear to help keep Magic Robots in the collective consciousness of the public and maintain awareness of their powerful and important history, and to educate about their true nature in the case that you are fortunate enough to encounter a now rare sighting.']
             // response: ['I had a the following goals for this website:',
             // ' - Create a command-line interface',
             // ' - Use canvas to create a crappy old CRT monitor effect',
