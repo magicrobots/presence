@@ -20,7 +20,7 @@ test_script:
   - yarn test
 
 # add .env file containing aws keys
-sh:
+Cmd:
   - vim config/.env
   - a
   - '# /.env
