@@ -60,11 +60,11 @@ export default {
 
         { commandName: 'contact',
         routeName: 'cmd-contact',
-        helpText: 'Connection options for my programmer.',
-        usage: 'contact instagram',
+        helpText: 'Write messages to the webmaster.',
+        usage: null,
         date: 'Feb  7 12:01',
         size: '    651886',
-        isExec: false,
+        isExec: true,
         hideFromList: false },
 
         { commandName: 'hello',
