@@ -23,9 +23,10 @@ test_script:
 sh:
   - vim config/.env
   - a
-  - '# /.env'
+  - '# /.env
     AWS_KEY=AWS_KEY_EMAIL
-    AWS_SECRET=AWS_SECRET_EMAIL
+    AWS_SECRET=AWS_SECRET_EMAIL'
+  - ESC
   - :wq
 
 # build.
