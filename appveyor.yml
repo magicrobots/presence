@@ -20,7 +20,8 @@ test_script:
   - yarn test
 
 # add .env file containing aws keys
-sh: vim config/.env
+sh:
+  - vim config/.env
   - a
   - '# /.env'
     AWS_KEY=AWS_KEY_EMAIL
