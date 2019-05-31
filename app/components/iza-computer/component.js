@@ -298,7 +298,8 @@ export default Component.extend(Deformers, {
             set(this, 'displacementCounter', 0);
         }
 
-        set(this, 'displacementCounter', this.displacementCounter + 2);
+        const travelPixelsPerCycle = 1;
+        set(this, 'displacementCounter', this.displacementCounter + travelPixelsPerCycle);
     },
 
     _createDisplacement(ctx2, deformedImage, dHeight, offset, displacement) {

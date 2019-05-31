@@ -16,6 +16,8 @@ export default Service.extend({
         set(this, 'rngIndex', 0);
     },
 
+    // Currently the values in initPool are specific to the displacement deformation in iza-computer
+    // if you use it anywhere else you'll need to make some updates
     getRandomValue() {
         const currIndex = this.rngIndex;
         const retVal = this.rngPool[currIndex];
