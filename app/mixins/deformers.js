@@ -1,6 +1,8 @@
 import Mixin from '@ember/object/mixin';
+import { inject as service } from '@ember/service';
 
 export default Mixin.create({
+    rngeezus: service(),
 
     everything(imageData) {
         if (!imageData) {
@@ -73,7 +75,7 @@ export default Mixin.create({
     },
 
     _glowEdgesBit(i, imageData) {
-        const distance = Math.round(Math.random()) + 1;
+        const distance = 2;
 
         let r = imageData.data[i * 4 + 0];
         let g = imageData.data[i * 4 + 1];
@@ -85,11 +87,11 @@ export default Mixin.create({
         const currBrightness = r + g + b;
         const nextBrightness = r1 + g1 + b1;
         const contrast = Math.abs(nextBrightness - currBrightness);
-        const maxContrast = 100;
+        const maxContrast = 120;
 
         if (contrast > maxContrast)
         {
-            const increaseAmount = 20 + Math.random() * 10;
+            const increaseAmount = 20 + this.rngeezus.getRandomValue();
             const nextPixelIndex = i + 1;
             const nextPixelR = imageData.data[nextPixelIndex * 4 + 0];
             const nextPixelG = imageData.data[nextPixelIndex * 4 + 1];
