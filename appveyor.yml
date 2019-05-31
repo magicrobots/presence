@@ -24,19 +24,11 @@ test_script:
   - yarn test
 
 # add .env file containing aws keys
-- sh: >-
-  vim config/.env
-
+- sh: vim config/.env
   a
-
-  '# /.env
-
   AWS_KEY=AWS_KEY_EMAIL
-
-  AWS_SECRET=AWS_SECRET_EMAIL'
-
-  ESC
-  
+  AWS_SECRET=AWS_SECRET_EMAIL
+  ESC  
   :wq
 
 # build.
