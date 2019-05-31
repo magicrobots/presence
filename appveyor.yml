@@ -2,6 +2,10 @@ version: 0.0.1.{build}
 
 # Test against the latest version of this Node.js version
 environment:
+  AWS_KEY_EMAIL:
+    secure: +dPvvxxksecEbtXXj0WeS8eMrQiS91BrStU+Gkn8kAo=
+  AWS_SECRET_EMAIL:
+    secure: FYJljDShng/1GYBj8YtIgs1NZmgwc0Eab34hLx4QNbTB4bTN6z4bfQ90XgTnvSnM
   nodejs_version: "8"
 
 # Install scripts. (runs after repo cloning)
@@ -19,8 +23,12 @@ test_script:
   # run tests
   - yarn test
 
+
 # build.
 build_script:
+# add .env file containing aws keys
+  - echo AWS_KEY=%AWS_KEY_EMAIL% > config/.env
+  - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> config/.env
   - yarn build -prod
   
 # create artifacts for deployment.

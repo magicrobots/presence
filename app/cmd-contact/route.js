@@ -1,56 +1,116 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
+import { set, computed } from '@ember/object';
+import AWS from 'aws-sdk';
+import ENV from '../config/environment';
 
 import environmentHelpers from '../utils/environment-helpers';
 
+
+const ses = new AWS.SES({
+    apiVersion: '2010-12-01',
+    accessKeyId: ENV.aws.id,
+    "secretAccessKey": ENV.aws.access,
+    "region": "us-east-1"
+});
+
 export default Route.extend({
     inputProcessor: service(),
+    persistenceHandler: service(),
 
-    afterModel() {
-        // handle transition
-        if (isPresent(this.inputProcessor.currentArgs)) {
-            const locationKey = this.inputProcessor.currentArgs[0];
-
-            switch(locationKey) {
-                case 'email':
-                    this._redirectBrowser('mailto:adam@magicrobots.com');
-                    break;
-                case 'instagram':
-                    this._redirectBrowser('https://www.instagram.com/magicrobots/');
-                    break;
-                case 'twitter':
-                    this._redirectBrowser('https://twitter.com/magic_robots/');
-                    break;
-                case 'github':
-                    this._redirectBrowser('https://github.com/magicrobots');
-                    break;
-                default:
-                    this._sendAppResponse([`Sorry, the contact function doesn't have connection type '${locationKey}'`]);
-                    return;
-            }
+    initMessage: computed({
+        get() {
+            return ['Enter a message:'];
         }
+    }),
+    messageBody: '',
+    stepIndex: 0,
 
-        this._sendAppResponse(['Connections available at:',
-            '  email: adam@magicrobots.com',
-            '  instagram: magicrobots',
-            '  twitter: magic_robots',
-            '  github: magicrobots',
-            '',
-            'If you run the contact command and pass the connection type it will send you there in a new browser window.',
-            'eg: type `contact instagram`']);
+    _sendEmail() {
+        // init response
+        this.inputProcessor.handleFunctionFromApp(['sending message...']);
+
+        // Prepare values to send with email
+        const emailParams = {
+            Destination: { ToAddresses: [ 'Admin <adam@magicrobots.com>' ] },
+            Message: {
+                Body: { Text: {
+                Data: this.messageBody,
+                Charset: 'UTF-8' } },
+                Subject: { Data: 'Robotified Contact Form', Charset: 'UTF-8' }
+            },
+            ReplyToAddresses: [`Administrator <adam@magicrobots.com>`],
+            Source: `${this.persistenceHandler.getUsername()} <adam@magicrobots.com>`, // this has to be verified email in SES
+        };
+
+        const scope = this;
+        ses.sendEmail(emailParams, function(error) {
+            if (error) {
+
+            // handle error
+                scope.inputProcessor.handleFunctionFromApp([`message sending error: ${error}.`]);
+            } else {
+
+            // handle success
+                scope.inputProcessor.handleFunctionFromApp(['message sent.']);
+            }
+            scope._resetContact();
+        });
     },
 
-    _sendAppResponse(responseArray) {
+    _resetContact() {
+        set(this, 'stepIndex', 0);
+    },
+
+    afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: responseArray
+            displayAppNameInPrompt: true,
+            interruptPrompt: true,
+            overrideScope: this,
+            response: this.initMessage
         });
+
+        this._resetContact();
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
     },
 
-    _redirectBrowser(url) {
-        window.open(url);
+    handleContactInput(inputString) {
+
+        let appResponse = this.initMessage;
+
+        switch(this.stepIndex) {
+            case 0:
+                set(this, 'messageBody', inputString);
+                appResponse = [
+                    `MESSAGE: [${this.messageBody}]`,
+                    '',
+                    'Are you sure you want to send the message to Magic Robots HQ?',
+                    'y/n'
+                    ];
+                break;
+            case 1:
+                if (isPresent(inputString)) {
+                    const response = inputString.toLowerCase();
+                    if (['y', 'yes'].includes(response)) {
+                        this._sendEmail();
+                        return;
+                    }
+                }
+
+                this._resetContact();
+                this.inputProcessor.handleFunctionFromApp(this.initMessage);
+                return;
+            default:
+                appResponse = ['press any key to continue.'];
+                break;
+
+        }
+
+        // increment step
+        set(this, 'stepIndex', this.stepIndex + 1);
+        this.inputProcessor.handleFunctionFromApp(appResponse);
     }
 });

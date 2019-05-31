@@ -15,7 +15,7 @@ export default Route.extend({
                 '',
                 'This was not true, of course. Our close monitoring and continued communication with the Robots never faltered, regardless of a media spotlight. Our hard work continued.',
                 '',
-                'Public perception of lack of need however, effected the v5DoR to lose public funding. MAGIC ROBOTS was formed as a private entity to help fund the v5DoR\'s efforts. We chose fashion and street wear to help keep Magic Robots in the collective consciousness of the public and maintain awareness of their powerful and important history, and to educate about their true nature in the case that you are fortunate enough to encounter a now rare sighting.']
+                'Public perception of lack of need however, effected the v5DoR to lose public funding. MAGIC ROBOTS was formed as a private entity to help fund the v5DoR\'s efforts. We chose fashion and street wear to help keep Magic Robots in the collective consciousness of the public and maintain awareness of their powerful and important history, as well as to educate about their true nature in the case that you are fortunate enough to encounter a now rare sighting.']
             // response: ['I had a the following goals for this website:',
             // ' - Create a command-line interface',
             // ' - Use canvas to create a crappy old CRT monitor effect',

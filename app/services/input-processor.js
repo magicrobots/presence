@@ -58,6 +58,13 @@ export default keyFunctions.extend({
     },
 
     _execute() {
+
+        // if it's an email message just send it
+        if (this.activeApp === 'cmd-contact') {
+            this.overrideScope['handleContactInput'](this.currentCommand);
+            return;
+        }
+
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
         if (commandWithNoWhitespace !== '') {
