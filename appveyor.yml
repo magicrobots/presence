@@ -1,7 +1,7 @@
 version: 0.0.1.{build}
 
 # Test against the latest version of this Node.js version
-environment:environment:
+environment:
   AWS_KEY_EMAIL:
     secure: +dPvvxxksecEbtXXj0WeS8eMrQiS91BrStU+Gkn8kAo=
   AWS_SECRET_EMAIL:
@@ -23,16 +23,16 @@ test_script:
   # run tests
   - yarn test
 
-# add .env file containing aws keys
-- sh: vim config/.env
-  a
-  AWS_KEY=AWS_KEY_EMAIL
-  AWS_SECRET=AWS_SECRET_EMAIL
-  ESC  
-  :wq
 
 # build.
 build_script:
+# add .env file containing aws keys
+  - vim config/.env
+  - a
+  - AWS_KEY=AWS_KEY_EMAIL
+  - AWS_SECRET=AWS_SECRET_EMAIL
+  - ESC  
+  - :wq
   - yarn build -prod
   
 # create artifacts for deployment.
