@@ -27,8 +27,8 @@ test_script:
 # build.
 build_script:
 # add .env file containing aws keys
-  - echo AWS_KEY=AWS_KEY_EMAIL > config/.env
-  - echo AWS_SECRET=AWS_SECRET_EMAIL >> config/.env
+  - echo AWS_KEY=%AWS_KEY_EMAIL% > config/.env
+  - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> config/.env
   - yarn build -prod
   
 # create artifacts for deployment.
