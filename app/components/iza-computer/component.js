@@ -9,6 +9,7 @@ import Deformers from '../../mixins/deformers';
 export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
+    rngeezus: service(),
     classNames: ['iza-computer'],
 
     // ------------------- consts -------------------
@@ -282,8 +283,7 @@ export default Component.extend(Deformers, {
         ctx2.putImageData(newImageData, 0, 0);
 
         this._doDisplacementCounter();
-        const maxDisplacement = this.canvasWidth / 10;
-        const largeDisplacement = Math.ceil(Math.random() * maxDisplacement) - (maxDisplacement / 2);
+        const largeDisplacement = this.rngeezus.getRandomValue();
         this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, largeDisplacement);
         this._createDisplacement(ctx2, deformedImage, 2, this.displacementCounter, 1);
     },

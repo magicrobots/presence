@@ -6,12 +6,18 @@ export default Service.extend({
         this._super(...arguments);
 
         const initPool = [];
-        for(let i = 0; i < 200; i++) {
-            initPool.push(Math.round((Math.random() * 10)));
+        const maxDisplacement = 20;
+        for(let i = 0; i < 20000; i++) {
+            const newValue = Math.ceil(Math.random() * maxDisplacement) - (maxDisplacement / 2);
+            initPool.push(newValue);
         }
 
         set(this, 'rngPool', initPool);
         set(this, 'rngIndex', 0);
+    },
+
+    getCeilRange() {
+
     },
 
     getRandomValue() {

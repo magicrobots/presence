@@ -14,7 +14,7 @@ export default Mixin.create({
         for (let i = 0; i < l; i++) {
             this._shiftPixel(i, imageData);
             this._pixelizeBit(i, imageData);
-            this._glowEdgesBit(i, imageData);
+            // this._glowEdgesBit(i, imageData);
         }
 
         return imageData;
@@ -87,7 +87,7 @@ export default Mixin.create({
         const currBrightness = r + g + b;
         const nextBrightness = r1 + g1 + b1;
         const contrast = Math.abs(nextBrightness - currBrightness);
-        const maxContrast = 100;
+        const maxContrast = 120;
 
         if (contrast > maxContrast)
         {
