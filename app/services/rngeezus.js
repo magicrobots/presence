@@ -16,10 +16,6 @@ export default Service.extend({
         set(this, 'rngIndex', 0);
     },
 
-    getCeilRange() {
-
-    },
-
     getRandomValue() {
         const currIndex = this.rngIndex;
         const retVal = this.rngPool[currIndex];
