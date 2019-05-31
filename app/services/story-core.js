@@ -205,7 +205,7 @@ export default Service.extend({
     },    
 
     _getRoomDescriptionOnly() {
-        let roomDesc = this._getIsGameCompleted() ? this._processVariableText(this.currentRoom.completed) : this._processVariableText(this.currentRoom.description);
+        let roomDesc = this._getProcessedDescription();
 
         // store room as visited
         this.persistenceHandler.addStoryVisitedRoom(this.currentRoom.id);
@@ -444,14 +444,22 @@ export default Service.extend({
         return false;
     },
 
-    handleTrap() {
-        const trapDescription = this._getIsGameCompleted() ?
+    _getProcessedDescription() {
+        return this._getIsGameCompleted() ?
             this._processVariableText(this.currentRoom.completed) :
             this._processVariableText(this.currentRoom.description);
+    },
 
+    _getProcessedSummary() {
+        return this._getIsGameCompleted() ?
+            this._processVariableText(this.currentRoom.completed) :
+            `You are ${this._processVariableText(this.currentRoom.summary)}.`;
+    },
+
+    handleTrap() {
         this.handleDeath();
 
-        return [trapDescription];
+        return [this._getProcessedDescription()];
     },
 
     handleDeath() {
@@ -482,7 +490,7 @@ export default Service.extend({
     },
 
     whereAmI() {
-        return [`You are ${this._processVariableText(this.currentRoom.summary)}.`];
+        return [this._getProcessedSummary()];
     },
 
     getCurrentRoomDescription() {
@@ -509,9 +517,7 @@ export default Service.extend({
         if (roomIsNew) {
             descriptionContent.push(this.getFullRoomDescription());
         } else {
-            descriptionContent.push([ this._getIsGameCompleted()
-                ? this._processVariableText(this.currentRoom.completed) :
-                `You are ${this._processVariableText(this.currentRoom.summary)}.` ]);
+            descriptionContent.push([this._getProcessedSummary()]);
         }
 
         return descriptionContent;
