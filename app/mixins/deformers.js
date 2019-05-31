@@ -75,7 +75,7 @@ export default Mixin.create({
     },
 
     _glowEdgesBit(i, imageData) {
-        const distance = 1;
+        const distance = 2;
 
         let r = imageData.data[i * 4 + 0];
         let g = imageData.data[i * 4 + 1];
