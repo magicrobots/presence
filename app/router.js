@@ -17,7 +17,7 @@ Router.map(function() {
   this.route('cmd-man');
   this.route('cmd-ls');
   this.route('cmd-pwd');
-  this.route('cmd-robots');
+  this.route('cmd-stills');
   this.route('cmd-settings');
   this.route('cmd-shop');
   this.route('cmd-story');

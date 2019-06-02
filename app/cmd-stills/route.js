@@ -7,43 +7,38 @@ import environmentHelpers from '../utils/environment-helpers';
 export default Route.extend({
     inputProcessor: service(),
 
-    currentBotIndex: 0,
-    robotImages: Object.freeze([
+    currentImgIndex: 0,
+    stillImages: Object.freeze([
         'pond.jpg',
-        'cave.jpg',
-        'beach.jpg',
-        'atst.jpg',
-        'classic.jpg',
-        'hover.jpg',
-        'tripod.jpg',
-        'bunny.jpg',
-        'wired.jpg']),
+        'forest.jpg',
+        'meadow.jpg',
+        'cave.jpg']),
 
     _arrowLeft(scope) {
-        let newIndex = scope.currentBotIndex - 1;
+        let newIndex = scope.currentImgIndex - 1;
         if (newIndex < 0) {
-            newIndex = scope.robotImages.length - 1;
+            newIndex = scope.stillImages.length - 1;
         }
 
-        set(scope, 'currentBotIndex', newIndex);
+        set(scope, 'currentImgIndex', newIndex);
     },
 
     _arrowRight(scope) {
-        let newIndex = scope.currentBotIndex + 1;
-        if (newIndex > scope.robotImages.length - 1) {
+        let newIndex = scope.currentImgIndex + 1;
+        if (newIndex > scope.stillImages.length - 1) {
             newIndex = 0;
         }
 
-        set(scope, 'currentBotIndex', newIndex);
+        set(scope, 'currentImgIndex', newIndex);
     },
 
-    imagePath: computed('currentBotIndex', {
+    imagePath: computed('currentImgIndex', {
         get() {
-            return `robots/${this.robotImages[this.currentBotIndex]}`;
+            return `stills/${this.stillImages[this.currentImgIndex]}`;
         }
     }),
 
-    imageIndexChanged: observer('currentBotIndex', function() {
+    imageIndexChanged: observer('currentImgIndex', function() {
         this._displayImage();
     }),
 
