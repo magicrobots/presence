@@ -112,8 +112,8 @@ export default {
         isExec: false,
         hideFromList: true },
 
-        { commandName: 'robots',
-        routeName: 'cmd-robots',
+        { commandName: 'stills',
+        routeName: 'cmd-stills',
         helpText: 'Displays still images taken off modern VHS tapes.',
         usage: 'Use left and right arrows to navigate, and ESC to exit.',
         date: 'Feb  9 16:02',
