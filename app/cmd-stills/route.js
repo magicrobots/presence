@@ -12,6 +12,7 @@ export default Route.extend({
         'pond.jpg',
         'forest.jpg',
         'meadow.jpg',
+        'robot.jpg',
         'cave.jpg']),
 
     _arrowLeft(scope) {
