@@ -3,7 +3,6 @@ import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import commandRegistry from '../const/command-registry';
-import hiddenItems from '../const/hidden-items';
 import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
@@ -17,7 +16,7 @@ export default Route.extend({
             cdTarget = cdTarget.substr(0, cdTarget.length -1);
         }
 
-        const allCommands = hiddenItems.commands.concat(commandRegistry.registry);
+        const allCommands = commandRegistry.registry;
         const matchedCmdDef = allCommands.findBy('commandName', cdTarget);
 
         if (isPresent(matchedCmdDef)) {

@@ -1,4 +1,5 @@
 import EmberRouter from '@ember/routing/router';
+import { isPresent } from '@ember/utils';
 import config from './config/environment';
 import commandRegistry from './const/command-registry';
 
@@ -13,7 +14,9 @@ Router.map(function() {
 
   const scope = this;
   uniqueRoutnames.forEach((currRouteName) => {
-    scope.route(currRouteName);
+    if (isPresent(currRouteName)) {
+      scope.route(currRouteName);
+    }
   });
 });
 
