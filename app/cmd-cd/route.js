@@ -20,7 +20,7 @@ export default Route.extend({
         const matchedCmdDef = allCommands.findBy('commandName', cdTarget);
 
         if (isPresent(matchedCmdDef)) {
-            if (matchedCmdDef.isExec) {
+            if (matchedCmdDef.isDir) {
                 return `cd: ${cdTarget} ACCESS DENIED`;
             }
             return `cd: ${cdTarget}: Not a directory`;
