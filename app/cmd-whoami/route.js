@@ -4,11 +4,12 @@ import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
+    persistenceHandler: service(),
 
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: ['anonymous']
+            response: [this.persistenceHandler.getUsername()]
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);

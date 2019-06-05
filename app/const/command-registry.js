@@ -198,7 +198,7 @@ export default {
                 '<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
                 '<PropertyGroup>',
                 '<AssemblyName>MSBuildSample</AssemblyName>',
-                '<OutputPath>Bin\</OutputPath>',
+                '<OutputPath>Bin</OutputPath>',
                 '</PropertyGroup>',
                 '<ItemGroup>',
                 '<Compile Include="helloworld.cs" />',
