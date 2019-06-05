@@ -153,8 +153,14 @@ export default keyFunctions.extend({
     },
 
     _handleCommandExecution(commandDefinition) {
-        // run app route
-        getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
+
+        if (commandDefinition.routeName) {
+            // run app route
+            getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
+            return;
+        }
+        
+        this._handleInvalidInput(commandDefinition.commandName.toUpperCase());
     },
 
     _handleFilthyInput() {

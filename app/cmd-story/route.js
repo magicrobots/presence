@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import { computed, aliasMethod } from '@ember/object';
+import { aliasMethod } from '@ember/object';
 import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
