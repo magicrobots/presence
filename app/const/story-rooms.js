@@ -24,7 +24,7 @@ export default {
             exits: {
                 N: null,
                 E: {
-                    closed: 'There is a locked industrial doorway leading to the east. Looks like you need an RFID badge or something to gain access.',
+                    closed: 'There is a locked industrial doorway leading to the east.',
                     opened: 'There is an industrial doorway leading to the east.'
                     },
                 W: {
@@ -147,7 +147,7 @@ export default {
             exits: {
                 N: null,
                 E: {
-                    closed: 'To the east is a solid metal door with a red light glowing above it.',
+                    closed: 'To the east is a solid metal door with a red light glowing above it. Looks like you need an RFID badge or something to gain access.',
                     opened: 'There is a door connecting the bridge to the eastern building.'
                    },
                 W: {

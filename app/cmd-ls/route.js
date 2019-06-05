@@ -3,7 +3,6 @@ import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 
 import commandRegistry from '../const/command-registry';
-import hiddenItems from '../const/hidden-items';
 import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
@@ -34,31 +33,34 @@ export default Route.extend({
         return commandList;
     },
 
-    _responseWide(addHiddenItems) {
-        const responseItems = isPresent(addHiddenItems) ? hiddenItems.commands.map((currHiddenItem) => {
-            return currHiddenItem.commandName;
-        }) : [];
+    _getPrunedCommandList(addHiddenItems) {
+        const hiddenRejectionTerm = isPresent(addHiddenItems) ? 'nonexistantattributename' : 'isHidden';
 
-        commandRegistry.registry.forEach((currCmdDef) => {
-            if(!currCmdDef.hideFromList) {
-                responseItems.push(currCmdDef.commandName);
-            }
-        });
+        return commandRegistry.registry.rejectBy(hiddenRejectionTerm, true)
+            .rejectBy('isInvisible', true)
+            .sortBy('commandName');
+    },
 
-        // find longest item to create spacing
+    _getLongestCommandName(commandList) {
         let longestItem = 0;
-        responseItems.forEach((currResponseItem) => {
-            const currLength = currResponseItem.length;
+        commandList.forEach((currResponseItem) => {
+            const currLength = currResponseItem.commandName.length;
             if (currLength > longestItem) {
                 longestItem = currLength;
             }
         });
 
-        // create response string
+        return longestItem;
+    },
+
+    _responseWide(addHiddenItems) {
+        const responseItems = this._getPrunedCommandList(addHiddenItems);
         const distanceBetweenItems = 2;
+        const longestCommandNameLength = this._getLongestCommandName(responseItems) + distanceBetweenItems;
+
         let response = '';
         responseItems.forEach((currResponseItem) => {
-            const newString = currResponseItem.padEnd(longestItem + distanceBetweenItems, ' ');
+            const newString = currResponseItem.commandName.padEnd(longestCommandNameLength, ' ');
             response = response.concat(newString);
         });
 
@@ -67,9 +69,13 @@ export default Route.extend({
 
     _createDetailedLine(appConfigObject) {
         const itemPrefix = '-rw-r--r--';
-        const itemPrefixExec = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
-        const prefix = appConfigObject.isExec ? itemPrefixExec : itemPrefix;
-        const suffix = appConfigObject.isExec ? '/' : '';
+        const itemPrefixExec = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.EXEC_COLOR}-rwxr-xr-x`;
+        const itemPrefixDir = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
+        const prefix = appConfigObject.isExec ? itemPrefixExec :
+            appConfigObject.isDir ? itemPrefixDir :
+            itemPrefix;
+        const suffix = appConfigObject.isDir ? '/' :
+            appConfigObject.isExec ? '.exe' : '';
 
         return prefix.
             concat(' 1 magicrobots ').
@@ -80,24 +86,12 @@ export default Route.extend({
     },
 
     _responseTall(addHiddenItems) {
-        let response = [];
+        const responseItems = this._getPrunedCommandList(addHiddenItems);
         const scope = this;
 
-        if (isPresent(addHiddenItems)) {
-            response = hiddenItems.commands.map((currHiddenItem) => {
-                return scope._createDetailedLine(currHiddenItem);
-            });            
-        }
-
-        commandRegistry.registry.forEach((currCmdDef) => {
-            if(!currCmdDef.hideFromList) {
-                const currLine = scope._createDetailedLine(currCmdDef);
-
-                response = response.concat(currLine);
-            }
+        return responseItems.map((currCommandItem) => {
+            return scope._createDetailedLine(currCommandItem);
         });
-
-        return response;
     },
 
     afterModel() {

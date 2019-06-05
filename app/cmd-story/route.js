@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import { computed, aliasMethod } from '@ember/object';
+import { aliasMethod } from '@ember/object';
 import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
@@ -15,9 +15,12 @@ export default Route.extend({
     // ------------------- ember hooks -------------------
 
     afterModel() {
+        let welcomePrefix = 'Welcome back';
+
         // handle initialization of story data if it doesn't exist yet
-        if (this.isNewStory) {
+        if (this.storyCore.getIsNewStory()) {
             this.storyCore.formatStoryData();
+            welcomePrefix = 'Welcome to story';
         }
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
@@ -25,30 +28,13 @@ export default Route.extend({
             displayAppNameInPrompt: true,
             interruptPrompt: true,
             overrideScope: this,
-            response: [this.welcomeMessage, ''].concat(this.storyCore.getCurrentRoomDescription())
+            response: [`${welcomePrefix} ${this.persistenceHandler.getUsername()}`, '']
+                .concat(this.storyCore.getCurrentRoomDescription())
         });
 
         // init story in shell
         this.inputProcessor.setAppEnvironment(appEnvironment);
     },
-
-    // ------------------- computed properties -------------------
-
-    welcomeMessage: computed('isNewStory', 'persistenceHandler.magicRobotsData.username', {
-        get() {
-            const username = this.persistenceHandler.getUsername();
-            return this.isNewStory ?
-                `Welcome to story ${username}.` :
-                `Welcome back ${username}.`;
-        }
-    }),
-
-    isNewStory: computed('storyCore.xp', {
-        get() {
-            const xp = this.storyCore.xp;
-            return xp === undefined || xp === 0 || xp === 1;
-        }
-    }),
 
     // ------------------- private methods -------------------
 
@@ -788,24 +774,8 @@ export default Route.extend({
             'attack',
             'kill',
             'throw'
-        ]
+        ];
 
-        // check for item completion
-        const splitFrag = fragment.toLowerCase().split(' ');
-        if (splitFrag.length > 1) {
-            const itemFrag = splitFrag[splitFrag.length - 1];
-            const listOfItemNames = items.items.mapBy('name');
-            const matchedItem = environmentHelpers.getMatchingFragmentFromSet(itemFrag, listOfItemNames);
-
-            if (isPresent(matchedItem)) {
-                // recombine result
-                const firstPortion = splitFrag.slice(0, -1);
-                firstPortion.push(matchedItem);
-                
-                return firstPortion.join(' ');
-            }
-        }
-
-        return environmentHelpers.getMatchingFragmentFromSet(fragment, commandRegistry);
+        return environmentHelpers.handleTabComplete(fragment, [commandRegistry, items.items.mapBy('name')]);
     }
 });

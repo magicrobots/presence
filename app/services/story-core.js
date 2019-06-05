@@ -15,6 +15,9 @@ const HOME_COORD_X = 47;
 const HOME_COORD_Y = 47;
 const MAX_THINGS_TO_LIST = 10;
 
+const INIT_ROOM_ONE_INVENTORY = [1, 23, 25];
+const INIT_USER_INVENTORY = [3];
+
 export default Service.extend({
     persistenceHandler: service(),
     inputProcessor: service(),
@@ -294,6 +297,19 @@ export default Service.extend({
 
     // ------------------- public methods -------------------
 
+    getIsNewStory() {
+        if (isNone(this.persistenceHandler.getStoryInventoryItems())) {
+            return true;
+        }
+        // check persistenceHandler values against init values of:
+        // room 1 inventory
+        // user inventory
+        // visited rooms
+        return this.persistenceHandler.getStoryRoomInventoryById(1) === INIT_ROOM_ONE_INVENTORY &&
+            this.persistenceHandler.getStoryInventoryItems() === INIT_USER_INVENTORY &&
+            this.persistenceHandler.getStoryVisitedRooms() === [];
+    },
+
     hasFlashlight() {
         return this.persistenceHandler.getStoryInventoryItems().includes(7);
     },
@@ -341,10 +357,10 @@ export default Service.extend({
         this.persistenceHandler.setStoryPosX(HOME_COORD_X);
         this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
-        this.persistenceHandler.setStoryInventoryItems([3]);
+        this.persistenceHandler.setStoryInventoryItems(INIT_USER_INVENTORY);
         this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
-            {roomId: 1, inventory: [1, 23, 25]},
+            {roomId: 1, inventory: INIT_ROOM_ONE_INVENTORY},
             {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
