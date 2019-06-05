@@ -1,3 +1,5 @@
+import { isPresent } from '@ember/utils';
+
 export default {
 
     generateEnvironmentWithDefaults: function(options) {
@@ -17,7 +19,32 @@ export default {
         return list[randomResponseIndex];
     },
 
-    getMatchingFragmentFromSet(fragment, set) {
+    handleTabComplete(fragment, itemSets) {
+        // check for arguments
+        const splitFrag = fragment.toLowerCase().split(' ');
+        const itemFrag = splitFrag[splitFrag.length - 1];
+
+        // get item names
+        let listOfItemNames = itemSets[0];
+
+        if (splitFrag.length > 1) {
+            // get matched item
+            listOfItemNames = itemSets[itemSets.length -1];
+            const matchedItem = this.getItemFromSetByFragment(itemFrag, listOfItemNames);
+
+            if (isPresent(matchedItem)) {
+                // recombine result
+                const firstPortion = splitFrag.slice(0, -1);
+                firstPortion.push(matchedItem);
+                
+                return firstPortion.join(' ');
+            }
+        }
+
+        return this.getItemFromSetByFragment(itemFrag, listOfItemNames);
+    },
+
+    getItemFromSetByFragment(fragment, set) {
         const testEntry = fragment.toUpperCase();
 
         const matches = set.filter((currCmdDef) => {

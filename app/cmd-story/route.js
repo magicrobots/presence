@@ -774,24 +774,8 @@ export default Route.extend({
             'attack',
             'kill',
             'throw'
-        ]
+        ];
 
-        // check for item completion
-        const splitFrag = fragment.toLowerCase().split(' ');
-        if (splitFrag.length > 1) {
-            const itemFrag = splitFrag[splitFrag.length - 1];
-            const listOfItemNames = items.items.mapBy('name');
-            const matchedItem = environmentHelpers.getMatchingFragmentFromSet(itemFrag, listOfItemNames);
-
-            if (isPresent(matchedItem)) {
-                // recombine result
-                const firstPortion = splitFrag.slice(0, -1);
-                firstPortion.push(matchedItem);
-                
-                return firstPortion.join(' ');
-            }
-        }
-
-        return environmentHelpers.getMatchingFragmentFromSet(fragment, commandRegistry);
+        return environmentHelpers.handleTabComplete(fragment, [commandRegistry, items.items.mapBy('name')]);
     }
 });

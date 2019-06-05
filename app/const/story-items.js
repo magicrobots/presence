@@ -313,7 +313,7 @@ export default {
             id: 25,
             type: environmentValues.ITEM_TYPE_DOC,
             name: 'magazine',
-            description: 'Half open splayed across the table lies a well worn magazine.',
+            description: 'Splayed open across the table lies a well worn magazine.',
             details: 'You flip over the glossy cover to read it\'s titled "Astronomy". The cover stories are about a "Puzzling Supernova in M81" and a "New U.S. Mission to the Moon".',
             content: ['... a bunch of stuff you don\'t understand and mostly you learn that you don\'t really have any interest in astronomy.'],
             use: null,

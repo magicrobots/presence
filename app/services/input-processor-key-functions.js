@@ -2,6 +2,7 @@ import { get, set } from '@ember/object';
 import { isPresent } from '@ember/utils';
 import inputComputed from './input-processor-computed';
 import commandRegistry from '../const/command-registry';
+import environmentHelpers from '../utils/environment-helpers';
 
 let deleteFromCommand;
 let newCommand;
@@ -111,7 +112,7 @@ export default inputComputed.extend({
                 matchedCommand = scopedTabComplete(fragment);
             }
         } else {
-            matchedCommand = commandRegistry.getMatchingCommandFragment(fragment);
+            matchedCommand = environmentHelpers.handleTabComplete(fragment, [commandRegistry.registry.mapBy('commandName')]);
         }
 
         // command completion        
