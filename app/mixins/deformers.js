@@ -4,7 +4,7 @@ import { inject as service } from '@ember/service';
 export default Mixin.create({
     rngeezus: service(),
 
-    everything(imageData) {
+    applyAllDeformers(imageData) {
         if (!imageData) {
             return false;
         }
@@ -91,7 +91,7 @@ export default Mixin.create({
 
         if (contrast > maxContrast)
         {
-            const increaseAmount = 20 + this.rngeezus.getRandomValue();
+            const increaseAmount = 20 + this.rngeezus.getRandomValue('largeDisplacementPool');
             const nextPixelIndex = i + 1;
             const nextPixelR = imageData.data[nextPixelIndex * 4 + 0];
             const nextPixelG = imageData.data[nextPixelIndex * 4 + 1];
@@ -102,7 +102,7 @@ export default Mixin.create({
 
             const middleIncreaseAmount = increaseAmount * 0.5;
             const middlePixelIndex = i + 2;
-            const middlePixelR = imageData.data[middlePixelIndex * 4 + 0];
+            const middlePixelR = imageData.data[middlePixelIndex * 4 + 1];
             const middlePixelG = imageData.data[middlePixelIndex * 4 + 1];
             const middlePixelB = imageData.data[middlePixelIndex * 4 + 2];
             imageData.data[middlePixelIndex * 4 + 0] = middlePixelR + middleIncreaseAmount;
@@ -117,6 +117,6 @@ export default Mixin.create({
             imageData.data[farPixelIndex * 4 + 0] = farPixelR + farIncreaseAmount;
             imageData.data[farPixelIndex * 4 + 1] = farPixelG + farIncreaseAmount;
             imageData.data[farPixelIndex * 4 + 2] = farPixelB + farIncreaseAmount;
-        }  
+        }
     },
 });

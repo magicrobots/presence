@@ -71,7 +71,7 @@ export default Service.extend({
             `Still remaining ${remainingIds.length > 1 ? 'are' : 'is'}`
         ];
 
-        return `${environmentHelpers.getRandomResponseFromList(responses)} the ${remainingNames.join(' and ')}.`;
+        return `The robot booms "${environmentHelpers.getRandomResponseFromList(responses)} the ${remainingNames.join(' and ')}."`;
     },
 
     _findRoomThatContainsItem(itemId) {
@@ -473,9 +473,10 @@ export default Service.extend({
     },
 
     handleTrap() {
+        const trapResponse = this._getProcessedDescription();
         this.handleDeath();
 
-        return [this._getProcessedDescription()];
+        return [trapResponse];
     },
 
     handleDeath() {
@@ -736,7 +737,7 @@ export default Service.extend({
                 '',
                 'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side and a long spider looking grasping appendage unfolds from within, and it lifts the wrench from your hands like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
                 '',
-                'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which I kid you not, is a smilie face emoji.' ];
+                'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which looks like an X in a box.' ];
         } else {
             return ['What do you think a giant robot would like as a snack?'];
         }

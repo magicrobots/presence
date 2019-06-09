@@ -637,7 +637,7 @@ export default Route.extend({
     progress: aliasMethod('status'),
     status() {
         // show flashlight status if applicable
-        const flashlightStatus = this._showFlashlightStatus();
+        let result = this._showFlashlightStatus();
 
         // get max XP:
         const maxXp = this.storyCore.maxXp;
@@ -668,7 +668,7 @@ export default Route.extend({
                 completionReport.push('You have totally saved the world.  Nice work.');
                 completionReport.push(' [x] self satisfaction, relief');
             } else {
-                completionReport.push('Completion Items:');
+                completionReport.push('Robot\'s Quest:');
     
                 const collectedCompletionItems = this.persistenceHandler.getStoryCompletionItemsCollected();
     
@@ -681,12 +681,17 @@ export default Route.extend({
         }
 
         // result
-        const result = flashlightStatus.concat([`XP: ${currXp} / ${maxXp}`, '', 'Progress:', barProgress, '', `Deaths: ${deathCount}`].concat(hackerReport).concat(completionReport));
-        if (maxXp === currXp) {
+        const isExplorer = maxXp === currXp;
+        if (isExplorer) {
             result.push('');
             result.push('You really get around.');
             result.push(' [x] explorer');
+        } else {
+            result = result.concat(['Explorer:', barProgress]);
         }
+
+        // deaths, hacker, robot completion
+        result = result.concat(hackerReport.concat(completionReport));
 
         // cake
         if (this.persistenceHandler.getCakeEaten()) {
@@ -694,6 +699,10 @@ export default Route.extend({
             result.push('You ate the cake.');
             result.push(' [x] happiness');
         }
+
+        // deaths
+        const deaths = ['', `Deaths: ${deathCount}`];
+        result.push(deaths);
 
         // share response
         this.inputProcessor.handleFunctionFromApp(result);
