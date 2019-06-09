@@ -291,7 +291,7 @@ export default Component.extend(Deformers, {
         let deformedImage = this.originalScreenBitmap;
 
         // chain pixel modifications
-        deformedImage = this.everything(deformedImage);
+        deformedImage = this.applyAllDeformers(deformedImage);
 
         // make new image for display using contents of deformed image data
         let newImageData = ctx2.createImageData(this.canvasWidth, this.canvasHeight);
@@ -303,8 +303,9 @@ export default Component.extend(Deformers, {
         ctx2.putImageData(newImageData, 0, 0);
 
         this._doDisplacementCounter();
-        const largeDisplacement = this.rngeezus.getRandomValue();
-        this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter, largeDisplacement);
+        const largeDisplacement = this.rngeezus.getRandomValue('largeDisplacementPool');
+        this._createDisplacement(ctx2, deformedImage, 5, this.displacementCounter + 2, 4);
+        this._createDisplacement(ctx2, deformedImage, 4, this.displacementCounter + 1, largeDisplacement);
         this._createDisplacement(ctx2, deformedImage, 2, this.displacementCounter, 1);
     },
 
@@ -318,7 +319,7 @@ export default Component.extend(Deformers, {
             set(this, 'displacementCounter', 0);
         }
 
-        const travelPixelsPerCycle = 1;
+        const travelPixelsPerCycle = 3;
         set(this, 'displacementCounter', this.displacementCounter + travelPixelsPerCycle);
     },
 
