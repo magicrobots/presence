@@ -12,9 +12,9 @@ export default Mixin.create({
         const l = imageData.data.length / 4;
 
         for (let i = 0; i < l; i++) {
-            this._shiftPixel(i, imageData);
             this._pixelizeBit(i, imageData);
-            // this._glowEdgesBit(i, imageData);
+            this._shiftPixel(i, imageData);
+            this._glowEdgesBit(i, imageData);
         }
 
         return imageData;
@@ -75,7 +75,7 @@ export default Mixin.create({
     },
 
     _glowEdgesBit(i, imageData) {
-        const distance = 2;
+        const distance = 3;
 
         let r = imageData.data[i * 4 + 0];
         let g = imageData.data[i * 4 + 1];

@@ -32,26 +32,32 @@ export default Component.extend(Deformers, {
         this.inputProcessor.processKey(event);
     },
 
-    didRender() {
+    didInsertElement() {
+        this._super(...arguments);
+
         // inform input processor of markup
         set(this.inputProcessor, 'relevantMarkup', this.$()[0]);
-
-        // store max chars per line
-        const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
-        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
-        set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
+        this._initCanvas();
 
         // add resize listener
         const scope = this;
         window.addEventListener('resize', function() {
-            set(scope, 'containerHeight', window.innerHeight);
-            set(scope, 'containerWidth', window.innerWidth);
+            scope._setContainerSize();
         })
 
         // get everything started
         this._setContainerSize();
         this._startRenderLoop();
         this._setDomFocusToSelf();
+    },
+
+    didRender() {
+        this._super(...arguments);
+
+        // store max chars per line
+        const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
+        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
+        set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
     },
 
     // ------------------- computed properties -------------------
@@ -171,15 +177,13 @@ export default Component.extend(Deformers, {
         this._setBgImage(this.inputProcessor.bgImage);
     }),
 
-    _setContainerSize() {
-        set(this, 'containerHeight', window.innerHeight);
-        set(this, 'containerWidth', window.innerWidth);
-
+    _initCanvas() {
         const canvasSource = this.$('#source-canvas')[0];
         const ctx = canvasSource.getContext("2d");
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
-        ctx.font = `${this.FONT_SIZE}px Courier`;
+
+        ctx.font = `${this.FONT_SIZE}px Courier New`;
 
         ctx.imageSmoothingEnabled = false;
         ctx.mozImageSmoothingEnabled = false;
@@ -200,28 +204,42 @@ export default Component.extend(Deformers, {
 
         // canvas to put modified image onto
         ctx2.fillStyle = "rgba(0,0,0,0)";
-        ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    },
+
+    _setContainerSize() {
+        set(this, 'containerHeight', window.innerHeight);
+        set(this, 'containerWidth', window.innerWidth);
+        
+        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         this._setBgImage();
     },
 
-    _setBgImage(imgPath) {
-        const newImage = imgPath || 'emptyScreen.jpg';
+    bgImagePath:computed('inputProcessor.bgImage', {
+        get() {
+            return this.inputProcessor.bgImage || 'emptyScreen.jpg';
+        }
+    }),
+
+    _setBgImage() {
         const scope = this;
         const imageObj = new Image();
+        set(this, 'isLoadingSomething', true);
 
         // load BG image
         imageObj.onload = function() {
             set(scope, 'bgImageData', this);
+            set(scope, 'isLoadingSomething', false);
         };
 
-        imageObj.src = `assets/${newImage}`;
-
+        imageObj.src = `assets/${this.bgImagePath}`;
     },
 
     _setDomFocusToSelf() {
         this.$().attr({ tabindex: 1 });
         this.$().focus();
+        this._setContainerSize();
     },
 
     _startRenderLoop() {
@@ -246,6 +264,8 @@ export default Component.extend(Deformers, {
 
     _drawText(ctx) {
         const scopedContext = ctx;
+
+        ctx.font = `${this.FONT_SIZE}px Courier New`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             
