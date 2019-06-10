@@ -15,7 +15,7 @@ export default Component.extend(Deformers, {
     // ------------------- consts -------------------
 
     FONT_SIZE: 12,
-    FONT_CHARACTER_WIDTH: 7.3,
+    FONT_CHARACTER_WIDTH: 8.7,
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,
@@ -183,8 +183,6 @@ export default Component.extend(Deformers, {
         const canvasAltered = this.$('#altered-canvas')[0];
         const ctx2 = canvasAltered.getContext("2d");
 
-        ctx.font = `${this.FONT_SIZE}px Courier New`;
-
         ctx.imageSmoothingEnabled = false;
         ctx.mozImageSmoothingEnabled = false;
         ctx.webkitImageSmoothingEnabled = false;
@@ -265,7 +263,7 @@ export default Component.extend(Deformers, {
     _drawText(ctx) {
         const scopedContext = ctx;
 
-        ctx.font = `${this.FONT_SIZE}px Courier New`;
+        ctx.font = `${this.FONT_SIZE}px ocr-a-std`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             
