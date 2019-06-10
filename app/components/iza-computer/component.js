@@ -10,6 +10,7 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     rngeezus: service(),
+    platformAnalyzer: service(),
     classNames: ['iza-computer'],
 
     // ------------------- consts -------------------
@@ -437,11 +438,14 @@ export default Component.extend(Deformers, {
             const h = scope.canvasHeight;
             ctx.drawImage(bgImage, 0, 0, w, h);
             scope._drawText(ctx);
-            scope._deform(ctx2);
 
-            // store canvas image data for manipulation
-            const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
-            set(scope, 'originalScreenBitmap', imgData);
+            if (!scope.platformAnalyzer.getIsSafari()) {
+                scope._deform(ctx2);
+    
+                // store canvas image data for manipulation
+                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+                set(scope, 'originalScreenBitmap', imgData);
+            }
         }
 
         window.requestAnimationFrame(window.recursiveAnimationFunction);

@@ -1,7 +1,10 @@
 import Service from '@ember/service';
+import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
 
 export default Service.extend({
+    platformAnalyzer: service(),
+
     CURSOR_CHAR: '█',
     COLORIZE_LINE_PREFIX: '<colorize>',
     COLORIZE_COLOR_LENGTH: 7,
@@ -32,9 +35,13 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
+        const welcomeMessage = this.platformAnalyzer.getIsSafari() ?
+            ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help', 'SAFARI USER: for best experience please switch to Chrome or Firefox browsers.'] :
+            ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help'];
+
         // set defaults
         set(this, 'commandHistory', []),
-        set(this, 'appResponse', ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help']);
+        set(this, 'appResponse', welcomeMessage);
         set(this, 'previousExecutionBlocks', []),
 
         this._startPromptCursorLoop();
