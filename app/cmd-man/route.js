@@ -20,7 +20,7 @@ export default Route.extend({
 
                 // append usage if it's there
                 if (isPresent(matchedCommand.usage)) {
-                    response = response.concat([`  usage: ${matchedCommand.usage}`]);
+                    response = response.concat([` usage: ${matchedCommand.usage}`]);
                 }
             } else {
                 response = [`  ERROR: no help file found for ${helpAppName.toUpperCase()}`];
