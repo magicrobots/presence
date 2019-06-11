@@ -334,6 +334,12 @@ export default keyFunctions.extend({
                 break;
 
             default:
+
+                if (entry === 'ESCAPE') {
+                    // stop user from tabbing outside of browser focus
+                    keyEvent.preventDefault();
+                }
+
                 if (this.interruptPrompt && isPresent(this.activeApp)) {
                     // quit running app
                     if (entry === 'ESCAPE' ||

@@ -35,9 +35,11 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
+        const appVersion = '0.1.4234265';
+        const welcomeBase = [`Welcome to Faux OS v${appVersion} ©1996`, '? for help'];
         const welcomeMessage = this.platformAnalyzer.getIsSafari() ?
-            ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help', 'SAFARI USER: for best experience please switch to Chrome or Firefox browsers.'] :
-            ['Welcome to Faux OS v0.1.4234265 ©2019', '? for help'];
+            welcomeBase.concat(['', 'SAFARI USER:', 'Safari has performance problems. Therefore what you\'re seeing has been limited.', 'For best experience please switch to Chrome or Firefox browsers.']) :
+            welcomeBase;
 
         // set defaults
         set(this, 'commandHistory', []),

@@ -65,7 +65,7 @@ export default Component.extend(Deformers, {
 
     isMobileDevice: computed({
         get() {
-            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+            return this.platformAnalyzer.getIsMobileDevice();
         }
     }),
 
@@ -206,6 +206,11 @@ export default Component.extend(Deformers, {
     },
 
     _setContainerSize() {
+        if (this.containerHeight === window.innerHeight &&
+            this.containerWidth === window.innerWidth) {
+                return;
+        }
+
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
         
