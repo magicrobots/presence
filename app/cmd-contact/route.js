@@ -36,7 +36,7 @@ export default Route.extend({
             Destination: { ToAddresses: [ 'Admin <adam@magicrobots.com>' ] },
             Message: {
                 Body: { Text: {
-                Data: this.messageBody,
+                Data: `${this.messageBody}, from: ${this.messageFrom}`,
                 Charset: 'UTF-8' } },
                 Subject: { Data: 'Robotified Contact Form', Charset: 'UTF-8' }
             },
@@ -85,13 +85,21 @@ export default Route.extend({
             case 0:
                 set(this, 'messageBody', inputString);
                 appResponse = [
+                    'Enter who the message is from:',
+                    '[If you\'d like a response, an email address would be helpful here]'
+                    ];
+                break;
+            case 1:
+                set(this, 'messageFrom', inputString);
+                appResponse = [
                     `MESSAGE: [${this.messageBody}]`,
+                    `   FROM: [${this.messageFrom}]`,
                     '',
                     'Are you sure you want to send the message to Magic Robots HQ?',
                     'y/n'
                     ];
                 break;
-            case 1:
+            case 2:
                 if (isPresent(inputString)) {
                     const response = inputString.toLowerCase();
                     if (['y', 'yes'].includes(response)) {
