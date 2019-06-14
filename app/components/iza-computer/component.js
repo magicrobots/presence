@@ -15,7 +15,7 @@ export default Component.extend(Deformers, {
 
     // ------------------- consts -------------------
 
-    FONT_SIZE: 12,
+    FONT_SIZE: 14,
     FONT_CHARACTER_WIDTH: 8.7,
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
@@ -269,7 +269,7 @@ export default Component.extend(Deformers, {
     _drawText(ctx) {
         const scopedContext = ctx;
 
-        ctx.font = `${this.FONT_SIZE}px ocr-a-std`;
+        ctx.font = `${this.FONT_SIZE}px courier-std`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             

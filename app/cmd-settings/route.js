@@ -12,7 +12,7 @@ export default Route.extend({
         const newName = this.inputProcessor.currentArgs[0];
 
         if (isBlank(newName)) {
-            this.inputProcessor.handleFunctionFromApp([`enter second parameter to set username - eg: {username HAL9000}`]);
+            this.inputProcessor.handleFunctionFromApp([`enter second parameter to set username - e.g.: 'username HAL9000'`]);
 
             return;
         }
@@ -25,7 +25,7 @@ export default Route.extend({
         const newColor = this.inputProcessor.currentArgs[0];
 
         if (isBlank(newColor)) {
-            this.inputProcessor.handleFunctionFromApp([`enter valid hex code as second parameter to change prompt color - eg: {promptcolor #336699}`]);
+            this.inputProcessor.handleFunctionFromApp([`enter valid hex code as second parameter to change prompt color - e.g.: 'promptcolor #336699'`]);
 
             return;
         }
@@ -36,7 +36,7 @@ export default Route.extend({
             this.persistenceHandler.setPromptColor(newColor);
             this.inputProcessor.handleFunctionFromApp([`Prompt color changed to ${newColor}`]);
         } else {
-            this.inputProcessor.handleFunctionFromApp([`second parameter must be valid hex color - eg: {promptcolor #336699}`]);
+            this.inputProcessor.handleFunctionFromApp([`second parameter must be valid hex color - e.g.: 'promptcolor #336699'`]);
         }
     },
 
