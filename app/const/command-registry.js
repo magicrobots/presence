@@ -125,7 +125,7 @@ export default {
 
         { commandName: 'viewer',
         routeName: 'cmd-viewer',
-        helpText: 'Displays still images from recent VHS videotape recordings.',
+        helpText: 'Displays still images captured from recent VHS videotape recordings.',
         usage: 'Use left and right arrows to navigate, and ESC to exit.',
         date: 'Feb  9 16:02',
         size: '9819081510',
@@ -135,7 +135,7 @@ export default {
         { commandName: 'settings',
         routeName: 'cmd-settings',
         helpText: 'Allows user to save personal settings for terminal environment.',
-        usage: 'At settings prompt >`username Eloise`',
+        usage: 'At settings prompt enter desired username: `cmd-settings >username Eloise`',
         date: 'Jan 16  6:05',
         size: '      5191',
         isExec: true,
