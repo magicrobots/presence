@@ -85,7 +85,7 @@ export default keyFunctions.extend({
         // create executable command from string
         set(this, 'currentCommand', this.currentCommand.toLowerCase());
         const commandComponents = this.currentCommand.split(' ');
-        const enteredWords = commandComponents.concat();
+        // const enteredWords = commandComponents.concat();
         let commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
@@ -96,7 +96,7 @@ export default keyFunctions.extend({
         }
 
         // don't do anything if the user is rude
-        if (this._commandHasSwears(enteredWords)) {
+        if (this._commandHasSwears(this.currentCommand)) {
             this._handleFilthyInput();
             this._doAnalytics();
 
@@ -142,10 +142,10 @@ export default keyFunctions.extend({
         this._doAnalytics();
     },
 
-    _commandHasSwears(enteredWords) {
-        for (let i = 0; i < enteredWords.length; i++) {
-            const currEnteredWord = enteredWords[i];
-            if (environmentValues.badWords.includes(currEnteredWord)) {
+    _commandHasSwears(currentCommand) {
+        for (let i = 0; i < environmentValues.badWords.length; i++) {
+            const currBadWord = environmentValues.badWords[i];
+            if (currentCommand.includes(currBadWord)) {
                 return true;
             }
         }

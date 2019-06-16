@@ -4,17 +4,9 @@ export default {
 
     badWords: [
         'shit',
-        'shitty',
-        'shittier',
-        'bullshit',
-        'ass',
+        'asshole',
         'fuck',
-        'fucked',
-        'motherfucker',
-        'motherfuckin',
-        'motherfucking',
         'bitch',
-        'bitches',
         'cunt',
         'twat',
         'pussy',
