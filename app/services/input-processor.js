@@ -110,7 +110,8 @@ export default keyFunctions.extend({
 
                 // handle enter bug
                 if (commandName === 'enter' ||
-                    commandName === 'exit') {
+                commandName === 'exit' ||
+                commandName === 'init') {
 
                     this._handleInvalidInput(commandName.toUpperCase());
                     return;
