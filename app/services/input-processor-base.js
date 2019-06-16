@@ -37,9 +37,21 @@ export default Service.extend({
 
         const appVersion = '0.1.4234265';
         const welcomeBase = [`Welcome to Faux OS v${appVersion} ©1996`, '? for help'];
-        const welcomeMessage = this.platformAnalyzer.getIsSafari() ?
-            welcomeBase.concat(['', 'SAFARI USER:', 'Safari has performance problems. Therefore what you\'re seeing has been limited.', 'For best experience please switch to Chrome or Firefox browsers.']) :
+        let welcomeMessage = this.platformAnalyzer.getIsSafari() ?
+            welcomeBase.concat([
+                '',
+                'SAFARI USER:',
+                'Experience limited: enhanced graphics disabled.',
+                'For full experience switch to Chrome or Firefox browsers.'
+            ]) :
             welcomeBase;
+
+        if (this.platformAnalyzer.getIsMobileDevice()) {
+            welcomeMessage = welcomeMessage.concat([
+                '',
+                'KEYBOARD REQUIRED.'
+            ]);
+        }
 
         // set defaults
         set(this, 'commandHistory', []),
