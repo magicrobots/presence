@@ -20,7 +20,7 @@ export default Route.extend({
         // handle initialization of story data if it doesn't exist yet
         if (this.storyCore.getIsNewStory()) {
             this.storyCore.formatStoryData();
-            welcomePrefix = 'Welcome to story';
+            welcomePrefix = 'Welcome to Origin';
         }
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
@@ -723,7 +723,7 @@ export default Route.extend({
     },
 
     help() {
-        this.inputProcessor.handleFunctionFromApp(['Story help:',
+        this.inputProcessor.handleFunctionFromApp(['Origin help:',
             '',
             'This is an interactive text adventure. Here is a list of some of the basic commands you can use, but there are plenty of others (some of which are required to WIN) you can find by experimenting.',
             '',
@@ -736,7 +736,7 @@ export default Route.extend({
             '  drop ...... If you have something you can drop it.',
             '  inventory . Lists items you possess.',
             '  examine ... Describes items in detail.',
-            '  progress .. Displays progress through story.',
+            '  progress .. Displays progress through Origin.',
             '  format .... Resets your game if you want to start again. Careful!',
             '',
             'Have fun!']);

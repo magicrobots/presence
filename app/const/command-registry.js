@@ -60,6 +60,15 @@ export default {
         isExec: true,
         isInvisible: false },
 
+        { commandName: 'fling',
+        routeName: 'cmd-fling',
+        helpText: 'Fling things. Mostly chickens.',
+        usage: null,
+        date: 'Jun 15 11:58',
+        size: '    253885',
+        isExec: true,
+        isInvisible: true },
+
         { commandName: 'hello',
         routeName: 'cmd-hello',
         helpText: 'Sometimes you just want to say hi.',

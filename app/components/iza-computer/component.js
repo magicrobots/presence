@@ -63,12 +63,6 @@ export default Component.extend(Deformers, {
 
     // ------------------- computed properties -------------------
 
-    isMobileDevice: computed({
-        get() {
-            return this.platformAnalyzer.getIsMobileDevice();
-        }
-    }),
-
     textEdgeBuffer: computed('viewportMeasurements.{width,height}', {
         get() {
             return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
@@ -351,7 +345,7 @@ export default Component.extend(Deformers, {
 
         // prevent inifinite loop?
         if (maxCharsPerLine < this.MIN_USEABLE_COLUMNS) {
-            return ['', 'so smol','  :('];
+            return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
         }
 
         allLines.forEach((currLine) => {

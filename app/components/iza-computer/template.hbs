@@ -1,15 +1,10 @@
-
-{{#if isMobileDevice}}
-    This website was made in 1986 before your device existed so please connect using desktop personal computer with at least 5600kbps modem speed.
-{{else}}
-    <div class="route-container" style={{routeContainerStyle}}>
-        {{iza-computer/loading-indicator
-            isVisible=isLoadingSomething}}
-        <img class="vignette" alt="vignette" src="assets/vignette.png">
-        <canvas id="source-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
-        <canvas id="altered-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
-        <div class="outlet-container">
-            {{outlet}}
-        </div>
+<div class="route-container" style={{routeContainerStyle}}>
+    {{iza-computer/loading-indicator
+        isVisible=isLoadingSomething}}
+    <img class="vignette" alt="vignette" src="assets/vignette.png">
+    <canvas id="source-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
+    <canvas id="altered-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
+    <div class="outlet-container">
+        {{outlet}}
     </div>
-{{/if}}
+</div>
