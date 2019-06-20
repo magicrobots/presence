@@ -11,6 +11,7 @@ export default Component.extend(Deformers, {
     persistenceHandler: service(),
     rngeezus: service(),
     platformAnalyzer: service(),
+    statusBar: service(),
     classNames: ['iza-computer'],
 
     // ------------------- consts -------------------
@@ -437,6 +438,7 @@ export default Component.extend(Deformers, {
             const h = scope.canvasHeight;
             ctx.drawImage(bgImage, 0, 0, w, h);
             scope._drawText(ctx);
+            scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
             if (!scope.platformAnalyzer.getIsSafari()) {
                 scope._deform(ctx2);

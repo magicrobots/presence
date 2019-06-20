@@ -212,6 +212,7 @@ export default keyFunctions.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'cursorPosition', 0);
+        this.statusBar.clearStatusMessage();
         getOwner(this).lookup('router:main').transitionTo('index');
     },
 

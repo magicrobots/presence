@@ -1,18 +1,58 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { set, computed, observer } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
 import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
+    statusBar: service(),
     currentShopIndex: 0,
 
     shopImages: Object.freeze([
-        'shop.jpg',
-        'teeshirt1.jpg',
-        'teeshirt2.jpg',
-        'stickers1.jpg']),
+        {
+            url: 'shop.jpg',
+            itemMapId: null
+        },
+        {
+            url: 'teeshirt1.jpg',
+            itemMapId: 0
+        },
+        {
+            url: 'stickers1.jpg',
+            itemMapId: 2
+        },
+        {
+            url: 'teeshirt2.jpg',
+            itemMapId: 0
+        },
+        {
+            url: 'stickers2.jpg',
+            itemMapId: 2
+        }
+    ]),
+
+    shopItems: Object.freeze([
+        { 
+            id: 0,
+            name: 'Teeshirt',
+            price: 25,
+            desc: 'yellow. sizes S-XXL'
+        },
+        { 
+            id: 1,
+            name: 'Hoodie',
+            price: 75,
+            desc: 'black. sizes S-XXL'
+        },
+        { 
+            id: 2,
+            name: 'Sticker Pack',
+            price: 7,
+            desc: '4 assorted stickers'
+        }
+    ]),
 
     MAIN_DESCRIPTION: Object.freeze(['',
         'Submit payment via paypal to Automated Direct Accounting Matrix (ADAM): ADAM@MAGICROBOTS.COM',
@@ -25,12 +65,6 @@ export default Route.extend({
         ' - Payment calculation must be correct.',
         '',
         '<- use arrows to navigate gallery ->', 'ESC to quit', '? to show this message again.']),
-
-    shopItems: Object.freeze([
-        { itemName: 'Teeshirt', price: 25 },
-        { itemName: 'Hoodie', price: 50 },
-        { itemName: 'Sticker Pack', price: 10 }
-    ]),
 
     _arrowLeft(scope) {
         let newIndex = scope.currentShopIndex - 1;
@@ -61,7 +95,7 @@ export default Route.extend({
 
     imagePath: computed('currentShopIndex', {
         get() {
-            return `shop/${this.shopImages[this.currentShopIndex]}`;
+            return `shop/${this.shopImages[this.currentShopIndex].url}`;
         }
     }),
 
@@ -70,12 +104,17 @@ export default Route.extend({
     }),
 
     _displayImage() {
+        const currImageItem = this.shopItems[this.shopImages[this.currentShopIndex].itemMapId];
+        const itemMessage = isPresent(currImageItem) ?
+            `${currImageItem.name} | $${currImageItem.price} | ${currImageItem.desc}` :
+            null;
+        this.statusBar.setStatusMessage(itemMessage);
         set(this.inputProcessor, 'bgImage', this.imagePath);
     },
 
     _getItems() {
         return this.shopItems.map((currItem) => {
-            return ` - $${currItem.price}.00 | ${currItem.itemName}`;
+            return ` - $${currItem.price}.00 | ${currItem.name}`;
         });
     },
 

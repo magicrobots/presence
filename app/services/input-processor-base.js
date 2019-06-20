@@ -4,6 +4,7 @@ import { set } from '@ember/object';
 
 export default Service.extend({
     platformAnalyzer: service(),
+    statusBar: service(),
 
     CURSOR_CHAR: '█',
     COLORIZE_LINE_PREFIX: '<colorize>',
