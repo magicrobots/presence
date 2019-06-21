@@ -2,22 +2,11 @@ import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
 
+import MagicNumbers from '../const/magic-numbers';
+
 export default Service.extend({
     platformAnalyzer: service(),
     statusBar: service(),
-
-    CURSOR_CHAR: '█',
-    COLORIZE_LINE_PREFIX: '<colorize>',
-    COLORIZE_COLOR_LENGTH: 7,
-    DEFAULT_PROMPT_COLOR: '#35dd59',
-    STATIC_PROMPT_COLOR: '#e3ff16',
-    DIRECTORY_LIST_COLOR: '#18def4',
-    EXEC_COLOR: '#86ff5e',
-    INACTIVE_COLORIZED_COLOR: '#2a4959',
-    INACTIVE_SCROLLED_COLOR: '#555555',
-    DEFAULT_SCROLLED_COLOR: '#878787',
-    DEFAULT_FEEDBACK_COLOR: '#FFFFFF',
-    CURSOR_BLINK_LENGTH: 400, // in milliseconds
 
     currentCommand: '',
     currentArgs: undefined,
@@ -29,8 +18,8 @@ export default Service.extend({
     currCommandIndex: -1,
     bgImage: undefined,
 
-    CURRENT_BLOCK_DEMARCATION() {
-        return this.COLORIZE_LINE_PREFIX.concat(this.DEFAULT_FEEDBACK_COLOR);
+    currentBlockDemarcation() {
+        return MagicNumbers.COLORIZE_LINE_PREFIX.concat(MagicNumbers.DEFAULT_FEEDBACK_COLOR);
     },
 
     init() {

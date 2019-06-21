@@ -3,6 +3,7 @@ import { isPresent } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import processorBase from './input-processor-base';
+import MagicNumbers from '../const/magic-numbers';
 
 export default processorBase.extend({
     persistenceHandler: service(),
@@ -54,27 +55,27 @@ export default processorBase.extend({
             // display cursor in position
             if (this.isPromptCursorVisible || this.forceDisplayCursor) {
                 commandDisplay = this.currentCommand.substr(0, this.cursorPosition) +
-                    this.CURSOR_CHAR +
+                    MagicNumbers.CURSOR_CHAR +
                     this.currentCommand.substr(this.cursorPosition + 1);
             }
 
             const interactiveLine = `${this.PROMPT_LINE_2}${commandDisplay}`;
-            const promptColor = this.persistenceHandler.getPromptColor() || this.DEFAULT_PROMPT_COLOR;
+            const promptColor = this.persistenceHandler.getPromptColor() || MagicNumbers.DEFAULT_PROMPT_COLOR;
 
             const fullBlock = isPresent(this.interruptPrompt) ?
-                ['', `${this.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`] :
-                ['', `${this.COLORIZE_LINE_PREFIX}${this.STATIC_PROMPT_COLOR}${this.PROMPT_LINE_1}`,
-                    `${this.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`];
+                ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`] :
+                ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.STATIC_PROMPT_COLOR}${this.PROMPT_LINE_1}`,
+                    `${MagicNumbers.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`];
 
             const appResponseMarked = [];
             this.appResponse.forEach((currLine) => {
                 if (typeof (currLine) === 'string') {
-                    appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currLine));
+                    appResponseMarked.push(this.currentBlockDemarcation().concat(currLine));
                 } else if (Array.isArray(currLine)) {
 
                     // handle arrays as responses.
                     currLine.forEach((currArrayLine) => {
-                        appResponseMarked.push(this.CURRENT_BLOCK_DEMARCATION().concat(currArrayLine));
+                        appResponseMarked.push(this.currentBlockDemarcation().concat(currArrayLine));
                     });
                 }
             });

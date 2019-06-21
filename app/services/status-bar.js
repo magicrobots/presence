@@ -2,9 +2,7 @@ import Service from '@ember/service';
 import { set } from '@ember/object';
 import { isPresent } from '@ember/utils';
 
-const FONT_SIZE = 16;
-const FONT_CHARACTER_WIDTH = 10;
-const STATUS_BORDER = 75;
+import MagicNumbers from '../const/magic-numbers';
 
 export default Service.extend({
 
@@ -20,10 +18,10 @@ export default Service.extend({
     
             // Draw text
             const textX = viewportMeasurements.width -
-                this.statusMessage.length * FONT_CHARACTER_WIDTH -
-                STATUS_BORDER;
+                this.statusMessage.length * MagicNumbers.STATUS_FONT_CHARACTER_WIDTH -
+                MagicNumbers.STATUS_BORDER;
 
-            ctx.font = `700 ${FONT_SIZE}px courier-std`;
+            ctx.font = `700 ${MagicNumbers.STATUS_FONT_SIZE}px courier-std`;
             ctx.fillStyle = '#000000';
             ctx.fillText(this.statusMessage, textX, textY);
             ctx.fillText(this.statusMessage, textX - 1, textY);

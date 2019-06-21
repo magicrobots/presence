@@ -4,6 +4,7 @@ import { isPresent } from '@ember/utils';
 
 import commandRegistry from '../const/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
+import MagicNumbers from '../const/magic-numbers';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -69,8 +70,8 @@ export default Route.extend({
 
     _createDetailedLine(appConfigObject) {
         const itemPrefix = '-rw-r--r--';
-        const itemPrefixExec = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.EXEC_COLOR}-rwxr-xr-x`;
-        const itemPrefixDir = `${this.inputProcessor.COLORIZE_LINE_PREFIX}${this.inputProcessor.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
+        const itemPrefixExec = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.EXEC_COLOR}-rwxr-xr-x`;
+        const itemPrefixDir = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
         const prefix = appConfigObject.isExec ? itemPrefixExec :
             appConfigObject.isDir ? itemPrefixDir :
             itemPrefix;
