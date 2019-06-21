@@ -8,6 +8,9 @@ const KEY_MAGIC_ROBOTS_DATA = 'magic-robots-data';
 const KEY_USERNAME = 'username';
 const KEY_PROMPT_COLOR = 'prompt-color';
 
+// fling
+const KEY_FLING_RECORD = 'fling-record';
+
 // story level
 const KEY_STORY_POS_X = 'story-pos-x';
 const KEY_STORY_POS_Y = 'story-pos-y';
@@ -58,6 +61,17 @@ export default Service.extend({
 
     getPromptColor() {
         return get(this._getStorageObject(), KEY_PROMPT_COLOR);
+    },
+
+    // --------------------- story vars ------------------------
+    
+    setFlingRecord(newRecord) {
+        set(this, `magicRobotsData.${KEY_FLING_RECORD}`, newRecord);
+        this._setStorageObject();
+    },
+
+    getFlingRecord() {
+        return get(this._getStorageObject(), KEY_FLING_RECORD);
     },
 
     // --------------------- story vars ------------------------
