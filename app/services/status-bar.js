@@ -15,7 +15,7 @@ export default Service.extend({
             // draw rect
             const rectHeight = 30;
             const textY = viewportMeasurements.height - 15;
-            ctx.fillStyle = "green";
+            ctx.fillStyle = '#4ba0ff';
             ctx.fillRect(0, viewportMeasurements.height - rectHeight, viewportMeasurements.width, rectHeight);
     
             // Draw text
@@ -24,7 +24,7 @@ export default Service.extend({
                 STATUS_BORDER;
 
             ctx.font = `700 ${FONT_SIZE}px courier-std`;
-            ctx.fillStyle = "black";
+            ctx.fillStyle = '#000000';
             ctx.fillText(this.statusMessage, textX, textY);
             ctx.fillText(this.statusMessage, textX - 1, textY);
             ctx.fillText(this.statusMessage, textX - 2, textY);

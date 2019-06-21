@@ -20,12 +20,24 @@ export default Route.extend({
             itemMapId: 0
         },
         {
+            url: 'hoodie2.jpg',
+            itemMapId: 1
+        },
+        {
             url: 'stickers1.jpg',
             itemMapId: 2
         },
         {
+            url: 'hoodie1.jpg',
+            itemMapId: 1
+        },
+        {
             url: 'teeshirt2.jpg',
             itemMapId: 0
+        },
+        {
+            url: 'hoodie3.jpg',
+            itemMapId: 1
         },
         {
             url: 'stickers2.jpg',
@@ -38,19 +50,19 @@ export default Route.extend({
             id: 0,
             name: 'Teeshirt',
             price: 25,
-            desc: 'yellow. sizes S-XXL'
+            desc: 'Yellow. Sizes S-XXL.'
         },
         { 
             id: 1,
-            name: 'Hoodie',
+            name: 'Hoodie (light weight)',
             price: 75,
-            desc: 'black. sizes S-XXL'
+            desc: 'Black. Sizes S-XXL: These run SMALL'
         },
         { 
             id: 2,
             name: 'Sticker Pack',
             price: 7,
-            desc: '4 assorted stickers'
+            desc: 'Four assorted stickers.'
         }
     ]),
 
