@@ -6,17 +6,8 @@ import { inject as service } from '@ember/service';
 import rooms from '../const/story-rooms';
 import items from '../const/story-items';
 import environmentValues from '../const/environment-values';
+import MagicNumbers from '../const/magic-numbers';
 import environmentHelpers from '../utils/environment-helpers';
-
-const XP_PER_MOVE = 1;
-const XP_PER_UNLOCK = 2;
-const XP_PER_COMPLETION_ITEM = 3;
-const HOME_COORD_X = 47;
-const HOME_COORD_Y = 47;
-const MAX_THINGS_TO_LIST = 10;
-
-const INIT_ROOM_ONE_INVENTORY = [1, 23, 25];
-const INIT_USER_INVENTORY = [3];
 
 export default Service.extend({
     persistenceHandler: service(),
@@ -230,7 +221,7 @@ export default Service.extend({
         const roomInventory = this.getRoomInventory();
         
         if (roomInventory.length > 0) {
-            if (roomInventory.length > MAX_THINGS_TO_LIST) {
+            if (roomInventory.length > MagicNumbers.MAX_THINGS_TO_LIST) {
                 // too many things to show descriptions
 
                 return 'There is a bunch of stuff.';
@@ -257,8 +248,8 @@ export default Service.extend({
 
     currentRoom: computed('persistenceHandler.magicRobotsData.{story-pos-x,story-pos-y}', {
         get() {
-            const posX = this.persistenceHandler.getStoryPosX() || HOME_COORD_X;
-            const posY = this.persistenceHandler.getStoryPosY() || HOME_COORD_Y;
+            const posX = this.persistenceHandler.getStoryPosX() || MagicNumbers.HOME_COORD_X;
+            const posY = this.persistenceHandler.getStoryPosY() || MagicNumbers.HOME_COORD_Y;
 
             return rooms.getRoom({x: posX, y: posY});
         }
@@ -266,10 +257,10 @@ export default Service.extend({
 
     xp: computed('persistenceHandler.magicRobotsData.{story-visited-rooms,story-room-unlocked-directions,story-unlocked-items,story-completion-items}', {
         get() {
-            const visitedRoomXp = this.persistenceHandler.getStoryVisitedRooms().length * XP_PER_MOVE;
-            const unlockedItemXp = this.persistenceHandler.getAllUnlockedItems().length * XP_PER_UNLOCK;
-            const unlockedDirectionXp = this.persistenceHandler.getAllUnlockedExits().length * XP_PER_UNLOCK;
-            const completionItemXp = this.persistenceHandler.getStoryCompletionItemsCollected().length * XP_PER_COMPLETION_ITEM;
+            const visitedRoomXp = this.persistenceHandler.getStoryVisitedRooms().length * MagicNumbers.XP_PER_MOVE;
+            const unlockedItemXp = this.persistenceHandler.getAllUnlockedItems().length * MagicNumbers.XP_PER_UNLOCK;
+            const unlockedDirectionXp = this.persistenceHandler.getAllUnlockedExits().length * MagicNumbers.XP_PER_UNLOCK;
+            const completionItemXp = this.persistenceHandler.getStoryCompletionItemsCollected().length * MagicNumbers.XP_PER_COMPLETION_ITEM;
 
             return visitedRoomXp + unlockedItemXp + completionItemXp + unlockedDirectionXp;
         }
@@ -277,17 +268,17 @@ export default Service.extend({
 
     maxXp: computed({
         get() {
-            const exploreXp = rooms.rooms.length * XP_PER_MOVE;
+            const exploreXp = rooms.rooms.length * MagicNumbers.XP_PER_MOVE;
 
             // add active unlock xp. Init with fake unlock for robot's fake unlock.
-            let useXp = XP_PER_UNLOCK;
+            let useXp = MagicNumbers.XP_PER_UNLOCK;
             items.items.forEach((currItem) => {
                 if (isPresent(currItem.use)) {
-                    useXp += XP_PER_UNLOCK;
+                    useXp += MagicNumbers.XP_PER_UNLOCK;
                 }
             });
 
-            const completionItemXp = environmentValues.COMPLETION_ITEM_IDS.length * XP_PER_COMPLETION_ITEM; 
+            const completionItemXp = environmentValues.COMPLETION_ITEM_IDS.length * MagicNumbers.XP_PER_COMPLETION_ITEM; 
 
             return exploreXp +
                 useXp + 
@@ -305,8 +296,8 @@ export default Service.extend({
         // room 1 inventory
         // user inventory
         // visited rooms
-        return this.persistenceHandler.getStoryRoomInventoryById(1) === INIT_ROOM_ONE_INVENTORY &&
-            this.persistenceHandler.getStoryInventoryItems() === INIT_USER_INVENTORY &&
+        return this.persistenceHandler.getStoryRoomInventoryById(1) === MagicNumbers.INIT_ROOM_ONE_INVENTORY &&
+            this.persistenceHandler.getStoryInventoryItems() === MagicNumbers.INIT_USER_INVENTORY &&
             this.persistenceHandler.getStoryVisitedRooms() === [];
     },
 
@@ -354,13 +345,13 @@ export default Service.extend({
         // TODO: find a better way to store init values for everything
         // initialize defaults / start over
         this.persistenceHandler.setStoryDeaths(0);
-        this.persistenceHandler.setStoryPosX(HOME_COORD_X);
-        this.persistenceHandler.setStoryPosY(HOME_COORD_Y);
+        this.persistenceHandler.setStoryPosX(MagicNumbers.HOME_COORD_X);
+        this.persistenceHandler.setStoryPosY(MagicNumbers.HOME_COORD_Y);
         this.persistenceHandler.setStoryVisitedRooms([]);
-        this.persistenceHandler.setStoryInventoryItems(INIT_USER_INVENTORY);
+        this.persistenceHandler.setStoryInventoryItems(MagicNumbers.INIT_USER_INVENTORY);
         this.persistenceHandler.setCakeEaten(false);
         this.persistenceHandler.setStoryRoomInventories([
-            {roomId: 1, inventory: INIT_ROOM_ONE_INVENTORY},
+            {roomId: 1, inventory: MagicNumbers.INIT_ROOM_ONE_INVENTORY},
             {roomId: 2, inventory: [2, 5]},
             {roomId: 3, inventory: [4]},
             {roomId: 4, inventory: [6]},
@@ -735,9 +726,9 @@ export default Service.extend({
 
             return ['The wrench is really heavy so you need both hands to hold it out and waggle it like a giant metal cheeto. "Hungry? Want a yummy wrench?" you say, feeling kind of idiotic.',
                 '',
-                'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side and a long spider looking grasping appendage unfolds from within, and it lifts the wrench from your hands like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
+                'The robot focuses on you for a moment. It almost makes a gesture like it\'s chuckling. A small door opens on on its side and a long spider like grasping appendage unfolds from within, and it lifts the wrench from your hands like it was nothing. It pulls it inside itself and you hear a muffled grinding noise.',
                 '',
-                'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which looks like an X in a box.' ];
+                'A scanning laser appears for a moment next to you on the floor of the helipad, connecting the machine\'s massive rectangular eye and the ground for a split second. Smoke wisps up from the mark burned into the metal, which looks like a square with an X inscribed within.' ];
         } else {
             return ['What do you think a giant robot would like as a snack?'];
         }

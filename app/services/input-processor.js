@@ -6,6 +6,7 @@ import { normalizeEvent } from 'ember-jquery-legacy';
 import commandRegistry from '../const/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../const/environment-values';
+import MagicNumbers from '../const/magic-numbers';
 import keyFunctions from './input-processor-key-functions';
 
 export default keyFunctions.extend({
@@ -24,7 +25,7 @@ export default keyFunctions.extend({
             } else {
                 set(scope, 'isPromptCursorVisible', false);
             }
-        }, this.CURSOR_BLINK_LENGTH));
+        }, MagicNumbers.CURSOR_BLINK_LENGTH));
     },
 
     _getIsKeyboardActive() {
@@ -48,8 +49,8 @@ export default keyFunctions.extend({
     _setPreviousExecutionBlocks() {
         const currBlockCopy = Object.assign([],this.currExecutionBlock.map((currLine) => {
             // remove current block demarcation
-            if (currLine.indexOf(this.CURRENT_BLOCK_DEMARCATION()) === 0) {
-                return currLine.split(this.CURRENT_BLOCK_DEMARCATION())[1];
+            if (currLine.indexOf(this.currentBlockDemarcation()) === 0) {
+                return currLine.split(this.currentBlockDemarcation())[1];
             }
             return currLine;
         }));
@@ -212,6 +213,7 @@ export default keyFunctions.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
         set(this, 'cursorPosition', 0);
+        this.statusBar.clearStatusMessage();
         getOwner(this).lookup('router:main').transitionTo('index');
     },
 

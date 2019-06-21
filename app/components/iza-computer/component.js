@@ -5,23 +5,15 @@ import { isPresent, isNone } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import Deformers from '../../mixins/deformers';
+import MagicNumbers from '../../const/magic-numbers';
 
 export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     rngeezus: service(),
     platformAnalyzer: service(),
+    statusBar: service(),
     classNames: ['iza-computer'],
-
-    // ------------------- consts -------------------
-
-    FONT_SIZE: 14,
-    FONT_CHARACTER_WIDTH: 8.7,
-    SPACE_BETWEEN_LINES: 2,
-    ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
-    MIN_BORDER: 50,
-    MIN_USEABLE_COLUMNS: 60,
-    FRAME_RATE: 1000/60,
 
     // ------------------- ember hooks -------------------
 
@@ -57,7 +49,7 @@ export default Component.extend(Deformers, {
 
         // store max chars per line
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
-        const maxCharsPerLine = Math.floor(textAreaWidth / this.FONT_CHARACTER_WIDTH);
+        const maxCharsPerLine = Math.floor(textAreaWidth / MagicNumbers.FONT_CHARACTER_WIDTH);
         set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
     },
 
@@ -71,7 +63,7 @@ export default Component.extend(Deformers, {
 
     visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', 'viewportMeasurements.height', 'textEdgeBuffer', {
         get() {
-            const lineHeightInPixels = this.SPACE_BETWEEN_LINES + this.FONT_SIZE;
+            const lineHeightInPixels = MagicNumbers.SPACE_BETWEEN_LINES + MagicNumbers.FONT_SIZE;
             const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
             const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
             const returnSet = [];
@@ -87,8 +79,8 @@ export default Component.extend(Deformers, {
                 // handle colorizing of each line
                 let workingLine = currLine;
                 let customColor = null;
-                const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
-                const colorCodeLength = this.inputProcessor.COLORIZE_COLOR_LENGTH;
+                const colorizePrefix = MagicNumbers.COLORIZE_LINE_PREFIX;
+                const colorCodeLength = MagicNumbers.COLORIZE_COLOR_LENGTH;
                 const isColorizedLine = currLine.substr(0, colorizePrefix.length) === colorizePrefix;
 
                 if (isColorizedLine) {
@@ -115,11 +107,11 @@ export default Component.extend(Deformers, {
             // make it a 4:3 ratio as big as possible in the viewport
             const outputRatio = 4 / 3;
             const currHeight = this.containerHeight;
-            const currWidth = this.containerWidth > this.ABSOLUTE_MAX_VIEWPORT_WIDTH ?
-                this.ABSOLUTE_MAX_VIEWPORT_WIDTH :
+            const currWidth = this.containerWidth > MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH ?
+                MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH :
                 this.containerWidth;
-            const maxHeight = currHeight - (this.MIN_BORDER * 2);
-            const maxWidth = currWidth - (this.MIN_BORDER * 2);
+            const maxHeight = currHeight - (MagicNumbers.MIN_BORDER * 2);
+            const maxWidth = currWidth - (MagicNumbers.MIN_BORDER * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
 
             let height;
@@ -134,7 +126,7 @@ export default Component.extend(Deformers, {
             } else {
                 width = maxWidth;
                 height = maxWidth * (1 / outputRatio);
-                top = (currHeight - height) / 2 - (this.MIN_BORDER * 1);
+                top = (currHeight - height) / 2 - (MagicNumbers.MIN_BORDER * 1);
             }
 
             left = (this.containerWidth - width) / 2;
@@ -263,18 +255,18 @@ export default Component.extend(Deformers, {
     _drawText(ctx) {
         const scopedContext = ctx;
 
-        ctx.font = `${this.FONT_SIZE}px courier-std`;
+        ctx.font = `${MagicNumbers.FONT_SIZE}px courier-std`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             
             if (isPresent(currLine.customColor)) {
                 scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ?
                     currLine.customColor : 
-                    this.inputProcessor.INACTIVE_COLORIZED_COLOR;
+                    MagicNumbers.INACTIVE_COLORIZED_COLOR;
             } else {
                 scopedContext.fillStyle = this.inputProcessor._getIsKeyboardActive() ?
-                    this.inputProcessor.DEFAULT_SCROLLED_COLOR :
-                    this.inputProcessor.INACTIVE_SCROLLED_COLOR;
+                    MagicNumbers.DEFAULT_SCROLLED_COLOR :
+                    MagicNumbers.INACTIVE_SCROLLED_COLOR;
             }
 
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);
@@ -344,7 +336,7 @@ export default Component.extend(Deformers, {
         const maxCharsPerLine = this.inputProcessor.maxCharsPerLine;
 
         // prevent inifinite loop?
-        if (maxCharsPerLine < this.MIN_USEABLE_COLUMNS) {
+        if (maxCharsPerLine < MagicNumbers.MIN_USEABLE_COLUMNS) {
             return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
         }
 
@@ -352,14 +344,14 @@ export default Component.extend(Deformers, {
 
             let undemarcatedLine;
             // remove current block demarcation if it's there in addition to custom color
-            if (currLine.indexOf(this.inputProcessor.CURRENT_BLOCK_DEMARCATION()) === 0) {
-                undemarcatedLine = currLine.split(this.inputProcessor.CURRENT_BLOCK_DEMARCATION())[1];
+            if (currLine.indexOf(this.inputProcessor.currentBlockDemarcation()) === 0) {
+                undemarcatedLine = currLine.split(this.inputProcessor.currentBlockDemarcation())[1];
             }         
 
-            const colorizePrefix = this.inputProcessor.COLORIZE_LINE_PREFIX;
+            const colorizePrefix = MagicNumbers.COLORIZE_LINE_PREFIX;
             const testLine = isPresent(undemarcatedLine) ? undemarcatedLine : currLine;
             const isColorizedLine = testLine.substr(0, colorizePrefix.length) === colorizePrefix;
-            const extractColorIndex = colorizePrefix.length + this.inputProcessor.COLORIZE_COLOR_LENGTH;
+            const extractColorIndex = colorizePrefix.length + MagicNumbers.COLORIZE_COLOR_LENGTH;
             let savedLineColor = '';
             let workingLine = currLine;
 
@@ -437,6 +429,7 @@ export default Component.extend(Deformers, {
             const h = scope.canvasHeight;
             ctx.drawImage(bgImage, 0, 0, w, h);
             scope._drawText(ctx);
+            scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
             if (!scope.platformAnalyzer.getIsSafari()) {
                 scope._deform(ctx2);
