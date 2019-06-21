@@ -8,7 +8,7 @@ import MagicNumbers from '../const/magic-numbers';
 export default processorBase.extend({
     persistenceHandler: service(),
 
-    PROMPT_LINE_1: computed('persistenceHandler.magicRobotsData.username', {
+    promptLine1: computed('persistenceHandler.magicRobotsData.username', {
         get() {
             // just some random nerdy stuff
             const code = navigator.appCodeName;
@@ -20,7 +20,7 @@ export default processorBase.extend({
         }
     }),
 
-    PROMPT_LINE_2: computed('activeApp', 'displayAppNameInPrompt', 'interruptPrompt', {
+    promptLine2: computed('activeApp', 'displayAppNameInPrompt', 'interruptPrompt', {
         get() {
             // add name of app if there's an active app
             const timestamp = new Date().getTime().toString().substr(5);
@@ -41,8 +41,8 @@ export default processorBase.extend({
         }
     }),
 
-    currExecutionBlock: computed('PROMPT_LINE_1',
-        'PROMPT_LINE_2',
+    currExecutionBlock: computed('promptLine1',
+        'promptLine2',
         'isPromptCursorVisible',
         'appResponse.[]',
         'currentCommand',
@@ -59,12 +59,12 @@ export default processorBase.extend({
                     this.currentCommand.substr(this.cursorPosition + 1);
             }
 
-            const interactiveLine = `${this.PROMPT_LINE_2}${commandDisplay}`;
+            const interactiveLine = `${this.promptLine2}${commandDisplay}`;
             const promptColor = this.persistenceHandler.getPromptColor() || MagicNumbers.DEFAULT_PROMPT_COLOR;
 
             const fullBlock = isPresent(this.interruptPrompt) ?
                 ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`] :
-                ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.STATIC_PROMPT_COLOR}${this.PROMPT_LINE_1}`,
+                ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.STATIC_PROMPT_COLOR}${this.promptLine1}`,
                     `${MagicNumbers.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`];
 
             const appResponseMarked = [];
