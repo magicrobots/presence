@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import { isNone } from '@ember/utils';
+import { isNone, isPresent } from '@ember/utils';
 import { set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import environmentHelpers from '../utils/environment-helpers';
@@ -59,6 +59,24 @@ const ANIMALS = [
         waver: 'floppy neck',
         lander: 'claws',
         landInteraction: 'scrabbles'
+    },
+    {
+        name: 'ant',
+        weight: 1,
+        airResistance: 86,
+        exclamation: 'eeeee!',
+        waver: 'little legs',
+        lander: 'feet',
+        landInteraction: 'slides'
+    },
+    {
+        name: 'salmon',
+        weight: 26,
+        airResistance: 2,
+        exclamation: 'squish!',
+        waver: 'fins',
+        lander: 'side',
+        landInteraction: 'slips'
     }
 ]
 
@@ -143,7 +161,15 @@ export default Route.extend({
         // Feedback? store achievements?
         if (diff < 10) {
             if (diff === 0) {
+                // Store count if it's lower than before
+                const oldRecord = this.persistenceHandler.getFlingRecord();
+                if (isPresent(oldRecord) &&
+                    oldRecord > this.tryCounter) {
+                        this.persistenceHandler.setFlingRecord(this.tryCounter);
+                }
+
                 response = response.concat(['SO CRAZY!!! HOLE IN ONE!']);
+                this.new();
             } else {
                 response = response.concat(['DAAAAAAAAAAAAAMN so close.']);
             }
@@ -157,7 +183,14 @@ export default Route.extend({
     },
 
     stats() {
-        this.inputProcessor.handleFunctionFromApp(['This part isn\'t done yet but it will show you how awesome you are.']);
+        const oldRecord = this.persistenceHandler.getFlingRecord();
+        const responseBase = 'Number of tries till perfect fling:';
+
+        if (isPresent(oldRecord)) {
+            this.inputProcessor.handleFunctionFromApp([`${responseBase} ${oldRecord}`, 'Nice.']);
+        } else {
+            this.inputProcessor.handleFunctionFromApp([`${responseBase} N/A`, 'You have yet to achieve a perfect fling. Keep at it, I have faith in you.']);
+        }
     },
 
     critters() {
@@ -170,6 +203,9 @@ export default Route.extend({
         const maxWind = 20;
         const maxDistance = 200;
         const minDistance = 23;
+
+        // init try counter
+        set(this, 'tryCounter', 0);
 
         // set wind
         set(this, 'wind', {
@@ -197,6 +233,10 @@ export default Route.extend({
         const animal = args[0];
         const effort = args[1];
 
+        // increment trycounter
+        const newTryCounter = this.tryCounter + 1;
+        set(this, 'tryCounter', newTryCounter);
+
         // make sure they entered an animal
         if (isNone(animal)) {
             this.inputProcessor.handleFunctionFromApp([`${MISSING_INPUT_PREFIX} animal you want to fling, effort value.`]);
@@ -211,8 +251,8 @@ export default Route.extend({
         }
 
         // make sure they entered an effort
-        if (isNone(effort)) {
-            this.inputProcessor.handleFunctionFromApp([`${MISSING_INPUT_PREFIX} effort value.`]);
+        if (isNone(effort) || isNaN(effort)) {
+            this.inputProcessor.handleFunctionFromApp([`${MISSING_INPUT_PREFIX} effort value as number.`]);
             return;
         }
 
@@ -233,5 +273,12 @@ export default Route.extend({
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
+    },
+
+    commandComplete(fragment) {
+        const commandRegistry = COMMANDS.mapBy('cmdName');
+        const critterList = ANIMALS.mapBy('name');
+
+        return environmentHelpers.handleTabComplete(fragment, [commandRegistry, critterList]);
     }
 });

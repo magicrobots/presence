@@ -49,13 +49,13 @@ export default Route.extend({
         { 
             id: 0,
             name: 'Teeshirt',
-            price: 25,
+            price: 35,
             desc: 'Yellow. Sizes S-XXL.'
         },
         { 
             id: 1,
             name: 'Hoodie (light weight)',
-            price: 75,
+            price: 65,
             desc: 'Black. Sizes S-XXL: These run SMALL'
         },
         { 
