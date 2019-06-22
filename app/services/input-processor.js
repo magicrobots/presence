@@ -155,7 +155,6 @@ export default keyFunctions.extend({
     },
 
     _handleCommandExecution(commandDefinition) {
-
         if (commandDefinition.routeName) {
             // run app route
             getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
@@ -186,7 +185,15 @@ export default keyFunctions.extend({
         set(this, 'currentArgs', undefined);
 
         if (isPresent(appName)) {
-            set(this, 'appResponse', [`ERROR: ${appName}: command not found.`]);
+            // handle SUDO
+            if (['sudo', 'chmod'].includes(appName)) {
+                set(this, 'appResponse', ['Nice try nerd. ACCESS DENIED.']);
+            } else if (appName === 'hack') {
+                set(this, 'appResponse', ['Hacking mainframe...', 'ACCESS GRANTED', '', '', '...jklol ACCESS DENIED.']);
+            } else {
+                set(this, 'appResponse', [`ERROR: ${appName}: command not found.`]);
+            }
+
             return;
         }
 
