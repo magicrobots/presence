@@ -2,6 +2,7 @@ import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
 
+import ENV from '../config/environment';
 import MagicNumbers from '../const/magic-numbers';
 
 export default Service.extend({
@@ -25,7 +26,10 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
-        const appVersion = '0.1.4234265';
+        const versionMajor = '0';
+        const versionMinor = '1';
+        const versionBuild = ENV.buildNumber;
+        const appVersion = `${versionMajor}.${versionMinor}.${versionBuild}`;
         const welcomeBase = [`Welcome to Faux OS v${appVersion} ©1996`, '? for help'];
         let welcomeMessage = this.platformAnalyzer.getIsSafari() ?
             welcomeBase.concat([

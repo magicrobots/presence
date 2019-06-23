@@ -12,6 +12,8 @@ module.exports = function(environment) {
       access: process.env.AWS_SECRET
     },
 
+    buildNumber: process.env.BUILD_NUMBER,
+
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
