@@ -9,10 +9,9 @@ module.exports = function(environment) {
 
     aws: {
       id: process.env.AWS_KEY,
-      access: process.env.AWS_SECRET
+      access: process.env.AWS_SECRET,
+      buildNumber: process.env.BUILD_NUMBER
     },
-
-    buildNumber: process.env.BUILD_NUMBER,
 
     EmberENV: {
       FEATURES: {

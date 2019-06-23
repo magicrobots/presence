@@ -28,7 +28,7 @@ export default Service.extend({
 
         const versionMajor = '0';
         const versionMinor = '1';
-        const versionBuild = ENV.buildNumber;
+        const versionBuild = ENV.aws.buildNumber;
         const appVersion = `${versionMajor}.${versionMinor}.${versionBuild}`;
         const welcomeBase = [`Welcome to Faux OS v${appVersion} ©1996`, '? for help'];
         let welcomeMessage = this.platformAnalyzer.getIsSafari() ?
