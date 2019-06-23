@@ -7,7 +7,7 @@ environment:
   AWS_SECRET_EMAIL:
     secure: FYJljDShng/1GYBj8YtIgs1NZmgwc0Eab34hLx4QNbTB4bTN6z4bfQ90XgTnvSnM
   nodejs_version: "8"
-  buildVersion: {build}
+  buildVersion: $build
 
 # Install scripts. (runs after repo cloning)
 install:
