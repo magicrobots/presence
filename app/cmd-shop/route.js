@@ -62,7 +62,7 @@ export default Route.extend({
             id: 2,
             name: 'Sticker Pack',
             price: 7,
-            desc: 'Four assorted stickers.'
+            desc: 'Five assorted stickers.'
         }
     ]),
 
@@ -73,7 +73,7 @@ export default Route.extend({
         ' - Note field must include garment sizes if applicable',
         ' - Note field must include shipping address',
         ' - Payment type must be "Friends and Family"',
-        ' - $15 flat fee ($3 if just stickers) for shipping must be included in calculation.',
+        ' - $10 flat fee ($3 if just stickers) for shipping must be included in calculation.',
         ' - Payment calculation must be correct.',
         '',
         '<- use arrows to navigate gallery ->', 'ESC to quit', '? to show this message again.']),
