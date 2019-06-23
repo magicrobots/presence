@@ -26,11 +26,7 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
-        const versionMajor = '0';
-        const versionMinor = '1';
-        const versionBuild = ENV.aws.buildNumber;
-        const appVersion = `${versionMajor}.${versionMinor}.${versionBuild}`;
-        const welcomeBase = [`Welcome to Faux OS v${appVersion} ©1996`, '? for help'];
+        const welcomeBase = [`Welcome to Faux OS ${this.getAppVersion()} ©1996`, '? for help'];
         let welcomeMessage = this.platformAnalyzer.getIsSafari() ?
             welcomeBase.concat([
                 '',
@@ -58,5 +54,11 @@ export default Service.extend({
     destroy() {
         clearInterval(this.cursorLoopContainer);
         this._super(...arguments);
+    },
+
+    getAppVersion() {
+        const versionBuild = ENV.aws.buildNumber;
+
+        return `v${MagicNumbers.VERSION_MAJOR}.${MagicNumbers.VERSION_MAJOR}.${versionBuild}`;
     }
 });

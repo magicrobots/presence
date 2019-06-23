@@ -186,6 +186,14 @@ export default {
         isExec: false,
         isInvisible: true },
 
+        { commandName: 'version',
+        routeName: 'cmd-version',
+        helpText: 'Displays current Faux OS version.',
+        date: 'Jun 23 19:47',
+        size: '      7477',
+        isExec: false,
+        isInvisible: true },
+
         // ----------------- hidden thangs
 
         { commandName: '.',
@@ -201,31 +209,6 @@ export default {
             isHidden: true,
             helpText: 'Parent directory.',
             isDir: true },
-
-        // { commandName: '.config',
-        //     date: 'Dec 18  1:17',
-        //     size: '      6581',
-        //     helpText: 'Config file.',
-        //     isHidden: true,
-        //     isExec: false,
-        //     content: [
-        //         '<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
-        //         '<PropertyGroup>',
-        //         '<AssemblyName>MSBuildSample</AssemblyName>',
-        //         '<OutputPath>Bin</OutputPath>',
-        //         '</PropertyGroup>',
-        //         '<ItemGroup>',
-        //         '<Compile Include="helloworld.cs" />',
-        //         '</ItemGroup>',
-        //         '<Target Name="Build">',
-        //         '<MakeDir Directories="$(OutputPath)" Condition="!Exists(`$(OutputPath)`)" />',
-        //         '<Csc Sources="@(Compile)" OutputAssembly="$(OutputPath)$(AssemblyName).exe" />',
-        //         '</Target><Target Name="Clean" >',
-        //         '<Delete Files="$(OutputPath)$(AssemblyName).exe" />',
-        //         '</Target>',
-        //         '<Target Name="Rebuild" DependsOnTargets="Clean;Build" />',
-        //         '</Project>'
-        //     ] },
 
         { commandName: '.core-dump',
             date: 'Nov 13 21:33',
