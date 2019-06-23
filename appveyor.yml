@@ -7,6 +7,7 @@ environment:
   AWS_SECRET_EMAIL:
     secure: FYJljDShng/1GYBj8YtIgs1NZmgwc0Eab34hLx4QNbTB4bTN6z4bfQ90XgTnvSnM
   nodejs_version: "8"
+  buildVersion: {build}
 
 # Install scripts. (runs after repo cloning)
 install:
@@ -29,7 +30,7 @@ build_script:
 # add .env file containing aws keys
   - echo AWS_KEY=%AWS_KEY_EMAIL% > config/.env
   - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> config/.env
-  - echo BUILD_NUMBER=%build% >> config/.env
+  - echo BUILD_NUMBER=%$env:buildVersion% >> config/.env
   - yarn build -prod
   
 # create artifacts for deployment.
