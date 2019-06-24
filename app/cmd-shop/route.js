@@ -24,7 +24,7 @@ export default Route.extend({
             itemMapId: 1
         },
         {
-            url: 'stickers1.jpg',
+            url: 'stickers3.jpg',
             itemMapId: 2
         },
         {
@@ -34,6 +34,10 @@ export default Route.extend({
         {
             url: 'teeshirt2.jpg',
             itemMapId: 0
+        },
+        {
+            url: 'stickers1.jpg',
+            itemMapId: 2
         },
         {
             url: 'hoodie3.jpg',
