@@ -36,6 +36,7 @@ export default Component.extend(Deformers, {
         const scope = this;
         window.addEventListener('resize', function() {
             scope._setContainerSize();
+            scope._doRedrawHack();
         })
 
         // get everything started
@@ -158,6 +159,12 @@ export default Component.extend(Deformers, {
         }
     }),
 
+    bgImagePath:computed('inputProcessor.bgImage', {
+        get() {
+            return this.inputProcessor.bgImage || 'emptyScreen.jpg';
+        }
+    }),
+
     // ------------------- private functions -------------------
 
     backgroundImageChanged: observer('inputProcessor.bgImage', function() {
@@ -206,11 +213,9 @@ export default Component.extend(Deformers, {
         this._setBgImage();
     },
 
-    bgImagePath:computed('inputProcessor.bgImage', {
-        get() {
-            return this.inputProcessor.bgImage || 'emptyScreen.jpg';
-        }
-    }),
+    _doRedrawHack() {
+        window.scrollTo(0, 0);
+    },
 
     _setBgImage() {
         const scope = this;
