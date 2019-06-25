@@ -214,7 +214,16 @@ export default Component.extend(Deformers, {
     },
 
     _doRedrawHack() {
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0);        
+        const tickleMe = document.getElementById("source-canvas");
+        const vignette = document.getElementById("vignette");
+
+        setTimeout(function() {
+            tickleMe.click();
+            tickleMe.style.zIndex = "1";
+            vignette.style.zIndex = "2";
+            tickleMe.style.display = "block";
+        }, 740)
     },
 
     _setBgImage() {
@@ -436,7 +445,7 @@ export default Component.extend(Deformers, {
             scope._drawText(ctx);
             scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (!scope.platformAnalyzer.getIsSafari()) {
+            if (!scope.platformAnalyzer.getIsIpad()) {
                 scope._deform(ctx2);
     
                 // store canvas image data for manipulation

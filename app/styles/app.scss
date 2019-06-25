@@ -17,23 +17,49 @@ body {
     user-select: none;
 }
 
+#small-content {
+    display: none;
+    background-color: $outerColor;
+
+    h1 {
+        padding: 20px;
+    }
+
+    div {
+        padding: 20px;
+    }
+
+    img:last-of-type {
+        padding-bottom: 50px;
+    }
+}
+
+@media only screen and (max-width: 700px),(max-height: 600px) {
+        #application-root {
+            display: none;
+        }
+
+        #small-content {
+            display: block;
+        }
+}
+
 #application-root {
-    display: block;
     position: absolute;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     background-color: $outerColor;
 
     .header {
         text-align: center;
         height: $borderHeight;
-        width: 100vw;
+        width: 100%;
         background-color: $outerColor;
         
         .header-image {
             height: 30px;
             margin-top: 0px;
-            width: 100vw;
+            width: 100%;
         }
     }
 
@@ -41,12 +67,13 @@ body {
         .route-container {
             position: relative;
             background-color: rgba(100,100,100,0.75);
-            background-size: cover;
-            background-repeat: no-repeat;
             border-radius: $borderRadius;
 
             canvas {
                 position: absolute;
+                z-index: 1;
+                top: 0px;
+                left: 0px;
             }
 
             .outlet-container {
@@ -57,18 +84,13 @@ body {
                 width: 100%;
                 height: 100%;
                 position: absolute;
-                z-index: 1;
+                z-index: 2;
                 pointer-events: none;
-            }
-
-            .body-text {
-                text-align: center;
-                width: 100%;
             }
 
             .loading-indicator {
                 position: absolute;
-                z-index: 2;
+                z-index: 3;
                 right: 0px;
             }
         }
@@ -80,13 +102,13 @@ body {
         background-color: $outerColor;
         bottom: 0px;
         position: absolute;
-        width: 100vw;      
+        width: 100%;      
         overflow: hidden;  
         
         .footer-image {
             height: 30px;
             margin-top: 20px;
-            width: 100vw;
+            width: 100%;
         }
 
         .footer-light {
