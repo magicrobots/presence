@@ -445,7 +445,7 @@ export default Component.extend(Deformers, {
             scope._drawText(ctx);
             scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (!scope.platformAnalyzer.getIsIpad()) {
+            if (scope.platformAnalyzer.isGraphicsEnabled()) {
                 scope._deform(ctx2);
     
                 // store canvas image data for manipulation

@@ -11,5 +11,9 @@ export default Service.extend({
     
     getIsIpad() {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    },
+
+    isGraphicsEnabled() {
+        return !this.getIsSafari() && !this.getIsIpad();
     }
 });
