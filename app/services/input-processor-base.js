@@ -27,14 +27,25 @@ export default Service.extend({
         this._super(...arguments);
 
         const welcomeBase = [`Welcome to Faux OS ${this.getAppVersion()} ©1996`, '? for help'];
-        let welcomeMessage = this.platformAnalyzer.getIsIpad() ?
-            welcomeBase.concat([
+        let welcomeMessage = '';
+        
+        if (this.platformAnalyzer.getIsIpad()) {
+            welcomeMessage = [
                 '',
                 'IPAD USER:',
                 'Experience limited: enhanced graphics disabled.',
                 'For full experience use Desktop Personal Computer.'
-            ]) :
-            welcomeBase;
+            ];
+        } else if (this.platformAnalyzer.getIsSafari()) {
+            welcomeMessage = [
+                '',
+                'SAFARI USER:',
+                'Experience limited: enhanced graphics disabled.',
+                'For full experience use Chrome or Firefox.'
+            ];
+        }
+
+        welcomeMessage = welcomeBase.concat(welcomeMessage);
 
         if (this.platformAnalyzer.getIsMobileDevice()) {
             welcomeMessage = welcomeMessage.concat([
