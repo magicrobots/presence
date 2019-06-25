@@ -27,19 +27,19 @@ export default Service.extend({
         this._super(...arguments);
 
         const welcomeBase = [`Welcome to Faux OS ${this.getAppVersion()} ©1996`, '? for help'];
-        let welcomeMessage = this.platformAnalyzer.getIsSafari() ?
+        let welcomeMessage = this.platformAnalyzer.getIsIpad() ?
             welcomeBase.concat([
                 '',
-                'SAFARI USER:',
+                'IPAD USER:',
                 'Experience limited: enhanced graphics disabled.',
-                'For full experience switch to Chrome or Firefox browsers.'
+                'For full experience use Desktop Personal Computer.'
             ]) :
             welcomeBase;
 
         if (this.platformAnalyzer.getIsMobileDevice()) {
             welcomeMessage = welcomeMessage.concat([
                 '',
-                'KEYBOARD REQUIRED.'
+                'PHYSICAL KEYBOARD REQUIRED.'
             ]);
         }
 

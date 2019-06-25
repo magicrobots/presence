@@ -36,6 +36,7 @@ export default Component.extend(Deformers, {
         const scope = this;
         window.addEventListener('resize', function() {
             scope._setContainerSize();
+            scope._doRedrawHack();
         })
 
         // get everything started
@@ -158,6 +159,12 @@ export default Component.extend(Deformers, {
         }
     }),
 
+    bgImagePath:computed('inputProcessor.bgImage', {
+        get() {
+            return this.inputProcessor.bgImage || 'emptyScreen.jpg';
+        }
+    }),
+
     // ------------------- private functions -------------------
 
     backgroundImageChanged: observer('inputProcessor.bgImage', function() {
@@ -206,11 +213,18 @@ export default Component.extend(Deformers, {
         this._setBgImage();
     },
 
-    bgImagePath:computed('inputProcessor.bgImage', {
-        get() {
-            return this.inputProcessor.bgImage || 'emptyScreen.jpg';
-        }
-    }),
+    _doRedrawHack() {
+        window.scrollTo(0, 0);        
+        const tickleMe = document.getElementById("source-canvas");
+        const vignette = document.getElementById("vignette");
+
+        setTimeout(function() {
+            tickleMe.click();
+            tickleMe.style.zIndex = "1";
+            vignette.style.zIndex = "2";
+            tickleMe.style.display = "block";
+        }, 740)
+    },
 
     _setBgImage() {
         const scope = this;
@@ -431,7 +445,7 @@ export default Component.extend(Deformers, {
             scope._drawText(ctx);
             scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (!scope.platformAnalyzer.getIsSafari()) {
+            if (!scope.platformAnalyzer.getIsIpad()) {
                 scope._deform(ctx2);
     
                 // store canvas image data for manipulation
