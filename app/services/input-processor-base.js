@@ -70,6 +70,6 @@ export default Service.extend({
     getAppVersion() {
         const versionBuild = ENV.aws.buildNumber;
 
-        return `v${MagicNumbers.VERSION_MAJOR}.${MagicNumbers.VERSION_MAJOR}.${versionBuild}`;
+        return `v${MagicNumbers.VERSION_MAJOR}.${MagicNumbers.VERSION_MINOR}.${versionBuild}`;
     }
 });
