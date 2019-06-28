@@ -88,6 +88,8 @@ export default Route.extend({
         ' - $10 flat fee ($3 if just stickers) for shipping must be included in calculation.',
         ' - Payment calculation must be correct.',
         '',
+        'NOTE: Stickers and garments ship separately will arrive at different times.',
+        '',
         '<- use arrows to navigate gallery ->', 'ESC to quit', '? to show this message again.']),
 
     _arrowLeft(scope) {
