@@ -21,7 +21,7 @@ export default Route.extend({
 
     initMessage: computed({
         get() {
-            return ['Enter a message:'];
+            return ['Enter a message:', '', 'ESC to quit'];
         }
     }),
     messageBody: '',
@@ -53,7 +53,7 @@ export default Route.extend({
             } else {
 
             // handle success
-                scope.inputProcessor.handleFunctionFromApp(['message sent.']);
+                scope.inputProcessor.handleFunctionFromApp(['message sent.', '', 'ESC to quit, or enter another message.']);
             }
             scope._resetContact();
         });

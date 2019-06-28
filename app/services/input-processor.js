@@ -38,6 +38,7 @@ export default keyFunctions.extend({
         const username = this.persistenceHandler.getUsername();
         const context = this.activeApp || 'root';
         const param2 = `user: ${username} | app: ${context}`;
+        // const fullUserEntry = this.currentCommand.
 
         window.ga('send',
             'event',
@@ -59,6 +60,7 @@ export default keyFunctions.extend({
     },
 
     _execute() {
+        this._doAnalytics();
 
         // if it's an email message just send it
         if (this.activeApp === 'cmd-contact') {
@@ -86,7 +88,6 @@ export default keyFunctions.extend({
         // create executable command from string
         set(this, 'currentCommand', this.currentCommand.toLowerCase());
         const commandComponents = this.currentCommand.split(' ');
-        // const enteredWords = commandComponents.concat();
         let commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
@@ -99,7 +100,6 @@ export default keyFunctions.extend({
         // don't do anything if the user is rude
         if (this._commandHasSwears(this.currentCommand)) {
             this._handleFilthyInput();
-            this._doAnalytics();
 
             return;
         }
@@ -139,8 +139,6 @@ export default keyFunctions.extend({
                 this._handleInvalidInput(commandName);
             }
         }
-
-        this._doAnalytics();
     },
 
     _commandHasSwears(currentCommand) {
