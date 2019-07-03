@@ -1,6 +1,6 @@
 export default {
     VERSION_MAJOR: 1,
-    VERSION_MINOR: 2,
+    VERSION_MINOR: 3,
     
     // iza-computer
     FONT_SIZE: 14,

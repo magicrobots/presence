@@ -71,9 +71,11 @@ export default Route.extend({
             if (this.settingsCommandRegistry.includes(overflowCommand)) {
                 const overflowArg = this.inputProcessor.currentArgs[1];
 
+                // only execute overflow if an argument is present:
                 if (isPresent(overflowArg)) {
                     this[overflowCommand](overflowArg, true);
                     this.inputProcessor.quit();
+
                     return;
                 }
             }
