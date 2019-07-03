@@ -110,7 +110,7 @@ export default inputComputed.extend({
         if (this.overrideScope) {
             const scopedTabComplete = get(this.overrideScope, 'commandComplete');
             if (isPresent(scopedTabComplete)) {
-                matchedCommand = scopedTabComplete(fragment);
+                matchedCommand = scopedTabComplete(fragment, this.overrideScope);
             }
         } else {
             matchedCommand = environmentHelpers.handleTabComplete(fragment, [commandRegistry.registry.mapBy('commandName')]);
