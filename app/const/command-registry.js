@@ -1,3 +1,5 @@
+import { isPresent } from '@ember/utils';
+
 const helpRoute = 'cmd-man';
 const helpText = 'Help, and ? are proxies to the MAN command. Enter either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
 const helpUsage = 'man contact';
@@ -12,6 +14,18 @@ export default {
                 return true;
             }
         })[0];
+    },
+
+    getIsDirectory(name) {
+        const matchedCommand = this.getMatchingCommand(name);
+
+        return isPresent(matchedCommand) ? matchedCommand.isDir : false;
+    },
+
+    getIsInvisible(name) {
+        const matchedCommand = this.getMatchingCommand(name);
+
+        return isPresent(matchedCommand) ? matchedCommand.isInvisible : false;
     },
 
     registry: [

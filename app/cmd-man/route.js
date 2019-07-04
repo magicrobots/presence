@@ -29,7 +29,7 @@ export default Route.extend({
             response = ['MAN (Manual):',
                 '  Enter the LS command to view a list of available commands.',
                 '  Commands are not case sensitive.',
-                '  For manual on a specific command, enter \'man {command}\'',
+                '  For manual on a specific command, enter \'man ls\'',
                 '  To quit any running application enter ESC to return to command line interface.'];
         }
 

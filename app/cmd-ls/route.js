@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { isPresent } from '@ember/utils';
+import { isPresent, isNone } from '@ember/utils';
 
 import commandRegistry from '../const/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
@@ -9,29 +9,42 @@ import MagicNumbers from '../const/magic-numbers';
 export default Route.extend({
     inputProcessor: service(),
 
-    _getCommandList() {
-        let commandList = [];
+    _listResponse() {
         let listArg = isPresent(this.inputProcessor.currentArgs) ?
             this.inputProcessor.currentArgs[0] :
             null;
 
-        switch(listArg) {
-            case '-al':
-            case '-la':
-                commandList = this._responseTall(true);
-                break;
-            case '-a':
-                commandList = this._responseWide(true);
-                break;
-            case '-l':
-                commandList = this._responseTall();
-                break;
-            default:
-                commandList = this._responseWide();
-                break;
+        // plain entry no arguments
+        if (isNone(listArg)) {
+            return this._responseWide();
+
+        // process args
+        } else if (isPresent(listArg) && listArg.charAt(0) === '-') {
+            const isTall = listArg.indexOf('l') > -1;
+
+            return isTall ?
+                this._responseTall(listArg) :
+                this._responseWide(listArg);
+
+        // process args with no dash
+        } else {
+            return (this._handleNonModifierArgument(listArg));
+        }
+    },
+
+    _handleNonModifierArgument(listArg) {
+        // deny access to directories
+        if (commandRegistry.getIsDirectory(listArg) || listArg.indexOf('/') > -1) {
+            return [`ls: ACCESS DENIED (${listArg})`];
+
+        // display files etc. typed in
+        } else if (isPresent(commandRegistry.getMatchingCommand(listArg)) &&
+            !commandRegistry.getIsInvisible(listArg)) {
+
+            return [listArg];
         }
 
-        return commandList;
+        return [`ls: cannot access '${listArg}': No such file or directory`];
     },
 
     _getPrunedCommandList(addHiddenItems) {
@@ -54,20 +67,6 @@ export default Route.extend({
         return longestItem;
     },
 
-    _responseWide(addHiddenItems) {
-        const responseItems = this._getPrunedCommandList(addHiddenItems);
-        const distanceBetweenItems = 2;
-        const longestCommandNameLength = this._getLongestCommandName(responseItems) + distanceBetweenItems;
-
-        let response = '';
-        responseItems.forEach((currResponseItem) => {
-            const newString = currResponseItem.commandName.padEnd(longestCommandNameLength, ' ');
-            response = response.concat(newString);
-        });
-
-        return [response];
-    },
-
     _createDetailedLine(appConfigObject) {
         const itemPrefix = '-rw-r--r--';
         const itemPrefixExec = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.EXEC_COLOR}-rwxr-xr-x`;
@@ -86,7 +85,8 @@ export default Route.extend({
 
     },
 
-    _responseTall(addHiddenItems) {
+    _responseTall(listArg) {
+        const addHiddenItems = !listArg || listArg.indexOf('a') === -1 ? null : true;
         const responseItems = this._getPrunedCommandList(addHiddenItems);
         const scope = this;
 
@@ -95,10 +95,25 @@ export default Route.extend({
         });
     },
 
+    _responseWide(listArg) {
+        const addHiddenItems = !listArg || listArg.indexOf('a') === -1 ? null : true;
+        const responseItems = this._getPrunedCommandList(addHiddenItems);
+        const distanceBetweenItems = 2;
+        const longestCommandNameLength = this._getLongestCommandName(responseItems) + distanceBetweenItems;
+
+        let response = '';
+        responseItems.forEach((currResponseItem) => {
+            const newString = currResponseItem.commandName.padEnd(longestCommandNameLength, ' ');
+            response = response.concat(newString);
+        });
+
+        return [response];
+    },
+
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: this._getCommandList()
+            response: this._listResponse()
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);
