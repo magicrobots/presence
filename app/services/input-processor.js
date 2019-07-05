@@ -38,7 +38,6 @@ export default keyFunctions.extend({
         const username = this.persistenceHandler.getUsername();
         const context = this.activeApp || 'root';
         const param2 = `user: ${username} | app: ${context}`;
-        // const fullUserEntry = this.currentCommand.
 
         window.ga('send',
             'event',
@@ -60,6 +59,7 @@ export default keyFunctions.extend({
     },
 
     _execute() {
+        set(this, 'rawUserEntry', this.currentCommand);
         this._doAnalytics();
 
         // if it's an email message just send it
