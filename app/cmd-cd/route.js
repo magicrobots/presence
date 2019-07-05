@@ -8,7 +8,8 @@ export default Route.extend({
     inputProcessor: service(),
 
     _getCdResponse() {
-        let cdTarget = this.inputProcessor.currentArgs[0];
+        const rawInputArgs = this.inputProcessor.rawUserEntry.split(' ')[1];
+        let cdTarget = rawInputArgs;
 
         // cd into current directory is noop
         if (cdTarget === '.' || cdTarget === './') {
@@ -24,7 +25,7 @@ export default Route.extend({
 
         // deny access if they're trying to CD to root or home
         if (cdTarget.charAt(0) === '/' || cdTarget.charAt(0) === '~' ||
-            this.inputProcessor.currentArgs[0] === '/') {
+            rawInputArgs === '/') {
             return responseDenied;
         }
 
