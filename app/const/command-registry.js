@@ -1,9 +1,11 @@
+import { isPresent } from '@ember/utils';
+
 const helpRoute = 'cmd-man';
 const helpText = 'Help, and ? are proxies to the MAN command. Enter either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
 const helpUsage = 'man contact';
+const originYear = 1996;
 
 export default {
-
     getMatchingCommand(command) {
         const testCommandName = command.toUpperCase();
 
@@ -14,13 +16,25 @@ export default {
         })[0];
     },
 
+    getIsDirectory(name) {
+        const matchedCommand = this.getMatchingCommand(name);
+
+        return isPresent(matchedCommand) ? matchedCommand.isDir : false;
+    },
+
+    getIsInvisible(name) {
+        const matchedCommand = this.getMatchingCommand(name);
+
+        return isPresent(matchedCommand) ? matchedCommand.isInvisible : false;
+    },
+
     registry: [
         { commandName: 'about',
         routeName: 'cmd-about',
         helpText: 'A brief synopsis of the relationship between Magic Robots and the V.5. Department of Robotics.',
         usage: null,
-        date: 'Feb  9 14:22',
-        size: '       147',
+        date: new Date(originYear, 1, 9, 14, 22),
+        size: 147,
         isExec: true,
         isInvisible: false },
 
@@ -28,8 +42,8 @@ export default {
         routeName: 'cmd-beep',
         helpText: 'Communicate with robots using their own language.',
         usage: null,
-        date: 'Oct 18 22:04',
-        size: '   3332656',
+        date: new Date(originYear, 9, 18, 22, 4),
+        size: 3332656,
         isExec: false,
         isInvisible: true },
 
@@ -37,8 +51,8 @@ export default {
         routeName: 'cmd-cd',
         helpText: 'Move within directory structure.',
         usage: null,
-        date: 'Dec 12  4:18',
-        size: '    432256',
+        date: new Date(originYear - 1, 11, 12, 4, 18),
+        size: 432256,
         isExec: false,
         isInvisible: true },
 
@@ -46,8 +60,8 @@ export default {
         routeName: 'cmd-clear',
         helpText: 'Clears the screen of any previous inputs and command responses.',
         usage: null,
-        date: 'Dec 30 18:32',
-        size: '      2199',
+        date: new Date(originYear - 1, 11, 30, 18, 32),
+        size: 2199,
         isExec: false,
         isInvisible: true },
 
@@ -55,8 +69,8 @@ export default {
         routeName: 'cmd-contact',
         helpText: 'Submit messages to Magic Robots HQ.',
         usage: null,
-        date: 'Feb  7 12:01',
-        size: '    651886',
+        date: new Date(originYear, 1, 7, 12, 1),
+        size: 651886,
         isExec: true,
         isInvisible: false },
 
@@ -64,17 +78,17 @@ export default {
         routeName: 'cmd-fling',
         helpText: 'Fling things. Mostly chickens.',
         usage: null,
-        date: 'Jun 15 11:58',
-        size: '    253885',
+        date: new Date(originYear, 5, 15, 11, 58),
+        size: 253885,
         isExec: true,
-        isInvisible: true },
+        isHidden: true },
 
         { commandName: 'hello',
         routeName: 'cmd-hello',
         helpText: 'Sometimes you just want to say hi.',
         usage: null,
-        date: 'Feb 20  6:25',
-        size: '      3432',
+        date: new Date(originYear, 1, 20, 6, 25),
+        size: 3432,
         isExec: false,
         isInvisible: true },
 
@@ -82,8 +96,8 @@ export default {
         routeName: helpRoute,
         helpText: helpText,
         usage: helpUsage,
-        date: 'Jan  6 22:07',
-        size: '  65188319',
+        date: new Date(originYear, 0, 6, 22, 7),
+        size: 65188319,
         isExec: false,
         isInvisible: true },
 
@@ -91,8 +105,8 @@ export default {
         routeName: 'cmd-less',
         helpText: 'Used to view but not edit the contents of a file.',
         usage: null,
-        date: 'Mar  3 12:47',
-        size: '    694515',
+        date: new Date(originYear, 2, 3, 12, 47),
+        size: 694515,
         isExec: true,
         isInvisible: true },
 
@@ -100,8 +114,8 @@ export default {
         routeName: 'cmd-cat',
         helpText: 'Used to view but not edit the contents of a file.',
         usage: null,
-        date: 'Jun  5  8:53',
-        size: '    245617',
+        date: new Date(originYear, 5, 5, 8, 53),
+        size: 245617,
         isExec: true,
         isInvisible: true },
 
@@ -109,8 +123,8 @@ export default {
         routeName: 'cmd-ls',
         helpText: 'List command shows user available commands in the system.',
         usage: null,
-        date: 'Feb  3  7:45',
-        size: '    198516',
+        date: new Date(originYear, 1, 3, 7, 45),
+        size: 198516,
         isExec: false,
         isInvisible: true },
 
@@ -118,8 +132,8 @@ export default {
         routeName: helpRoute,
         helpText: helpText,
         usage: helpUsage,
-        date: 'Nov 16  7:39',
-        size: '       484',
+        date: new Date(originYear - 1, 10, 16, 7, 39),
+        size: 484,
         isExec: false,
         isInvisible: true },
 
@@ -127,8 +141,8 @@ export default {
         routeName: 'cmd-pwd',
         helpText: 'Print Working Directory: informs user of current position in directory structure.',
         usage: null,
-        date: 'Feb  9 14:22',
-        size: '       235',
+        date: new Date(originYear, 1, 9, 18, 36),
+        size: 235,
         isExec: false,
         isInvisible: true },
 
@@ -136,8 +150,8 @@ export default {
         routeName: 'cmd-viewer',
         helpText: 'Displays still images captured from recent VHS videotape recordings.',
         usage: 'Use left and right arrows to navigate, and ESC to exit.',
-        date: 'Feb  9 16:02',
-        size: '9819081510',
+        date: new Date(originYear, 1, 9, 16, 2),
+        size: 9819081510,
         isExec: true,
         isInvisible: false },
 
@@ -145,8 +159,8 @@ export default {
         routeName: 'cmd-settings',
         helpText: 'Allows user to save personal settings for terminal environment.',
         usage: 'At settings prompt enter desired username: `cmd-settings >username Eloise`',
-        date: 'Jan 16  6:05',
-        size: '      5191',
+        date: new Date(originYear, 0, 16, 6, 5),
+        size: 5191,
         isExec: true,
         isInvisible: false },
 
@@ -154,8 +168,8 @@ export default {
         routeName: 'cmd-origin',
         helpText: 'A text based interactive adventure that allows the user to imagine the events of Encounter Zero.',
         usage: null,
-        date: 'Mar  1 14:41',
-        size: '      7394',
+        date: new Date(originYear, 2, 1, 14, 41),
+        size: 7394,
         isExec: true,
         isInvisible: false },
 
@@ -163,8 +177,8 @@ export default {
         routeName: 'cmd-shop',
         helpText: 'Displays gallery of things you can buy. And some things you can\'t.',
         usage: 'Use left and right arrows to navigate, and ESC to exit.',
-        date: 'Apr 18 21:30',
-        size: '0824054527',
+        date: new Date(originYear, 3, 18, 21, 30),
+        size: 824054527,
         isExec: true,
         isInvisible: false },
 
@@ -172,8 +186,8 @@ export default {
         routeName: 'cmd-whoami',
         helpText: 'Prints current active username.',
         usage: null,
-        date: 'Dec 20  6:47',
-        size: '    511190',
+        date: new Date(originYear - 1, 11, 20, 6, 47),
+        size: 511190,
         isExec: false,
         isInvisible: true },
 
@@ -181,38 +195,45 @@ export default {
         routeName: helpRoute,
         helpText: helpText,
         usage: helpUsage,
-        date: 'Nov 22 16:42',
-        size: '       486',
+        date: new Date(originYear - 1, 10, 22, 16, 42),
+        size: 486,
         isExec: false,
         isInvisible: true },
 
         { commandName: 'version',
         routeName: 'cmd-version',
         helpText: 'Displays current Faux OS version.',
-        date: 'Jun 23 19:47',
-        size: '      7477',
+        date: new Date(originYear, 5, 23, 19, 47),
+        size: 7477,
         isExec: false,
         isInvisible: true },
 
         // ----------------- hidden thangs
 
         { commandName: '.',
-            date: 'Jan  2  3:42',
-            size: '         0',
+            date: new Date(originYear, 0, 2, 3, 42),
+            size: 0,
             isHidden: true,
             helpText: 'Current directory.',
             isDir: true },
 
         { commandName: '..',
-            date: 'Jan 16 23:18',
-            size: '         0',
+            date: new Date(originYear, 0, 16, 23, 18),
+            size: 0,
             isHidden: true,
             helpText: 'Parent directory.',
             isDir: true },
 
+        { commandName: 'v5DoR_dynamic_keys',
+            date: new Date(originYear, 6, 5, 4, 45),
+            size: 0,
+            isHidden: true,
+            helpText: 'directory.',
+            isDir: true },
+
         { commandName: '.core-dump',
-            date: 'Nov 13 21:33',
-            size: '   2463722',
+            date: new Date(originYear - 1, 10, 13, 21, 33),
+            size: 2463722,
             helpText: 'Binary stream file.',
             isHidden: true,
             isExec: false,            
@@ -222,8 +243,8 @@ export default {
         },
 
         { commandName: 'mainframe.key',
-            date: 'Feb 19 10:47',
-            size: '  65815239',
+            date: new Date(originYear, 1, 19, 10, 47),
+            size: 65815239,
             helpText: 'Encrypted key file.',
             isHidden: true,
             isExec: false,
@@ -238,8 +259,8 @@ export default {
         },
 
         { commandName: 'recovered-map.jpg',
-            date: 'Feb 28  9:57',
-            size: '     46221',
+            date: new Date(originYear, 1, 28, 9, 57),
+            size: 46221,
             helpText: 'Image file.',
             isHidden: true,
             isExec: false,
