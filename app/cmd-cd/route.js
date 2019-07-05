@@ -9,16 +9,23 @@ export default Route.extend({
 
     _getCdResponse() {
         let cdTarget = this.inputProcessor.currentArgs[0];
-        const responseDenied = `cd: ${cdTarget}/ ACCESS DENIED`;
+
+        // cd into current directory is noop
+        if (cdTarget === '.' || cdTarget === './') {
+            return;
+        }
 
         // remove trailing slash if it's on there
         if (cdTarget.charAt(cdTarget.length - 1) === '/') {
             cdTarget = cdTarget.substr(0, cdTarget.length -1);
         }
 
+        const responseDenied = `cd: ${cdTarget}/ ACCESS DENIED`;
+
         // deny access if they're trying to CD to root or home
-        if (cdTarget.charAt(0) === '/' || cdTarget.charAt(0) === '~') {
-            return responseDenied
+        if (cdTarget.charAt(0) === '/' || cdTarget.charAt(0) === '~' ||
+            this.inputProcessor.currentArgs[0] === '/') {
+            return responseDenied;
         }
 
         const allCommands = commandRegistry.registry;

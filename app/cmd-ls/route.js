@@ -13,6 +13,12 @@ export default Route.extend({
     _listResponse() {
         const rawArgs = this.inputProcessor.rawUserEntry.split(' ')[1];
         set(this, 'lsArgs', rawArgs || null);
+
+        // ls ./ is same as ls
+        if (this.lsArgs === './' || this.lsArgs === '.') {
+            const nextArgs = this.inputProcessor.rawUserEntry.split(' ')[2];
+            set(this, 'lsArgs', nextArgs || null);
+        }
         
         const addHiddenItems = this._hasArg('a');
         let commandList = this._getPrunedCommandList(addHiddenItems);
