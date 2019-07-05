@@ -21,6 +21,9 @@ export default Route.extend({
         if (this._hasArg('S')) {
             commandList = commandList.sortBy('size').reverse();
         }
+        if (this._hasArg('t')) {
+            commandList = commandList.sortBy('date').reverse();
+        }
         if (this._hasArg('r')) {
             commandList.reverse();
         }
@@ -97,10 +100,18 @@ export default Route.extend({
             this._formatSize(appConfigObject.size) :
             appConfigObject.size.toString();
 
+        // formate date for display
+        const dateString = appConfigObject.date.toString();
+        const dateArray = dateString.split(' ');
+        const month = dateArray[1];
+        const day = dateArray[2];
+        const timeFull = dateArray[4].substring(0, 5);
+        const displayDate = `${month} ${day} ${timeFull}`;
+
         return prefix.
             concat(' 1 magicrobots ').
             concat(`${displaySize.padStart(longestSize, ' ')} `).
-            concat(`${appConfigObject.date} `).
+            concat(`${displayDate} `).
             concat(appConfigObject.commandName.concat(suffix));
 
     },
