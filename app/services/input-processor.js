@@ -242,6 +242,7 @@ export default keyFunctions.extend({
         set(this, 'keyOverrides', undefined);
         set(this, 'bgImage', undefined);
         set(this, 'overrideScope', undefined);
+        this.setBgImage(null);
 
         this._resetInput();
     },

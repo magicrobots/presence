@@ -7,7 +7,6 @@ import ENV from '../config/environment';
 
 import environmentHelpers from '../utils/environment-helpers';
 
-
 const ses = new AWS.SES({
     apiVersion: '2010-12-01',
     accessKeyId: ENV.aws.id,

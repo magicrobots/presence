@@ -1,5 +1,4 @@
 import Mixin from '@ember/object/mixin';
-import { aliasMethod } from '@ember/object';
 import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
@@ -28,8 +27,8 @@ export default Mixin.create({
 
     // ---------------------------- public commands
 
-    hi: aliasMethod('hello'),
-    sup: aliasMethod('hello'),
+    hi() { this.hello(...arguments) },
+    sup() { this.hello(...arguments) },
     hello() {
         const helloResponses = [
             'Howdy.',
@@ -46,7 +45,7 @@ export default Mixin.create({
         this.inputProcessor.handleFunctionFromApp(['You don\'t have any tools for digging, and you are not into digging with your bare hands.']);
     },
 
-    destroy: aliasMethod('smash'),
+    destroy() { this.smash(...arguments) },
     smash() {
         const args = this.inputProcessor.currentArgs;
         const targetItemName = args[0] === 'the' ? args[1] : args[0];
@@ -81,8 +80,8 @@ export default Mixin.create({
         this.inputProcessor.handleFunctionFromApp([response]);
     },
 
-    stab: aliasMethod('kill'),
-    attack: aliasMethod('kill'),
+    stab() { this.kill(...arguments) },
+    attack() { this.kill(...arguments) },
     kill() {
         const args = this.inputProcessor.currentArgs;
         const targetItemName = args[0] === 'the' ? args[1] : args[0];

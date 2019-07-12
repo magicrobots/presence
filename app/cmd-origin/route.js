@@ -1,5 +1,4 @@
 import Route from '@ember/routing/route';
-import { aliasMethod } from '@ember/object';
 import { isPresent, isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
@@ -102,8 +101,8 @@ export default Route.extend(FunCtionality, {
     /* ----------------------- public methods --------------------
        ------ these are also the commands the user can type ----- */
 
-    walk: aliasMethod('go'),
-    move: aliasMethod('go'),
+    walk() { this.go(...arguments) },
+    move() { this.go(...arguments) },
     go() {
         // handle no params
         if (isEmpty(this.inputProcessor.currentArgs)) {
@@ -138,8 +137,8 @@ export default Route.extend(FunCtionality, {
         this.inputProcessor.handleFunctionFromApp([this.storyCore.getExitDescriptions()]);
     },
 
-    items: aliasMethod('list'),
-    inventory: aliasMethod('list'),
+    items() { this.list(...arguments) },
+    inventory() { this.list(...arguments) },
     list() {
         const yourItems = this.persistenceHandler.getStoryInventoryItems();
 
@@ -162,7 +161,7 @@ export default Route.extend(FunCtionality, {
     pick() {
         const args = this.inputProcessor.currentArgs;
 
-        // if use is typing 'pick up' then alias 'get()'
+        // if use is typing 'pick up' then call 'get()'
         if (args[0] === 'up') {
             this.inputProcessor.currentArgs.shift();
             this.take();
@@ -171,7 +170,7 @@ export default Route.extend(FunCtionality, {
         }
     },
 
-    get: aliasMethod('take'),
+    get() { this.take(...arguments) },
     take() {
         const args = this.inputProcessor.currentArgs;
 
@@ -216,7 +215,7 @@ export default Route.extend(FunCtionality, {
         this.drop(true);
     },
 
-    discard: aliasMethod('drop'),
+    discard() { this.drop(...arguments) },
     drop(isThrow) {
         const args = this.inputProcessor.currentArgs;
         const actionWord = isThrow ? 'throw' : 'drop';
@@ -257,7 +256,7 @@ export default Route.extend(FunCtionality, {
         this._handlePotentiallyFatalMistake();
     },
 
-    inspect: aliasMethod('examine'),
+    inspect() { this.examine(...arguments) },
     examine(passedArgs) {
         const theArgs = passedArgs || this.inputProcessor.currentArgs;
         const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
@@ -426,7 +425,7 @@ export default Route.extend(FunCtionality, {
         this.inputProcessor.handleFunctionFromApp(this.storyCore.whereAmI());
     },
 
-    surroundings: aliasMethod('look'),
+    surroundings() { this.look(...arguments) },
     look() {
         const args = this.inputProcessor.currentArgs;
         if (isPresent(args)) {
@@ -461,7 +460,7 @@ export default Route.extend(FunCtionality, {
         this.inputProcessor.handleFunctionFromApp(['Processing report...', 'Done.', '', 'See console.']);
     },
 
-    progress: aliasMethod('status'),
+    progress() { this.status(...arguments) },
     status() {
         // show flashlight status if applicable
         let result = this._showFlashlightStatus();

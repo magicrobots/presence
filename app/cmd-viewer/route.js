@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { set, computed, observer } from '@ember/object';
+import { set, computed } from '@ember/object';
 
 import environmentHelpers from '../utils/environment-helpers';
 
@@ -24,6 +24,7 @@ export default Route.extend({
         }
 
         set(scope, 'currentImgIndex', newIndex);
+        scope._displayImage();
     },
 
     _arrowRight(scope) {
@@ -33,6 +34,7 @@ export default Route.extend({
         }
 
         set(scope, 'currentImgIndex', newIndex);
+        scope._displayImage();
     },
 
     imagePath: computed('currentImgIndex', {
@@ -41,12 +43,8 @@ export default Route.extend({
         }
     }),
 
-    imageIndexChanged: observer('currentImgIndex', function() {
-        this._displayImage();
-    }),
-
     _displayImage() {
-        set(this.inputProcessor, 'bgImage', this.imagePath);
+        this.inputProcessor.setBgImage(this.imagePath);
     },
 
     afterModel() {
