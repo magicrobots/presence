@@ -165,6 +165,13 @@ export default Component.extend(Deformers, {
         }
     }),
 
+    // didReceiveAttrs() {
+    //     this._super(...arguments);
+
+    //     // const currImage = this.inputProcessor.bgImage;
+    //     this._setBgImage(this.inputProcessor.bgImage);
+    // },
+
     // ------------------- private functions -------------------
 
     backgroundImageChanged: observer('inputProcessor.bgImage', function() {
@@ -455,5 +462,11 @@ export default Component.extend(Deformers, {
         }
 
         window.requestAnimationFrame(window.recursiveAnimationFunction);
+    },
+
+    actions: {
+        test() {
+            console.log('iza computer');
+        }
     }
 });

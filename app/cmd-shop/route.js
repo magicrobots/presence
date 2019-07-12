@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { set, computed, observer } from '@ember/object';
+import { set, computed } from '@ember/object';
 import { isPresent } from '@ember/utils';
 
 import environmentHelpers from '../utils/environment-helpers';
@@ -14,10 +14,6 @@ export default Route.extend({
         {
             url: 'shop.jpg',
             itemMapId: null
-        },
-        {
-            url: 'hoodie4.jpg',
-            itemMapId: 1
         },
         {
             url: 'teeshirt1.jpg',
@@ -99,6 +95,7 @@ export default Route.extend({
         }
 
         set(scope, 'currentShopIndex', newIndex);
+        scope._displayImage();
     },
 
     _arrowRight(scope) {
@@ -108,6 +105,7 @@ export default Route.extend({
         }
 
         set(scope, 'currentShopIndex', newIndex);
+        scope._displayImage();
     },
 
     help() {
@@ -123,10 +121,6 @@ export default Route.extend({
         get() {
             return `shop/${this.shopImages[this.currentShopIndex].url}`;
         }
-    }),
-
-    imageIndexChanged: observer('currentShopIndex', function() {
-        this._displayImage();
     }),
 
     _displayImage() {
