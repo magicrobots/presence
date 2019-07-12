@@ -129,7 +129,7 @@ export default Route.extend({
             `${currImageItem.name} | $${currImageItem.price} | ${currImageItem.desc}` :
             null;
         this.statusBar.setStatusMessage(itemMessage);
-        set(this.inputProcessor, 'bgImage', this.imagePath);
+        this.inputProcessor.setBgImage(this.imagePath);
     },
 
     _getItems() {

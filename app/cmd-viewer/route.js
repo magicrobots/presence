@@ -44,7 +44,7 @@ export default Route.extend({
     }),
 
     _displayImage() {
-        set(this.inputProcessor, 'bgImage', this.imagePath);
+        this.inputProcessor.setBgImage(this.imagePath);
     },
 
     afterModel() {

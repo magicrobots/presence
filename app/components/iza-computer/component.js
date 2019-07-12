@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { set, computed, observer } from '@ember/object';
+import { set, computed } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import { isPresent, isNone } from '@ember/utils';
 import { inject as service } from '@ember/service';
@@ -52,6 +52,15 @@ export default Component.extend(Deformers, {
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
         const maxCharsPerLine = Math.floor(textAreaWidth / MagicNumbers.FONT_CHARACTER_WIDTH);
         set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
+    },
+
+    init() {
+        this._super(...arguments);
+
+        const scope = this;
+        this.inputProcessor.bgImageCallback = function() {
+            scope._setBgImage();
+        };
     },
 
     // ------------------- computed properties -------------------
@@ -165,18 +174,7 @@ export default Component.extend(Deformers, {
         }
     }),
 
-    // didReceiveAttrs() {
-    //     this._super(...arguments);
-
-    //     // const currImage = this.inputProcessor.bgImage;
-    //     this._setBgImage(this.inputProcessor.bgImage);
-    // },
-
     // ------------------- private functions -------------------
-
-    backgroundImageChanged: observer('inputProcessor.bgImage', function() {
-        this._setBgImage(this.inputProcessor.bgImage);
-    }),
 
     _initCanvas() {
         const canvasSource = this.$('#source-canvas')[0];
@@ -462,11 +460,5 @@ export default Component.extend(Deformers, {
         }
 
         window.requestAnimationFrame(window.recursiveAnimationFunction);
-    },
-
-    actions: {
-        test() {
-            console.log('iza computer');
-        }
     }
 });

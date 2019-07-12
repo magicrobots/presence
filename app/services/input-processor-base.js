@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
 import ENV from '../config/environment';
 import MagicNumbers from '../const/magic-numbers';
@@ -71,5 +72,12 @@ export default Service.extend({
         const versionBuild = ENV.aws.buildNumber;
 
         return `v${MagicNumbers.VERSION_MAJOR}.${MagicNumbers.VERSION_MINOR}.${versionBuild}`;
+    },
+
+    setBgImage(imgPath) {
+        if(isPresent(this.bgImageCallback)) {
+            set(this, 'bgImage', imgPath);
+            this.bgImageCallback();
+        }
     }
 });
