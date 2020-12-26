@@ -9,13 +9,12 @@ export default Route.extend({
 
     currentImgIndex: 0,
     stillImages: Object.freeze([
-        'pond.jpg',
-        'forest.jpg',
-        'crashSite.jpg',
+        'bot_00.jpg',
+        'bot_01.jpg',
+        'bot_02.jpg',
         'robot.jpg',
-        'servers.jpg',
-        'cave.jpg',
-        'meadow.jpg']),
+        'bot_04.jpg',
+        'bot_05.jpg']),
 
     _arrowLeft(scope) {
         let newIndex = scope.currentImgIndex - 1;
