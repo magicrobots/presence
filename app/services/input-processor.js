@@ -34,16 +34,15 @@ export default keyFunctions.extend({
     },
 
     _doAnalytics() {
-        if (typeof window.ga !== 'function') { return; }
+        if (typeof window.gtag !== 'function') { return; }
         const username = this.persistenceHandler.getUsername();
         const context = this.activeApp || 'root';
         const param2 = `user: ${username} | app: ${context}`;
 
-        window.ga('send',
-            'event',
-            param2,
-            this.currentCommand || 'n/a'
-        );
+        window.gtag('event', param2, {
+            'event_category' : context,
+            'event_label' : this.currentCommand || 'n/a',
+          });
     },
 
     _setPreviousExecutionBlocks() {
