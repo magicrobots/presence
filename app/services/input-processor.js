@@ -181,12 +181,18 @@ export default keyFunctions.extend({
         set(this, 'currentCommand', '');
         set(this, 'currentArgs', undefined);
 
+        // handle quit
+        const quitEntries = ['Q', 'QUIT', 'EXIT'];
+
         if (isPresent(appName)) {
             // handle SUDO
             if (['sudo', 'chmod'].includes(appName)) {
                 set(this, 'appResponse', ['Nice try nerd. ACCESS DENIED.']);
             } else if (appName === 'hack') {
                 set(this, 'appResponse', ['Hacking mainframe...', 'ACCESS GRANTED', '', '', '...jklol ACCESS DENIED.']);
+            } else if (quitEntries.includes(appName)) {
+                set(this, 'appResponse', ['exiting...']);
+                this.quit();
             } else {
                 set(this, 'appResponse', [`ERROR: ${appName}: command not found.`]);
             }

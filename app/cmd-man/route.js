@@ -28,9 +28,8 @@ export default Route.extend({
         } else {
             response = ['MAN (Manual):',
                 '  Enter the LS command to view a list of available commands.',
-                '  Commands are not case sensitive.',
-                '  For manual on a specific command, enter \'man ls\'',
-                '  To quit any running application enter ESC to return to command line interface.'];
+                '  For manual on a specific command, enter \'man \' followed by the command name.',
+                '  To quit any running application hit the ESC key to return to command prompt.'];
         }
 
         return response;

@@ -46,10 +46,6 @@ export default Route.extend({
         {
             url: 'teeshirt3.jpg',
             itemMapId: 0
-        },
-        {
-            url: 'stickers2.jpg',
-            itemMapId: 2
         }
     ]),
 
@@ -58,13 +54,13 @@ export default Route.extend({
             id: 0,
             name: 'Teeshirt',
             price: 35,
-            desc: 'Yellow. Sizes S-XXL.'
+            desc: 'Yellow.'
         },
         { 
             id: 1,
             name: 'Hoodie (light weight)',
             price: 65,
-            desc: 'Black. Sizes S-XXL: These run SMALL'
+            desc: 'Black.'
         },
         { 
             id: 2,
@@ -75,16 +71,8 @@ export default Route.extend({
     ]),
 
     MAIN_DESCRIPTION: Object.freeze(['',
-        'Submit payment via paypal to Automated Direct Accounting Matrix (ADAM): ADAM@MAGICROBOTS.COM',
-        '',
-        'Any submission that deviates from the following ruleset will be rejected and refunded:',
-        ' - Note field must include garment sizes if applicable',
-        ' - Note field must include shipping address',
-        ' - Payment type must be "Friends and Family"',
-        ' - $10 flat fee ($3 if just stickers) for shipping must be included in calculation.',
-        ' - Payment calculation must be correct.',
-        '',
-        'NOTE: Stickers and garments ship separately will arrive at different times.',
+        'Limited edition garments and items:',
+        'NO LONGER AVAILABLE',
         '',
         '<- use arrows to navigate gallery ->', 'ESC to quit', '? to show this message again.']),
 
@@ -126,7 +114,7 @@ export default Route.extend({
     _displayImage() {
         const currImageItem = this.shopItems[this.shopImages[this.currentShopIndex].itemMapId];
         const itemMessage = isPresent(currImageItem) ?
-            `${currImageItem.name} | $${currImageItem.price} | ${currImageItem.desc}` :
+            `${currImageItem.name} | N/A | ${currImageItem.desc}` :
             null;
         this.statusBar.setStatusMessage(itemMessage);
         this.inputProcessor.setBgImage(this.imagePath);
@@ -140,15 +128,11 @@ export default Route.extend({
 
     afterModel() {
 
-        const response = ['Available items:', '']
-            .concat(this._getItems())
-            .concat(this.MAIN_DESCRIPTION);
-
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
             displayAppNameInPrompt: true,
             interruptPrompt: true,
-            response: response,
+            response: this.MAIN_DESCRIPTION,
             keyOverrides: {
                 ARROWLEFT: this._arrowLeft,
                 ARROWRIGHT: this._arrowRight,
