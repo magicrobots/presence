@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.817.0",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "sha.js": "^2.4.11"
   }
 }
