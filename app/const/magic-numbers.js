@@ -13,7 +13,7 @@ export default {
     MIN_USEABLE_COLUMNS: 60,
     FRAME_RATE: 1000 / 60,
     MAX_MPF: 150, // milliseconds per frame performance
-    SCREEN_BREAK: 700, // match media query max-width at app/styles/app.css
+    SCREEN_BREAK: 768, // match media query max-width at app/styles/app.css
 
     // status-bar
     STATUS_FONT_SIZE: 16,

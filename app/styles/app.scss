@@ -41,8 +41,8 @@ body {
         input {
             vertical-align: top;
             height: 5.5vw;
-            margin: 3px 3px 8px 3px;
-
+            min-width: 26vw;
+            margin: 3px 8px 8px 8px;
             border-radius: 4px;
             background-color: #333333;
             color: white;
@@ -171,7 +171,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 700px),(max-height: 600px) {
+@media only screen and (max-width: 768px),(max-height: 600px) {
         #application-root {
             top: 0;
             height: unset;
