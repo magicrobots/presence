@@ -29,20 +29,21 @@ export default keyFunctions.extend({
     },
 
     _getIsKeyboardActive() {
-        const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
-        return isViewerActiveDiv;
+        return true;
+        // const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
+        // return isViewerActiveDiv;
     },
 
     _doAnalytics() {
-        if (typeof window.gtag !== 'function') { return; }
-        const username = this.persistenceHandler.getUsername();
-        const context = this.activeApp || 'root';
-        const param2 = `user: ${username} | app: ${context}`;
+        // if (typeof window.gtag !== 'function') { return; }
+        // const username = this.persistenceHandler.getUsername();
+        // const context = this.activeApp || 'root';
+        // const param2 = `user: ${username} | app: ${context}`;
 
-        window.gtag('event', param2, {
-            'event_category' : context,
-            'event_label' : this.currentCommand || 'n/a',
-          });
+        // window.gtag('event', param2, {
+        //     'event_category' : context,
+        //     'event_label' : this.currentCommand || 'n/a',
+        //   });
     },
 
     _setPreviousExecutionBlocks() {
@@ -228,6 +229,23 @@ export default keyFunctions.extend({
     },
 
     // ------------------- public methods -------------------
+
+    handleScreenInput(input) {
+        set(this, 'currentCommand', input);
+        this._execute();
+    },
+
+    handleEsc() {
+        this.processKey({ key: 'ESCAPE', preventDefault: () => {} });
+    },
+
+    handleDirection(dir) {
+        this.processKey({ key: dir, preventDefault: () => {} });
+    },
+
+    callArrow(dir) {
+        this.processKey({ key: dir, preventDefault: () => { } });
+    },
 
     setAppEnvironment(appEnvironment) {
         set(this, 'activeApp', appEnvironment.activeAppName);

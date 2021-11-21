@@ -5,6 +5,8 @@ export default {
     // iza-computer
     FONT_SIZE: 14,
     FONT_CHARACTER_WIDTH: 8.7,
+    FONT_SIZE_S: 11,
+    FONT_CHARACTER_WIDTH_S: 6.4,
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,

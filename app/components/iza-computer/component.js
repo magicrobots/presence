@@ -49,7 +49,7 @@ export default Component.extend(Deformers, {
 
         // store max chars per line
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
-        const maxCharsPerLine = Math.floor(textAreaWidth / MagicNumbers.FONT_CHARACTER_WIDTH);
+        const maxCharsPerLine = Math.floor(textAreaWidth / this.fontCharacterWidth);
         set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
     },
 
@@ -67,6 +67,18 @@ export default Component.extend(Deformers, {
 
     // ------------------- computed properties -------------------
 
+    fontSize: computed('isSmallViewport', {
+        get() {
+            return this.isSmallViewport ? MagicNumbers.FONT_SIZE_S : MagicNumbers.FONT_SIZE;
+        }
+    }),
+
+    fontCharacterWidth: computed('isSmallViewport', {
+        get() {
+            return this.isSmallViewport ? MagicNumbers.FONT_CHARACTER_WIDTH_S : MagicNumbers.FONT_CHARACTER_WIDTH;
+        }
+    }),
+
     textEdgeBuffer: computed('viewportMeasurements.{width,height}', {
         get() {
             return Math.max(this.viewportMeasurements.width, this.viewportMeasurements.height) * 0.06;
@@ -75,7 +87,7 @@ export default Component.extend(Deformers, {
 
     visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', 'viewportMeasurements.height', 'textEdgeBuffer', {
         get() {
-            const lineHeightInPixels = MagicNumbers.SPACE_BETWEEN_LINES + MagicNumbers.FONT_SIZE;
+            const lineHeightInPixels = MagicNumbers.SPACE_BETWEEN_LINES + this.fontSize;
             const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
             const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
             const returnSet = [];
@@ -118,12 +130,13 @@ export default Component.extend(Deformers, {
         get() {
             // make it a 4:3 ratio as big as possible in the viewport
             const outputRatio = 4 / 3;
+            const borderValue = this.isSmallViewport ? 0 : MagicNumbers.MIN_BORDER;
             const currHeight = this.containerHeight;
             const currWidth = this.containerWidth > MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH ?
                 MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH :
                 this.containerWidth;
-            const maxHeight = currHeight - (MagicNumbers.MIN_BORDER * 2);
-            const maxWidth = currWidth - (MagicNumbers.MIN_BORDER * 2);
+            const maxHeight = currHeight - (borderValue * 2);
+            const maxWidth = currWidth - (borderValue * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
 
             let height;
@@ -138,7 +151,7 @@ export default Component.extend(Deformers, {
             } else {
                 width = maxWidth;
                 height = maxWidth * (1 / outputRatio);
-                top = (currHeight - height) / 2 - (MagicNumbers.MIN_BORDER * 1);
+                top = (currHeight - height) / 2 - (borderValue * 1);
             }
 
             if (this.isSmallViewport) {
@@ -151,9 +164,10 @@ export default Component.extend(Deformers, {
         }
     }),
 
-    isSmallViewport: computed('containerWidth', {
+    isSmallViewport: computed('containerWidth', 'containerHeight', {
         get () {
-            return this.containerWidth <= MagicNumbers.SCREEN_BREAK;
+            return this.containerWidth <= MagicNumbers.SCREEN_BREAK ||
+                this.containerHeight <= MagicNumbers.SCREEN_BREAK;
         }
     }),
 
@@ -286,7 +300,7 @@ export default Component.extend(Deformers, {
     _drawText(ctx) {
         const scopedContext = ctx;
 
-        ctx.font = `${MagicNumbers.FONT_SIZE}px courier-std`;
+        ctx.font = `${this.fontSize}px courier-std`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             

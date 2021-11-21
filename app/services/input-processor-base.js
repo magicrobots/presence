@@ -34,7 +34,6 @@ export default Service.extend({
         const isNarrowScreen = true;
         if (isNarrowScreen) {
             welcomeMessage = welcomeMessage.concat([
-                '',
                 'PHYSICAL KEYBOARD SUGGESTED.'
             ]);
         }

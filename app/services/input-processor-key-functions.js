@@ -12,26 +12,36 @@ let cursorIndexMax;
 let newCommandIndex;
 
 export default inputComputed.extend({
-    arrowUp() {
+    getOlderCommand() {
         newCommandIndex = this.currCommandIndex + 1;
         if (newCommandIndex > this.commandHistory.length - 1) {
             newCommandIndex = this.commandHistory.length - 1;
         }
 
         set(this, 'currCommandIndex', newCommandIndex);
-        newCommand = this.commandHistory[this.currCommandIndex] || '';
-        set(this, 'currentCommand', newCommand);
-        set(this, 'cursorPosition', this.currentCommand.length);
+
+        return this.commandHistory[this.currCommandIndex] || '';
     },
 
-    arrowDown() {
+    getNewerCommand() {
         newCommandIndex = this.currCommandIndex - 1;
         if (newCommandIndex < -1) {
             newCommandIndex = -1;
         }
 
         set(this, 'currCommandIndex', newCommandIndex);
-        newCommand = this.commandHistory[this.currCommandIndex] || '';
+
+        return this.commandHistory[this.currCommandIndex] || '';
+    },
+
+    arrowUp() {
+        newCommand = this.getOlderCommand();
+        set(this, 'currentCommand', newCommand);
+        set(this, 'cursorPosition', this.currentCommand.length);
+    },
+
+    arrowDown() {
+        newCommand = this.getNewerCommand();
         set(this, 'currentCommand', newCommand);
         set(this, 'cursorPosition', this.currentCommand.length);
     },

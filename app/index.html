@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Magic Robots</title>
-    <meta name="description" content="Magic Robots: Where would we be without them?">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <!-- Facebook open graph tags -->
-    <meta property="og:url" content="https://www.magicrobots.com" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Magic Robots" />
-    <meta property="og:description" content="Where would we be without them?" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="{{rootURL}}assets/facebookShare.jpg" />
-    <meta property="fb:app_id" content="112106115617635" />
 
-    {{content-for "head"}}
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Magic Robots</title>
+  <meta name="description" content="Magic Robots: Where would we be without them?">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <!-- Facebook open graph tags -->
+  <meta property="og:url" content="https://www.magicrobots.com" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Magic Robots" />
+  <meta property="og:description" content="Where would we be without them?" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="{{rootURL}}assets/facebookShare.jpg" />
+  <meta property="fb:app_id" content="112106115617635" />
 
-    <link rel="stylesheet" href="https://use.typekit.net/bac2xcp.css">
-    <link integrity="" rel="stylesheet" href="{{rootURL}}assets/vendor.css">
-    <link integrity="" rel="stylesheet" href="{{rootURL}}assets/frontend.css">
+  {{content-for "head"}}
 
-    <link rel="icon" href="/assets/favicon.ico">
+  <link rel="stylesheet" href="https://use.typekit.net/bac2xcp.css">
+  <link integrity="" rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+  <link integrity="" rel="stylesheet" href="{{rootURL}}assets/frontend.css">
 
-    {{content-for "head-footer"}}
-  </head>
+  <link rel="icon" href="/assets/favicon.ico">
 
-  <body>
-    {{content-for "body"}}
+  {{content-for "head-footer"}}
+</head>
 
-    <script src="{{rootURL}}assets/vendor.js"></script>
-    <script src="{{rootURL}}assets/frontend.js"></script>
+<body>
+  {{content-for "body"}}
 
-    {{content-for "body-footer"}}
-  </body>
+  <script src="{{rootURL}}assets/vendor.js"></script>
+  <script src="{{rootURL}}assets/frontend.js"></script>
+
+  {{content-for "body-footer"}}
+</body>
+
 </html>

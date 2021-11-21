@@ -17,6 +17,7 @@ body {
     color: white;
     user-select: none;
     background-color: black;
+    touch-action: pan-x pan-y;
 }
 
 #small-content {
@@ -25,12 +26,9 @@ body {
     width: 100%;
     height: 100%;
 
-    h1 {
-        padding: 20px;
-    }
-
-    div {
-        padding: 20px;
+    .input-container {
+        margin-top: 30px;
+        text-align: center;
     }
 }
 
