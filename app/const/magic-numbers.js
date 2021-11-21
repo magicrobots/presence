@@ -14,6 +14,7 @@ export default {
     FRAME_RATE: 1000 / 60,
     MAX_MPF: 150, // milliseconds per frame performance
     SCREEN_BREAK: 768, // match media query max-width at app/styles/app.css
+    PERFORMANCE_TEST_LENGTH: 30,
 
     // status-bar
     STATUS_FONT_SIZE: 16,

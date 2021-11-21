@@ -462,7 +462,7 @@ export default Component.extend(Deformers, {
     },
 
     _handlePerformanceEval(mpf){
-        set(this, 'mpf', mpf);
+        set(this, 'mpf', `${mpf} MPF (${this.performanceEval.length}/${MagicNumbers.PERFORMANCE_TEST_LENGTH})`);
         const newSet = this.performanceEval.push(mpf);
         set(this, 'performancEval', newSet);
 
@@ -474,7 +474,7 @@ export default Component.extend(Deformers, {
             return total / values.length;
         }
 
-        if (this.performanceEval.length >= 30) {
+        if (this.performanceEval.length >= MagicNumbers.PERFORMANCE_TEST_LENGTH) {
             const perf = avg(this.performanceEval);
             if (perf < MagicNumbers.MAX_MPF) {
                 set(this, 'isPerformant', true);
@@ -484,8 +484,6 @@ export default Component.extend(Deformers, {
 
             set(this, 'isEvaluated', true);
             set(this, 'isMpfVisible', false);
-
-            console.log(perf);
         }
     },
 
