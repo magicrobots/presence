@@ -28,7 +28,58 @@ body {
 
     .input-container {
         margin-top: 30px;
-        text-align: center;
+        width: 95vw;
+
+        .row-base {
+            width: 100%;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        input {
+            vertical-align: top;
+            height: 5.5vw;
+            margin: 3px 3px 8px 3px;
+
+            border-radius: 4px;
+            background-color: #333333;
+            color: white;
+        }
+
+        .key-row_upper {
+            @extend .row-base;
+
+            button:last-child {
+               margin-right: 10vw;
+            }
+        }
+        
+        .key-row_lower {
+            @extend .row-base;
+        }
+
+        button {
+            background-color: unset;
+            border: unset;
+            padding: 0;
+            display: flex;
+            margin: 0;
+
+                img {
+                    width: 10vw;
+                    // max-width: 40px;
+                    // padding: 0px;
+                }
+
+                #key-return {
+                    @extend img;
+                    width: 20vw;
+                    margin-right: 2px;
+                    // max-width: 80px;
+                }
+        }
     }
 }
 

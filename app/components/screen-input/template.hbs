@@ -1,10 +1,13 @@
 <div class="input-container">
-    <button {{action onEsc }}>Esc</button>
-    {{input value=inputValue type="text"}}
-    <button {{action onScreenInput }}>Submit</button>
-    <br />
-    <button {{action onUp}}>UP</button>
-    <button {{action onDown}}>DOWN</button>
-    <button {{action onLeft}}>L</button>
-    <button {{action onRight}}>R</button>
+    <div class="key-row_upper">
+        <button {{action onEsc }}><img id="key-esc" alt="esc" src="assets/key_esc.gif"></button>
+        {{input value=inputValue type="text" placeholder="$:"}}
+        <button {{action onScreenInput }}><img id="key-return" alt="return" src="assets/key_return.gif"></button>
+        <button {{action onUp}}><img id="key-arrow_up" alt="arrow_up" src="assets/key_up.gif"></button>
+    </div>
+    <div class="key-row_lower">
+        <button {{action onLeft}}><img id="key-arrow_left" alt="arrow_left" src="assets/key_left.gif"></button>
+        <button {{action onDown}}><img id="key-arrow_down" alt="arrow_down" src="assets/key_down.gif"></button>
+        <button {{action onRight}}><img id="key-arrow_right" alt="arrow_right" src="assets/key_right.gif"></button>
+    </div>
 </div>
