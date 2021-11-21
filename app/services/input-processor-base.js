@@ -7,7 +7,6 @@ import ENV from '../config/environment';
 import MagicNumbers from '../const/magic-numbers';
 
 export default Service.extend({
-    platformAnalyzer: service(),
     statusBar: service(),
 
     currentCommand: '',
@@ -29,29 +28,14 @@ export default Service.extend({
 
         const welcomeBase = [`Welcome to Faux OS ${this.getAppVersion()} ©1996`, '? for help'];
         let welcomeMessage = '';
-        
-        if (this.platformAnalyzer.getIsIpad()) {
-            welcomeMessage = [
-                '',
-                'IPAD USER:',
-                'Experience limited: enhanced graphics disabled.',
-                'For full experience use Desktop Personal Computer.'
-            ];
-        } else if (this.platformAnalyzer.getIsSafari()) {
-            welcomeMessage = [
-                '',
-                'SAFARI USER:',
-                'Experience limited: enhanced graphics disabled.',
-                'For full experience use Chrome or Firefox.'
-            ];
-        }
 
         welcomeMessage = welcomeBase.concat(welcomeMessage);
 
-        if (this.platformAnalyzer.getIsMobileDevice()) {
+        const isNarrowScreen = true;
+        if (isNarrowScreen) {
             welcomeMessage = welcomeMessage.concat([
                 '',
-                'PHYSICAL KEYBOARD REQUIRED.'
+                'PHYSICAL KEYBOARD SUGGESTED.'
             ]);
         }
 

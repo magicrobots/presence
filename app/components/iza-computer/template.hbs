@@ -1,6 +1,9 @@
 <div id="iza-computer" class="route-container" style={{routeContainerStyle}}>
     {{iza-computer/loading-indicator
-        isVisible=isLoadingSomething}}
+    isVisible=isLoadingSomething}}
+    {{iza-computer/mpf-indicator
+    mpf=mpf
+    isVisible=isMpfVisible}}
     <img id="vignette" class="vignette" alt="vignette" src="assets/vignette.png">
     <canvas id="source-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
     <canvas id="altered-canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>

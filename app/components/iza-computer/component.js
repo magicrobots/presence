@@ -11,7 +11,6 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     rngeezus: service(),
-    platformAnalyzer: service(),
     statusBar: service(),
     classNames: ['iza-computer'],
 
@@ -61,6 +60,9 @@ export default Component.extend(Deformers, {
         this.inputProcessor.bgImageCallback = function() {
             scope._setBgImage();
         };
+
+        set(this, 'isMpfVisible', true);
+        set(this, 'performanceEval', []);
     },
 
     // ------------------- computed properties -------------------
@@ -112,7 +114,7 @@ export default Component.extend(Deformers, {
         }
     }),
 
-    viewportMeasurements: computed('containerHeight', 'containerWidth', {
+    viewportMeasurements: computed('containerHeight', 'containerWidth', 'isSmallScreen', {
         get() {
             // make it a 4:3 ratio as big as possible in the viewport
             const outputRatio = 4 / 3;
@@ -139,9 +141,19 @@ export default Component.extend(Deformers, {
                 top = (currHeight - height) / 2 - (MagicNumbers.MIN_BORDER * 1);
             }
 
+            if (this.isSmallViewport) {
+                top = 0;
+            }
+
             left = (this.containerWidth - width) / 2;
 
             return {left, top, width, height};
+        }
+    }),
+
+    isSmallViewport: computed('containerWidth', {
+        get () {
+            return this.containerWidth <= MagicNumbers.SCREEN_BREAK;
         }
     }),
 
@@ -211,7 +223,7 @@ export default Component.extend(Deformers, {
 
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
-        
+    
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
@@ -291,7 +303,7 @@ export default Component.extend(Deformers, {
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
-    
+
     _deform(ctx2) {
         if (!this.originalScreenBitmap) {
             return;
@@ -355,9 +367,9 @@ export default Component.extend(Deformers, {
         const maxCharsPerLine = this.inputProcessor.maxCharsPerLine;
 
         // prevent inifinite loop?
-        if (maxCharsPerLine < MagicNumbers.MIN_USEABLE_COLUMNS) {
-            return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
-        }
+        // if (maxCharsPerLine < MagicNumbers.MIN_USEABLE_COLUMNS) {
+        //     return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
+        // }
 
         allLines.forEach((currLine) => {
 
@@ -435,9 +447,38 @@ export default Component.extend(Deformers, {
         return modifiedLines;
     },
 
+    _handlePerformanceEval(mpf){
+        set(this, 'mpf', mpf);
+        const newSet = this.performanceEval.push(mpf);
+        set(this, 'performancEval', newSet);
+
+        const avg = (values) => {
+            var total = 0;
+            for (var i = 0; i < values.length; i++) {
+                total += values[i];
+            }
+            return total / values.length;
+        }
+
+        if (this.performanceEval.length >= 30) {
+            const perf = avg(this.performanceEval);
+            if (perf < MagicNumbers.MAX_MPF) {
+                set(this, 'isPerformant', true);
+            } else {
+                set(this, 'isPerformant', false);
+            }
+
+            set(this, 'isEvaluated', true);
+            set(this, 'isMpfVisible', false);
+
+            console.log(perf);
+        }
+    },
+
     // ------------------- public functions -------------------
 
     recursiveAnimationFunction() {
+        const preTime = new Date().getTime();
         const scope = window.animationScope;
         const bgImage = scope.bgImageData;
         const ctx = scope.ctx;
@@ -450,15 +491,25 @@ export default Component.extend(Deformers, {
             scope._drawText(ctx);
             scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (scope.platformAnalyzer.isGraphicsEnabled()) {
+            if (!scope.isEvaluated || scope.isPerformant) {
                 scope._deform(ctx2);
-    
-                // store canvas image data for manipulation
-                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
-                set(scope, 'originalScreenBitmap', imgData);
+            } else {
+                // kill ctx2 if you need to
+                const canvasAltered = scope.$('#altered-canvas')[0];
+                canvasAltered.style = 'display:none;';
             }
+
+            // store canvas image data for manipulation
+            const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+            set(scope, 'originalScreenBitmap', imgData);
         }
 
         window.requestAnimationFrame(window.recursiveAnimationFunction);
+
+        const postTime = new Date().getTime();
+
+        if (!scope.isEvaluated) {
+            scope._handlePerformanceEval(postTime - preTime);
+        }
     }
 });

@@ -9,7 +9,9 @@ export default {
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,
     MIN_USEABLE_COLUMNS: 60,
-    FRAME_RATE: 1000/60,
+    FRAME_RATE: 1000 / 60,
+    MAX_MPF: 150, // milliseconds per frame performance
+    SCREEN_BREAK: 700, // match media query max-width at app/styles/app.css
 
     // status-bar
     STATUS_FONT_SIZE: 16,
