@@ -59,6 +59,7 @@ export default keyFunctions.extend({
     },
 
     _execute() {
+        set(this, 'currentCommand', this.currentCommand.trim());
         set(this, 'rawUserEntry', this.currentCommand);
         this._doAnalytics();
 
@@ -91,11 +92,6 @@ export default keyFunctions.extend({
         let commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
-
-        // trim accidental white space from beginning of command entry
-        if (commandName === '' && args.length > 0) {
-            commandName = args.shift();
-        }
 
         // don't do anything if the user is rude
         if (this._commandHasSwears(this.currentCommand)) {
@@ -187,7 +183,7 @@ export default keyFunctions.extend({
 
         if (isPresent(appName)) {
             // handle SUDO
-            if (['sudo', 'chmod'].includes(appName)) {
+            if (['sudo', 'chmod', 'su'].includes(appName)) {
                 set(this, 'appResponse', ['Nice try nerd. ACCESS DENIED.']);
             } else if (appName === 'hack') {
                 set(this, 'appResponse', ['Hacking mainframe...', 'ACCESS GRANTED', '', '', '...jklol ACCESS DENIED.']);

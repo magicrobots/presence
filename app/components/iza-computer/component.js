@@ -51,6 +51,9 @@ export default Component.extend(Deformers, {
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
         const maxCharsPerLine = Math.floor(textAreaWidth / this.fontCharacterWidth);
         set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
+
+        // force update from persisted values
+        this.notifyPropertyChange('isSmallViewport');
     },
 
     init() {
@@ -69,13 +72,34 @@ export default Component.extend(Deformers, {
 
     fontSize: computed('isSmallViewport', {
         get() {
+            const userSize = this.persistenceHandler.getFontSize();
+            if(userSize){
+                switch (userSize) {
+                    case 's':
+                        return MagicNumbers.FONT_SIZE_S;
+                    case 'm':
+                        return MagicNumbers.FONT_SIZE_M;
+                    case 'l':
+                        return MagicNumbers.FONT_SIZE;
+                }
+            }
+
             return this.isSmallViewport ? MagicNumbers.FONT_SIZE_S : MagicNumbers.FONT_SIZE;
         }
     }),
 
-    fontCharacterWidth: computed('isSmallViewport', {
+    fontCharacterWidth: computed('fontSize', {
         get() {
-            return this.isSmallViewport ? MagicNumbers.FONT_CHARACTER_WIDTH_S : MagicNumbers.FONT_CHARACTER_WIDTH;
+            switch (this.fontSize) {
+                case MagicNumbers.FONT_SIZE_S:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH_S;
+                case MagicNumbers.FONT_SIZE_M:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH_M;
+                case MagicNumbers.FONT_SIZE:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH;
+            }
+
+            return MagicNumbers.FONT_CHARACTER_WIDTH;
         }
     }),
 

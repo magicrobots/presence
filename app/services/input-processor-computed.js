@@ -16,7 +16,7 @@ export default processorBase.extend({
             const lang = navigator.language;
             const username = this.persistenceHandler.getUsername();
 
-            return `${code} ${plat} ${lang} | magicrobots/ (${username})`;
+            return `${username} | ${code} ${plat} ${lang} | magicrobots/`;
         }
     }),
 
@@ -60,7 +60,7 @@ export default processorBase.extend({
             }
 
             const interactiveLine = `${this.promptLine2}${commandDisplay}`;
-            const promptColor = this.persistenceHandler.getPromptColor() || MagicNumbers.DEFAULT_PROMPT_COLOR;
+            const promptColor = MagicNumbers.DEFAULT_PROMPT_COLOR;
 
             const fullBlock = isPresent(this.interruptPrompt) ?
                 ['', `${MagicNumbers.COLORIZE_LINE_PREFIX}${promptColor}${interactiveLine}`] :
