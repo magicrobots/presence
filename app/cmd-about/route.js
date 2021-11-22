@@ -9,13 +9,11 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: ['MAGIC ROBOTS is the private arm of the V.5. Department of Robotics (v5DoR).',
+            response: [`Welcome to Faux OS ${this.inputProcessor.getAppVersion()} ©1996`,
                 '',
-                '10-15 years ago Robot sightings became less and less frequent. Many assumed they had disappeared.',
-                '',
-                'This was not true, of course. Our close monitoring and continued communication with the Robots never faltered, regardless of a media spotlight. Our hard work continued.',
-                '',
-                'Public perception of lack of need however, effected the v5DoR to lose public funding. MAGIC ROBOTS was formed as a private entity to help fund the v5DoR\'s efforts. We chose fashion and street wear to help keep Magic Robots in the collective consciousness of the public and maintain awareness of their powerful and important history, as well as to educate about their true nature in the case that you are fortunate enough to encounter a now rare sighting.']
+                'You are connected to an updated Univac Mainframe running a preproduction IBM developed build of Linux.',
+                'This is an expanded VT102 terminal, color feature added retroactively in 1992 via updated protocol standards and millimeter-wave modification of internal CRT.'
+                ]
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);

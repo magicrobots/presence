@@ -26,7 +26,10 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
-        const welcomeBase = [`Welcome to Faux OS ${this.getAppVersion()} ©1996`, '? for help'];
+        const welcomeBase = [
+            `Welcome to Faux OS ${this.getAppVersion()} ©1996`,
+            '- limited shell -',
+            '? for help'];
         let welcomeMessage = '';
 
         welcomeMessage = welcomeBase.concat(welcomeMessage);
