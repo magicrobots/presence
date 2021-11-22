@@ -1,6 +1,4 @@
 <div id="iza-computer" class="route-container" style={{routeContainerStyle}}>
-    {{iza-computer/loading-indicator
-    isVisible=isLoadingSomething}}
     {{iza-computer/mpf-indicator
     mpf=mpf
     isVisible=isMpfVisible}}
@@ -10,4 +8,7 @@
     <div class="outlet-container">
         {{outlet}}
     </div>
+    {{iza-computer/loading-indicator
+    isVisible=isLoadingSomething}}
+    <img class="footer-light" src="assets/redLight.png">
 </div>
