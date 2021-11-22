@@ -10,7 +10,7 @@ export default Route.extend({
     afterModel() {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: this.routeName,
-            response: [`/magicrobots/users/${dasherize(this.persistenceHandler.getUsername())}/`]
+            response: [`/home/${dasherize(this.persistenceHandler.getUsername())}/`]
         });
 
         this.inputProcessor.setAppEnvironment(appEnvironment);

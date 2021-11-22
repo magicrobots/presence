@@ -9,6 +9,7 @@ import MagicNumbers from '../const/magic-numbers';
 
 export default Route.extend({
     inputProcessor: service(),
+    persistenceHandler: service(),
 
     _listResponse() {
         const rawArgs = this.inputProcessor.rawUserEntry.split(' ')[1];
@@ -41,7 +42,7 @@ export default Route.extend({
         // process args
         } else if (this._hasArg('-')) {
 
-            return this._hasArg('l') ?
+            return this._hasArg('l') || this._hasArg('n') ?
                 this._responseTall(commandList) :
                 this._responseWide(commandList);
 
@@ -78,19 +79,13 @@ export default Route.extend({
             .sortBy('commandName');
     },
 
-    _getLongestCommandName(commandList) {
-        let longestItem = 0;
-        commandList.forEach((currResponseItem) => {
-            const currLength = currResponseItem.commandName.length;
-            if (currLength > longestItem) {
-                longestItem = currLength;
-            }
-        });
-
-        return longestItem;
+    _getOwner(appConfigObject, longstName) {
+        const hardlinks = Math.ceil(Math.random() * 5);
+        const owner = appConfigObject.owner || { uname: this.persistenceHandler.getUsername(), uid:'1000'};
+        return ` ${hardlinks} ${this._hasArg('n') ? owner.uid.padStart(4) : owner.uname.padStart(longstName)} `;
     },
 
-    _createDetailedLine(appConfigObject, longestSize) {
+    _createDetailedLine(appConfigObject, longestSize, longstName) {
         const itemPrefix = '-rw-r--r--';
         const itemPrefixExec = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.EXEC_COLOR}-rwxr-xr-x`;
         const itemPrefixDir = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
@@ -115,7 +110,7 @@ export default Route.extend({
         const displayDate = `${month} ${day} ${timeFull}`;
 
         return prefix.
-            concat(' 1 magicrobots ').
+            concat(this._getOwner(appConfigObject, longstName)).
             concat(`${displaySize.padStart(longestSize, ' ')} `).
             concat(`${displayDate} `).
             concat(appConfigObject.commandName.concat(suffix));
@@ -147,13 +142,27 @@ export default Route.extend({
         return response;
     },
 
-    _getLongestSize(commandList) {
+    _commandNameFormatter(currItem) {
+        return currItem.commandName.length;
+    },
+
+    _sizeFormatter(currItem, scope) {
+        return scope._hasArg('h') ?
+            scope._formatSize(currItem.size).length :
+            currItem.size.toString().length;
+    },
+
+    _nameFormatter(currItem, scope) {
+        const owner = currItem.owner || { uname: scope.persistenceHandler.getUsername(), uid: '1000' };
+        return owner.uname.length;
+    },
+
+    _getLongestValue(commandList, formatter) {
         let longest = 0;
+        const scope = this;
         commandList.forEach((currItem) => {
-            const currSizeLength = this._hasArg('h') ? 
-                this._formatSize(currItem.size).length :
-                currItem.size.toString().length;
-            if(currSizeLength > longest) {
+            const currSizeLength = formatter(currItem, scope);
+            if (currSizeLength > longest) {
                 longest = currSizeLength;
             }
         });
@@ -163,16 +172,23 @@ export default Route.extend({
 
     _responseTall(commandList) {
         const scope = this;
-        const longestSize = this._getLongestSize(commandList);
+        const longestSize = this._getLongestValue(commandList, this._sizeFormatter);
+        const longstName = this._getLongestValue(commandList, this._nameFormatter)
 
         return commandList.map((currCommandItem) => {
-            return scope._createDetailedLine(currCommandItem, longestSize);
+            return scope._createDetailedLine(
+                currCommandItem,
+                longestSize,
+                longstName);
         });
     },
 
     _responseWide(commandList) {
         const distanceBetweenItems = 2;
-        const longestCommandNameLength = this._getLongestCommandName(commandList) + distanceBetweenItems;
+        const longestCommandNameLength = this._getLongestValue(
+                commandList,
+                this._commandNameFormatter
+            ) + distanceBetweenItems;
 
         let response = '';
         commandList.forEach((currResponseItem) => {
