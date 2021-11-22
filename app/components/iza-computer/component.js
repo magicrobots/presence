@@ -527,13 +527,26 @@ export default Component.extend(Deformers, {
             scope._drawText(ctx);
             scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (!scope.isEvaluated || scope.isPerformant) {
+            const userGrafxSetting = scope.persistenceHandler.getGraphicsMode();
+            if (userGrafxSetting === 'hi') {
                 scope._deform(ctx2);
-            } else {
+                const canvasAltered = scope.$('#altered-canvas')[0];
+                if (canvasAltered.style.display === 'none') {
+                    canvasAltered.style = '';
+                }
+            } else if (userGrafxSetting === 'lo') {
                 // kill ctx2 if you need to
                 const canvasAltered = scope.$('#altered-canvas')[0];
                 canvasAltered.style = 'display:none;';
-            }
+            } else {
+                if (!scope.isEvaluated || scope.isPerformant) {
+                    scope._deform(ctx2);
+                } else {
+                    // kill ctx2 if you need to
+                    const canvasAltered = scope.$('#altered-canvas')[0];
+                    canvasAltered.style = 'display:none;';
+                }
+            }            
 
             // store canvas image data for manipulation
             const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);

@@ -13,7 +13,7 @@ export default Route.extend({
     settingsCommandRegistry: Object.freeze([
         'username',
         'fontsize',
-        'showkeyboard',
+        // 'showkeyboard',
         'graphicsmode'
     ]),
 
@@ -64,20 +64,20 @@ export default Route.extend({
         );
     },
 
-    showkeyboard(overflowArg, hideEscText) {
-        const appResponse = [`Keyboard is currently: ${this.persistenceHandler.getShowKeyboard() === 'true' ? 'visible' : 'hidden'}`,
-            '',
-            `enter 'true' or 'false' as second parameter to toggle visibility - e.g.: 'showkeyboard true'`]
+    // showkeyboard(overflowArg, hideEscText) {
+    //     const appResponse = [`Keyboard is currently: ${this.persistenceHandler.getShowKeyboard() === 'true' ? 'visible' : 'hidden'}`,
+    //         '',
+    //         `enter 'true' or 'false' as second parameter to toggle visibility - e.g.: 'showkeyboard true'`]
 
-        this._commonProcesses(
-            overflowArg,
-            hideEscText,
-            'showkeyboard',
-            appResponse,
-            'setShowKeyboard',
-            ['true', 'false']
-        );
-    },
+    //     this._commonProcesses(
+    //         overflowArg,
+    //         hideEscText,
+    //         'showkeyboard',
+    //         appResponse,
+    //         'setShowKeyboard',
+    //         ['true', 'false']
+    //     );
+    // },
 
     graphicsmode(overflowArg, hideEscText) {
         const appResponse = [`Graphics mode is currently: ${this.persistenceHandler.getGraphicsMode()}`,
@@ -104,7 +104,7 @@ export default Route.extend({
             response: ['Available settings:',
                 '  username',
                 '  fontsize',
-                '  showkeyboard',
+                // '  showkeyboard',
                 '  graphicsmode'].concat(this.escText)
         });
 
