@@ -11,8 +11,7 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     rngeezus: service(),
-    platformAnalyzer: service(),
-    statusBar: service(),
+    // statusBar: service(),
     classNames: ['iza-computer'],
 
     // ------------------- ember hooks -------------------
@@ -50,8 +49,11 @@ export default Component.extend(Deformers, {
 
         // store max chars per line
         const textAreaWidth = this.viewportMeasurements.width - (2 * this.textEdgeBuffer);
-        const maxCharsPerLine = Math.floor(textAreaWidth / MagicNumbers.FONT_CHARACTER_WIDTH);
+        const maxCharsPerLine = Math.floor(textAreaWidth / this.fontCharacterWidth);
         set(this.inputProcessor, 'maxCharsPerLine', maxCharsPerLine);
+
+        // force update from persisted values
+        this.notifyPropertyChange('isSmallViewport');
     },
 
     init() {
@@ -61,9 +63,45 @@ export default Component.extend(Deformers, {
         this.inputProcessor.bgImageCallback = function() {
             scope._setBgImage();
         };
+
+        set(this, 'isMpfVisible', true);
+        set(this, 'performanceEval', []);
     },
 
     // ------------------- computed properties -------------------
+
+    fontSize: computed('isSmallViewport', {
+        get() {
+            const userSize = this.persistenceHandler.getFontSize();
+            if(userSize){
+                switch (userSize) {
+                    case 's':
+                        return MagicNumbers.FONT_SIZE_S;
+                    case 'm':
+                        return MagicNumbers.FONT_SIZE_M;
+                    case 'l':
+                        return MagicNumbers.FONT_SIZE;
+                }
+            }
+
+            return this.isSmallViewport ? MagicNumbers.FONT_SIZE_S : MagicNumbers.FONT_SIZE;
+        }
+    }),
+
+    fontCharacterWidth: computed('fontSize', {
+        get() {
+            switch (this.fontSize) {
+                case MagicNumbers.FONT_SIZE_S:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH_S;
+                case MagicNumbers.FONT_SIZE_M:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH_M;
+                case MagicNumbers.FONT_SIZE:
+                    return MagicNumbers.FONT_CHARACTER_WIDTH;
+            }
+
+            return MagicNumbers.FONT_CHARACTER_WIDTH;
+        }
+    }),
 
     textEdgeBuffer: computed('viewportMeasurements.{width,height}', {
         get() {
@@ -73,7 +111,7 @@ export default Component.extend(Deformers, {
 
     visibleDisplayLines: computed('inputProcessor.allDisplayLines.[]', 'viewportMeasurements.height', 'textEdgeBuffer', {
         get() {
-            const lineHeightInPixels = MagicNumbers.SPACE_BETWEEN_LINES + MagicNumbers.FONT_SIZE;
+            const lineHeightInPixels = MagicNumbers.SPACE_BETWEEN_LINES + this.fontSize;
             const maxLineHeight = this.viewportMeasurements.height - (2 * this.textEdgeBuffer);
             const maxLines = Math.ceil(maxLineHeight / lineHeightInPixels);
             const returnSet = [];
@@ -112,16 +150,17 @@ export default Component.extend(Deformers, {
         }
     }),
 
-    viewportMeasurements: computed('containerHeight', 'containerWidth', {
+    viewportMeasurements: computed('containerHeight', 'containerWidth', 'isSmallScreen', {
         get() {
             // make it a 4:3 ratio as big as possible in the viewport
             const outputRatio = 4 / 3;
+            const borderValue = this.isSmallViewport ? 0 : MagicNumbers.MIN_BORDER;
             const currHeight = this.containerHeight;
             const currWidth = this.containerWidth > MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH ?
                 MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH :
                 this.containerWidth;
-            const maxHeight = currHeight - (MagicNumbers.MIN_BORDER * 2);
-            const maxWidth = currWidth - (MagicNumbers.MIN_BORDER * 2);
+            const maxHeight = currHeight - (borderValue * 2);
+            const maxWidth = currWidth - (borderValue * 2);
             const isWideViewport = maxWidth / maxHeight > outputRatio;
 
             let height;
@@ -136,12 +175,23 @@ export default Component.extend(Deformers, {
             } else {
                 width = maxWidth;
                 height = maxWidth * (1 / outputRatio);
-                top = (currHeight - height) / 2 - (MagicNumbers.MIN_BORDER * 1);
+                top = (currHeight - height) / 2 - (borderValue * 1);
+            }
+
+            if (this.isSmallViewport) {
+                top = 0;
             }
 
             left = (this.containerWidth - width) / 2;
 
             return {left, top, width, height};
+        }
+    }),
+
+    isSmallViewport: computed('containerWidth', 'containerHeight', {
+        get () {
+            return this.containerWidth <= MagicNumbers.SCREEN_BREAK ||
+                this.containerHeight <= MagicNumbers.SCREEN_BREAK;
         }
     }),
 
@@ -211,7 +261,7 @@ export default Component.extend(Deformers, {
 
         set(this, 'containerHeight', window.innerHeight);
         set(this, 'containerWidth', window.innerWidth);
-        
+    
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx2.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
@@ -274,7 +324,7 @@ export default Component.extend(Deformers, {
     _drawText(ctx) {
         const scopedContext = ctx;
 
-        ctx.font = `${MagicNumbers.FONT_SIZE}px courier-std`;
+        ctx.font = `${this.fontSize}px courier-std`;
 
         this.visibleDisplayLines.forEach((currLine) => {
             
@@ -291,7 +341,7 @@ export default Component.extend(Deformers, {
             scopedContext.fillText(currLine.text, currLine.x, currLine.y);
         });
     },
-    
+
     _deform(ctx2) {
         if (!this.originalScreenBitmap) {
             return;
@@ -355,9 +405,9 @@ export default Component.extend(Deformers, {
         const maxCharsPerLine = this.inputProcessor.maxCharsPerLine;
 
         // prevent inifinite loop?
-        if (maxCharsPerLine < MagicNumbers.MIN_USEABLE_COLUMNS) {
-            return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
-        }
+        // if (maxCharsPerLine < MagicNumbers.MIN_USEABLE_COLUMNS) {
+        //     return ['', 'Minimum screen', 'size requirement', 'not met.','  :('];
+        // }
 
         allLines.forEach((currLine) => {
 
@@ -435,9 +485,36 @@ export default Component.extend(Deformers, {
         return modifiedLines;
     },
 
+    _handlePerformanceEval(mpf){
+        set(this, 'mpf', `${mpf} MPF (${this.performanceEval.length}/${MagicNumbers.PERFORMANCE_TEST_LENGTH})`);
+        const newSet = this.performanceEval.push(mpf);
+        set(this, 'performancEval', newSet);
+
+        const avg = (values) => {
+            var total = 0;
+            for (var i = 0; i < values.length; i++) {
+                total += values[i];
+            }
+            return total / values.length;
+        }
+
+        if (this.performanceEval.length >= MagicNumbers.PERFORMANCE_TEST_LENGTH) {
+            const perf = avg(this.performanceEval);
+            if (perf < MagicNumbers.MAX_MPF) {
+                set(this, 'isPerformant', true);
+            } else {
+                set(this, 'isPerformant', false);
+            }
+
+            set(this, 'isEvaluated', true);
+            set(this, 'isMpfVisible', false);
+        }
+    },
+
     // ------------------- public functions -------------------
 
     recursiveAnimationFunction() {
+        const preTime = new Date().getTime();
         const scope = window.animationScope;
         const bgImage = scope.bgImageData;
         const ctx = scope.ctx;
@@ -448,17 +525,40 @@ export default Component.extend(Deformers, {
             const h = scope.canvasHeight;
             ctx.drawImage(bgImage, 0, 0, w, h);
             scope._drawText(ctx);
-            scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
+            // scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
-            if (scope.platformAnalyzer.isGraphicsEnabled()) {
+            const userGrafxSetting = scope.persistenceHandler.getGraphicsMode();
+            if (userGrafxSetting === 'hi') {
                 scope._deform(ctx2);
-    
-                // store canvas image data for manipulation
-                const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
-                set(scope, 'originalScreenBitmap', imgData);
-            }
+                const canvasAltered = scope.$('#altered-canvas')[0];
+                if (canvasAltered.style.display === 'none') {
+                    canvasAltered.style = '';
+                }
+            } else if (userGrafxSetting === 'lo') {
+                // kill ctx2 if you need to
+                const canvasAltered = scope.$('#altered-canvas')[0];
+                canvasAltered.style = 'display:none;';
+            } else {
+                if (!scope.isEvaluated || scope.isPerformant) {
+                    scope._deform(ctx2);
+                } else {
+                    // kill ctx2 if you need to
+                    const canvasAltered = scope.$('#altered-canvas')[0];
+                    canvasAltered.style = 'display:none;';
+                }
+            }            
+
+            // store canvas image data for manipulation
+            const imgData = ctx.getImageData(0, 0, scope.canvasWidth, scope.canvasHeight);
+            set(scope, 'originalScreenBitmap', imgData);
         }
 
         window.requestAnimationFrame(window.recursiveAnimationFunction);
+
+        const postTime = new Date().getTime();
+
+        if (!scope.isEvaluated) {
+            scope._handlePerformanceEval(postTime - preTime);
+        }
     }
 });

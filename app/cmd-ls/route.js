@@ -100,7 +100,7 @@ export default Route.extend({
             itemPrefix;
 
         const suffix = appConfigObject.isDir ? '/' :
-            appConfigObject.isExec ? '.exe' : '';
+            appConfigObject.isExec ? '' : '';
 
         const displaySize = this._hasArg('h') ?
             this._formatSize(appConfigObject.size) :

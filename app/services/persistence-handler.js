@@ -6,7 +6,9 @@ const KEY_MAGIC_ROBOTS_DATA = 'magic-robots-data';
 
 // app level
 const KEY_USERNAME = 'username';
-const KEY_PROMPT_COLOR = 'prompt-color';
+const KEY_FONT_SIZE = 'font-size';
+const KEY_SHOW_KEYBOARD = 'show-keyboard';
+const KEY_GRAPHICS_MODE = 'graphics-mode';
 
 // fling
 const KEY_FLING_RECORD = 'fling-record';
@@ -32,6 +34,10 @@ export default Service.extend({
         set(this, 'magicRobotsData', this._getStorageObject());
     },
 
+    _validateBoolean(value) {
+        return ['true', '1', 'yes'].includes(value);
+    },
+
     _getStorageObject() {
         const dataAsString = window.localStorage.getItem(KEY_MAGIC_ROBOTS_DATA);
 
@@ -53,17 +59,43 @@ export default Service.extend({
     getUsername() {
         return get(this._getStorageObject(), KEY_USERNAME) || 'unknown user';
     },
-    
-    setPromptColor(newColor) {
-        set(this, `magicRobotsData.${KEY_PROMPT_COLOR}`, newColor);
-        this._setStorageObject();
+
+    setFontSize(size) {
+        // validate size entry
+        const validEntries = ['l', 'm', 's'];
+        if (validEntries.includes(size)) {
+            set(this, `magicRobotsData.${KEY_FONT_SIZE}`, size);
+            this._setStorageObject();
+        }
     },
 
-    getPromptColor() {
-        return get(this._getStorageObject(), KEY_PROMPT_COLOR);
+    getFontSize() {
+        return get(this._getStorageObject(), KEY_FONT_SIZE);
     },
 
-    // --------------------- story vars ------------------------
+    setShowKeyboard(isShowKeyboard) {
+        if (this._validateBoolean(isShowKeyboard)) {
+            set(this, `magicRobotsData.${KEY_SHOW_KEYBOARD}`, isShowKeyboard);
+            this._setStorageObject();
+        }
+    },
+
+    getShowKeyboard() {
+        return get(this._getStorageObject(), KEY_SHOW_KEYBOARD);
+    },
+
+    setGraphicsMode(mode) {
+        if (['hi', 'lo'].includes(mode)) {
+            set(this, `magicRobotsData.${KEY_GRAPHICS_MODE}`, mode);
+            this._setStorageObject();
+        }
+    },
+
+    getGraphicsMode() {
+        return get(this._getStorageObject(), KEY_GRAPHICS_MODE);
+    },
+
+    // --------------------- fling game vars ------------------------
     
     setFlingRecord(newRecord) {
         set(this, `magicRobotsData.${KEY_FLING_RECORD}`, newRecord);

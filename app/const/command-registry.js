@@ -2,7 +2,7 @@ import { isPresent } from '@ember/utils';
 
 const helpRoute = 'cmd-man';
 const helpText = 'Help, and ? are proxies to the MAN command. Enter either of these commands followed by any other command name to get information about that command, and usage instructions if applicable.';
-const helpUsage = 'man contact';
+const helpUsage = 'man origin';
 const originYear = 1996;
 
 export default {
@@ -65,14 +65,14 @@ export default {
         isExec: false,
         isInvisible: true },
 
-        { commandName: 'contact',
-        routeName: 'cmd-contact',
-        helpText: 'Submit messages to Magic Robots HQ.',
-        usage: null,
-        date: new Date(originYear, 1, 7, 12, 1),
-        size: 651886,
-        isExec: true,
-        isInvisible: false },
+        // { commandName: 'contact',
+        // routeName: 'cmd-contact',
+        // helpText: 'Submit messages to Magic Robots HQ.',
+        // usage: null,
+        // date: new Date(originYear, 1, 7, 12, 1),
+        // size: 651886,
+        // isExec: true,
+        // isInvisible: false },
 
         { commandName: 'fling',
         routeName: 'cmd-fling',

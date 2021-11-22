@@ -29,20 +29,21 @@ export default keyFunctions.extend({
     },
 
     _getIsKeyboardActive() {
-        const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
-        return isViewerActiveDiv;
+        return true;
+        // const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
+        // return isViewerActiveDiv;
     },
 
     _doAnalytics() {
-        if (typeof window.gtag !== 'function') { return; }
-        const username = this.persistenceHandler.getUsername();
-        const context = this.activeApp || 'root';
-        const param2 = `user: ${username} | app: ${context}`;
+        // if (typeof window.gtag !== 'function') { return; }
+        // const username = this.persistenceHandler.getUsername();
+        // const context = this.activeApp || 'root';
+        // const param2 = `user: ${username} | app: ${context}`;
 
-        window.gtag('event', param2, {
-            'event_category' : context,
-            'event_label' : this.currentCommand || 'n/a',
-          });
+        // window.gtag('event', param2, {
+        //     'event_category' : context,
+        //     'event_label' : this.currentCommand || 'n/a',
+        //   });
     },
 
     _setPreviousExecutionBlocks() {
@@ -58,14 +59,15 @@ export default keyFunctions.extend({
     },
 
     _execute() {
+        set(this, 'currentCommand', this.currentCommand.trim());
         set(this, 'rawUserEntry', this.currentCommand);
         this._doAnalytics();
 
         // if it's an email message just send it
-        if (this.activeApp === 'cmd-contact') {
-            this.overrideScope['handleContactInput'](this.currentCommand);
-            return;
-        }
+        // if (this.activeApp === 'cmd-contact') {
+        //     this.overrideScope['handleContactInput'](this.currentCommand);
+        //     return;
+        // }
 
         // store command in history if it's not just whitespace
         const commandWithNoWhitespace = this.currentCommand.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -90,11 +92,6 @@ export default keyFunctions.extend({
         let commandName = commandComponents[0];
         const args = commandComponents.splice(1);
         set(this, 'currentArgs', args);
-
-        // trim accidental white space from beginning of command entry
-        if (commandName === '' && args.length > 0) {
-            commandName = args.shift();
-        }
 
         // don't do anything if the user is rude
         if (this._commandHasSwears(this.currentCommand)) {
@@ -186,7 +183,7 @@ export default keyFunctions.extend({
 
         if (isPresent(appName)) {
             // handle SUDO
-            if (['sudo', 'chmod'].includes(appName)) {
+            if (['sudo', 'chmod', 'su'].includes(appName)) {
                 set(this, 'appResponse', ['Nice try nerd. ACCESS DENIED.']);
             } else if (appName === 'hack') {
                 set(this, 'appResponse', ['Hacking mainframe...', 'ACCESS GRANTED', '', '', '...jklol ACCESS DENIED.']);
@@ -228,6 +225,23 @@ export default keyFunctions.extend({
     },
 
     // ------------------- public methods -------------------
+
+    handleScreenInput(input) {
+        set(this, 'currentCommand', input);
+        this._execute();
+    },
+
+    handleEsc() {
+        this.processKey({ key: 'ESCAPE', preventDefault: () => {} });
+    },
+
+    handleDirection(dir) {
+        this.processKey({ key: dir, preventDefault: () => {} });
+    },
+
+    callArrow(dir) {
+        this.processKey({ key: dir, preventDefault: () => { } });
+    },
 
     setAppEnvironment(appEnvironment) {
         set(this, 'activeApp', appEnvironment.activeAppName);

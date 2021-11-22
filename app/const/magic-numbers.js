@@ -5,11 +5,18 @@ export default {
     // iza-computer
     FONT_SIZE: 14,
     FONT_CHARACTER_WIDTH: 8.7,
+    FONT_SIZE_M: 12,
+    FONT_CHARACTER_WIDTH_M: 6.9,
+    FONT_SIZE_S: 9,
+    FONT_CHARACTER_WIDTH_S: 5.4,
     SPACE_BETWEEN_LINES: 2,
     ABSOLUTE_MAX_VIEWPORT_WIDTH: 1200,
     MIN_BORDER: 50,
     MIN_USEABLE_COLUMNS: 60,
-    FRAME_RATE: 1000/60,
+    FRAME_RATE: 1000 / 60,
+    MAX_MPF: 150, // milliseconds per frame performance
+    SCREEN_BREAK: 768, // match media query max-width at app/styles/app.css
+    PERFORMANCE_TEST_LENGTH: 30,
 
     // status-bar
     STATUS_FONT_SIZE: 16,
