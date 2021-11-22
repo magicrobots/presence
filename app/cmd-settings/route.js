@@ -1,9 +1,8 @@
 import Route from '@ember/routing/route';
-import { isBlank, isPresent } from '@ember/utils';
+import { isBlank } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import environmentHelpers from '../utils/environment-helpers';
-import MagicNumbers from '../const/magic-numbers';
 
 export default Route.extend({
     inputProcessor: service(),
@@ -13,7 +12,6 @@ export default Route.extend({
     settingsCommandRegistry: Object.freeze([
         'username',
         'fontsize',
-        // 'showkeyboard',
         'graphicsmode'
     ]),
 
@@ -64,21 +62,6 @@ export default Route.extend({
         );
     },
 
-    // showkeyboard(overflowArg, hideEscText) {
-    //     const appResponse = [`Keyboard is currently: ${this.persistenceHandler.getShowKeyboard() === 'true' ? 'visible' : 'hidden'}`,
-    //         '',
-    //         `enter 'true' or 'false' as second parameter to toggle visibility - e.g.: 'showkeyboard true'`]
-
-    //     this._commonProcesses(
-    //         overflowArg,
-    //         hideEscText,
-    //         'showkeyboard',
-    //         appResponse,
-    //         'setShowKeyboard',
-    //         ['true', 'false']
-    //     );
-    // },
-
     graphicsmode(overflowArg, hideEscText) {
         const appResponse = [`Graphics mode is currently: ${this.persistenceHandler.getGraphicsMode()}`,
             '',
@@ -104,7 +87,6 @@ export default Route.extend({
             response: ['Available settings:',
                 '  username',
                 '  fontsize',
-                // '  showkeyboard',
                 '  graphicsmode'].concat(this.escText)
         });
 

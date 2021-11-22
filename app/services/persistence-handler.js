@@ -6,7 +6,6 @@ const KEY_MAGIC_ROBOTS_DATA = 'magic-robots-data';
 
 // app level
 const KEY_USERNAME = 'username';
-const KEY_PROMPT_COLOR = 'prompt-color';
 const KEY_FONT_SIZE = 'font-size';
 const KEY_SHOW_KEYBOARD = 'show-keyboard';
 const KEY_GRAPHICS_MODE = 'graphics-mode';
