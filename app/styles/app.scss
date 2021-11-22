@@ -115,6 +115,20 @@ body {
                 top: 0px;
                 left: 0px;
             }
+            
+            .footer-light {
+                position: absolute;
+                bottom: -25px;
+                right: 0px;
+                z-index: 3;
+            }
+
+            .loading-indicator {
+                position: absolute;
+                z-index: 3;
+                right: 40px;
+                bottom: -15px;
+            }
 
             .outlet-container {
                 position: absolute;
@@ -128,47 +142,12 @@ body {
                 pointer-events: none;
             }
 
-            .loading-indicator {
-                position: absolute;
-                z-index: 3;
-                right: 0px;
-            }
-
             .fps-indicator {
                 position: absolute;
                 z-index: 3;
                 right: 20px;
                 font-size: 10px;
             }
-        }
-    }
-    
-    .footer {
-        text-align: center;
-        height: $borderHeight;
-        background-color: $outerColor;
-        bottom: 0px;
-        position: absolute;
-        width: 100%;      
-        overflow: hidden;  
-        
-        .footer-image {
-            height: 30px;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .footer-light {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-        }
-
-        .header-logo {
-            position: absolute;
-            bottom: 7px;
-            left: calc(50% - 29px);
-            height: 20px;
         }
     }
 }
