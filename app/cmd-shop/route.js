@@ -1,13 +1,13 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { set, computed } from '@ember/object';
-import { isPresent } from '@ember/utils';
+// import { isPresent } from '@ember/utils';
 
 import environmentHelpers from '../utils/environment-helpers';
 
 export default Route.extend({
     inputProcessor: service(),
-    statusBar: service(),
+    // statusBar: service(),
     currentShopIndex: 0,
 
     shopImages: Object.freeze([
@@ -112,11 +112,11 @@ export default Route.extend({
     }),
 
     _displayImage() {
-        const currImageItem = this.shopItems[this.shopImages[this.currentShopIndex].itemMapId];
-        const itemMessage = isPresent(currImageItem) ?
-            `${currImageItem.name} | N/A | ${currImageItem.desc}` :
-            null;
-        this.statusBar.setStatusMessage(itemMessage);
+        // const currImageItem = this.shopItems[this.shopImages[this.currentShopIndex].itemMapId];
+        // const itemMessage = isPresent(currImageItem) ?
+        //     `${currImageItem.name} | N/A | ${currImageItem.desc}` :
+        //     null;
+        // this.statusBar.setStatusMessage(itemMessage);
         this.inputProcessor.setBgImage(this.imagePath);
     },
 

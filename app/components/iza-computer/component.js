@@ -11,7 +11,7 @@ export default Component.extend(Deformers, {
     inputProcessor: service(),
     persistenceHandler: service(),
     rngeezus: service(),
-    statusBar: service(),
+    // statusBar: service(),
     classNames: ['iza-computer'],
 
     // ------------------- ember hooks -------------------
@@ -525,7 +525,7 @@ export default Component.extend(Deformers, {
             const h = scope.canvasHeight;
             ctx.drawImage(bgImage, 0, 0, w, h);
             scope._drawText(ctx);
-            scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
+            // scope.statusBar.drawStatusBar(ctx, scope.viewportMeasurements);
 
             const userGrafxSetting = scope.persistenceHandler.getGraphicsMode();
             if (userGrafxSetting === 'hi') {
