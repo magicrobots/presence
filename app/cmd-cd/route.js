@@ -12,7 +12,7 @@ export default Route.extend({
         let cdTarget = rawInputArgs;
 
         // cd into current directory is noop
-        if (cdTarget === '.' || cdTarget === './') {
+        if ( !cdTarget || cdTarget === '.' || cdTarget === './') {
             return;
         }
 
