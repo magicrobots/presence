@@ -8,6 +8,7 @@ import MagicNumbers from '../const/magic-numbers';
 
 export default Service.extend({
     statusBar: service(),
+    persistenceHandler: service(),
 
     currentCommand: '',
     currentArgs: undefined,
@@ -18,9 +19,28 @@ export default Service.extend({
     cursorPosition: 0,
     currCommandIndex: -1,
     bgImage: undefined,
+    rawUserEntry: '',
 
     currentBlockDemarcation() {
         return MagicNumbers.COLORIZE_LINE_PREFIX.concat(MagicNumbers.DEFAULT_FEEDBACK_COLOR);
+    },
+
+    _doAnalytics(commandDefinition) {
+        if (typeof window.ga !== 'function') { return; }
+        const username = this.persistenceHandler.getUsername();
+        const stuff = {
+            user: username,
+            command: commandDefinition,
+            args: this.currentArgs,
+            context: this.commandContext
+        }
+
+        window.ga(
+            'send',
+            'pageview',
+            `/${this.commandContext}`,
+            stuff
+            );
     },
 
     init() {
@@ -45,8 +65,11 @@ export default Service.extend({
         set(this, 'commandHistory', []),
         set(this, 'appResponse', welcomeMessage);
         set(this, 'previousExecutionBlocks', []),
+        set(this, 'currentArgs', []),
 
         this._startPromptCursorLoop();
+
+        this._doAnalytics();
     },
     
     destroy() {
