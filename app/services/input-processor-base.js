@@ -34,29 +34,8 @@ export default Service.extend({
             context: this.appContext || 'index',
             isScreenInput
         };
-
-        if(this.prevPage === trackingData.context){
-            window.gtag('event', 'page_view', {
-                page_title: trackingData.context,
-                page_location: trackingData.context,
-                page_path: trackingData.context,
-                send_to: 'G-PBDE9ZHLEY'
-            });
-
-            window.gtag('event', 'entry', {
-                'event_category': trackingData.user,
-                'event_label': trackingData.context,
-                'value': trackingData.input
-            });
-        } else {
-            window.gtag('event', 'contextual entry', {
-                'event_category': trackingData.user,
-                'event_label': trackingData.context,
-                'value': trackingData.input
-            });
-        }
-
-        set(this, 'prevPage', trackingData.context);
+        
+        console.log(trackingData);
     },
 
     init() {
