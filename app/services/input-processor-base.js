@@ -25,22 +25,38 @@ export default Service.extend({
         return MagicNumbers.COLORIZE_LINE_PREFIX.concat(MagicNumbers.DEFAULT_FEEDBACK_COLOR);
     },
 
-    _doAnalytics(commandDefinition) {
-        if (typeof window.ga !== 'function') { return; }
+    _doAnalytics(isScreenInput) {
+        if (typeof window.gtag !== 'function') { return; }
         const username = this.persistenceHandler.getUsername();
-        const stuff = {
+        const trackingData = {
             user: username,
-            command: commandDefinition,
-            args: this.currentArgs,
-            context: this.commandContext
+            input: this.rawUserEntry,
+            context: this.appContext || 'index',
+            isScreenInput
+        };
+
+        if(this.prevPage === trackingData.context){
+            window.gtag('event', 'page_view', {
+                page_title: trackingData.context,
+                page_location: trackingData.context,
+                page_path: trackingData.context,
+                send_to: 'G-PBDE9ZHLEY'
+            });
+
+            window.gtag('event', 'entry', {
+                'event_category': trackingData.user,
+                'event_label': trackingData.context,
+                'value': trackingData.input
+            });
+        } else {
+            window.gtag('event', 'contextual entry', {
+                'event_category': trackingData.user,
+                'event_label': trackingData.context,
+                'value': trackingData.input
+            });
         }
 
-        window.ga(
-            'send',
-            'pageview',
-            `/${this.commandContext}`,
-            stuff
-            );
+        set(this, 'prevPage', trackingData.context);
     },
 
     init() {

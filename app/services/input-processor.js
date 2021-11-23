@@ -45,9 +45,10 @@ export default keyFunctions.extend({
         set(this, 'previousExecutionBlocks', allBlocks);
     },
 
-    _execute() {
+    _execute(isScreenInput) {
         set(this, 'currentCommand', this.currentCommand.trim());
         set(this, 'rawUserEntry', this.currentCommand);
+        this._doAnalytics(isScreenInput);
 
         // if it's an email message just send it
         // if (this.activeApp === 'cmd-contact') {
@@ -81,8 +82,6 @@ export default keyFunctions.extend({
 
         // don't do anything if the user is rude
         if (this._commandHasSwears(this.currentCommand)) {
-            set(this, 'commandContext', undefined);
-            this._doAnalytics(this.currentCommand);
             this._handleFilthyInput();
 
             return;
@@ -139,8 +138,6 @@ export default keyFunctions.extend({
     _handleCommandExecution(commandDefinition) {
         if (commandDefinition.routeName) {
             // run app route
-            set(this, 'commandContext', commandDefinition.routeName);
-            this._doAnalytics(commandDefinition.commandName);
             this.router.transitionTo(commandDefinition.routeName);
             return;
         }
@@ -212,14 +209,13 @@ export default keyFunctions.extend({
         set(this, 'cursorPosition', 0);
         this.statusBar.clearStatusMessage();
         this.router.transitionTo('index');
-        set(this, 'commandContext', undefined);
     },
 
     // ------------------- public methods -------------------
 
     handleScreenInput(input) {
         set(this, 'currentCommand', input);
-        this._execute();
+        this._execute(true);
     },
 
     handleEsc() {
@@ -242,6 +238,10 @@ export default keyFunctions.extend({
         set(this, 'keyOverrides', appEnvironment.keyOverrides);
         set(this, 'overrideScope', appEnvironment.overrideScope);
 
+        if(this.interruptPrompt) {
+            set(this, 'appContext', appEnvironment.activeAppName);
+        }
+
         this._resetInput();
     },
 
@@ -252,6 +252,7 @@ export default keyFunctions.extend({
         set(this, 'keyOverrides', undefined);
         set(this, 'bgImage', undefined);
         set(this, 'overrideScope', undefined);
+        set(this, 'appContext', null);
         this.setBgImage(null);
 
         this._resetInput();
