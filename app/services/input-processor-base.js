@@ -8,6 +8,7 @@ import MagicNumbers from '../const/magic-numbers';
 
 export default Service.extend({
     statusBar: service(),
+    persistenceHandler: service(),
 
     currentCommand: '',
     currentArgs: undefined,
@@ -18,9 +19,23 @@ export default Service.extend({
     cursorPosition: 0,
     currCommandIndex: -1,
     bgImage: undefined,
+    rawUserEntry: '',
 
     currentBlockDemarcation() {
         return MagicNumbers.COLORIZE_LINE_PREFIX.concat(MagicNumbers.DEFAULT_FEEDBACK_COLOR);
+    },
+
+    _doAnalytics(isScreenInput) {
+        if (typeof window.gtag !== 'function') { return; }
+        const username = this.persistenceHandler.getUsername();
+        const trackingData = {
+            user: username,
+            input: this.rawUserEntry,
+            context: this.appContext || 'index',
+            isScreenInput
+        };
+
+        console.log(trackingData);
     },
 
     init() {
@@ -28,7 +43,8 @@ export default Service.extend({
 
         const welcomeBase = [
             `Welcome to Faux OS ${this.getAppVersion()} ©1996`,
-            '- limited shell -',
+            'limited permissions terminal',
+            '',
             '? for help'];
         let welcomeMessage = '';
 
@@ -45,8 +61,11 @@ export default Service.extend({
         set(this, 'commandHistory', []),
         set(this, 'appResponse', welcomeMessage);
         set(this, 'previousExecutionBlocks', []),
+        set(this, 'currentArgs', []),
 
         this._startPromptCursorLoop();
+
+        this._doAnalytics();
     },
     
     destroy() {

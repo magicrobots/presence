@@ -1,7 +1,7 @@
 import { set } from '@ember/object';
 import { isPresent } from '@ember/utils';
-import { getOwner } from '@ember/application';
 import { normalizeEvent } from 'ember-jquery-legacy';
+import { inject as service } from '@ember/service';
 
 import commandRegistry from '../const/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
@@ -10,6 +10,7 @@ import MagicNumbers from '../const/magic-numbers';
 import keyFunctions from './input-processor-key-functions';
 
 export default keyFunctions.extend({
+    router: service(),
 
     // ------------------- private methods -------------------
 
@@ -30,20 +31,6 @@ export default keyFunctions.extend({
 
     _getIsKeyboardActive() {
         return true;
-        // const isViewerActiveDiv = document.activeElement === this.relevantMarkup;
-        // return isViewerActiveDiv;
-    },
-
-    _doAnalytics() {
-        // if (typeof window.gtag !== 'function') { return; }
-        // const username = this.persistenceHandler.getUsername();
-        // const context = this.activeApp || 'root';
-        // const param2 = `user: ${username} | app: ${context}`;
-
-        // window.gtag('event', param2, {
-        //     'event_category' : context,
-        //     'event_label' : this.currentCommand || 'n/a',
-        //   });
     },
 
     _setPreviousExecutionBlocks() {
@@ -58,10 +45,10 @@ export default keyFunctions.extend({
         set(this, 'previousExecutionBlocks', allBlocks);
     },
 
-    _execute() {
+    _execute(isScreenInput) {
         set(this, 'currentCommand', this.currentCommand.trim());
         set(this, 'rawUserEntry', this.currentCommand);
-        this._doAnalytics();
+        this._doAnalytics(isScreenInput);
 
         // if it's an email message just send it
         // if (this.activeApp === 'cmd-contact') {
@@ -151,10 +138,10 @@ export default keyFunctions.extend({
     _handleCommandExecution(commandDefinition) {
         if (commandDefinition.routeName) {
             // run app route
-            getOwner(this).lookup('router:main').transitionTo(commandDefinition.routeName);
+            this.router.transitionTo(commandDefinition.routeName);
             return;
         }
-        
+
         this._handleInvalidInput(commandDefinition.commandName.toUpperCase());
     },
 
@@ -218,17 +205,17 @@ export default keyFunctions.extend({
 
     _resetInput() {
         set(this, 'currentCommand', '');
-        set(this, 'currentArgs', undefined);
+        set(this, 'currentArgs', []);
         set(this, 'cursorPosition', 0);
         this.statusBar.clearStatusMessage();
-        getOwner(this).lookup('router:main').transitionTo('index');
+        this.router.transitionTo('index');
     },
 
     // ------------------- public methods -------------------
 
     handleScreenInput(input) {
         set(this, 'currentCommand', input);
-        this._execute();
+        this._execute(true);
     },
 
     handleEsc() {
@@ -251,6 +238,10 @@ export default keyFunctions.extend({
         set(this, 'keyOverrides', appEnvironment.keyOverrides);
         set(this, 'overrideScope', appEnvironment.overrideScope);
 
+        if(this.interruptPrompt) {
+            set(this, 'appContext', appEnvironment.activeAppName);
+        }
+
         this._resetInput();
     },
 
@@ -261,9 +252,11 @@ export default keyFunctions.extend({
         set(this, 'keyOverrides', undefined);
         set(this, 'bgImage', undefined);
         set(this, 'overrideScope', undefined);
+        set(this, 'appContext', null);
         this.setBgImage(null);
 
         this._resetInput();
+        this.router.transitionTo('index');
     },
 
     clear() {
