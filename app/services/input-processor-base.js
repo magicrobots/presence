@@ -34,7 +34,7 @@ export default Service.extend({
             context: this.appContext || 'index',
             isScreenInput
         };
-        
+
         console.log(trackingData);
     },
 
@@ -43,7 +43,8 @@ export default Service.extend({
 
         const welcomeBase = [
             `Welcome to Faux OS ${this.getAppVersion()} ©1996`,
-            '- limited shell -',
+            'limited permissions terminal',
+            '',
             '? for help'];
         let welcomeMessage = '';
 

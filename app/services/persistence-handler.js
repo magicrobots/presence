@@ -57,7 +57,7 @@ export default Service.extend({
     },
 
     getUsername() {
-        return get(this._getStorageObject(), KEY_USERNAME) || 'unknown user';
+        return get(this._getStorageObject(), KEY_USERNAME) || 'guest';
     },
 
     setFontSize(size) {
