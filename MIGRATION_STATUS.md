@@ -31,9 +31,9 @@ Tracking conversion progress. Update this file after each conversion.
 ## Phase 2: Services → Hooks / Context
 | Source File | React Destination | Status | Notes |
 |---|---|---|---|
-| `app/services/rngeezus.js` | `src/utils/rngeezus.js` | ⬜ Not Started | Plain module, no React needed |
-| `app/services/persistence-handler.js` | `src/hooks/usePersistence.js` | ⬜ Not Started | localStorage wrapper |
-| `app/services/status-bar.js` | `src/context/StatusBarContext.jsx` | ⬜ Not Started | Simple context value |
+| `app/services/rngeezus.js` | `src/utils/rngeezus.js` | ✅ Done | Plain singleton module; pools built at module load time |
+| `app/services/persistence-handler.js` | `src/hooks/usePersistence.js` | ✅ Done | Plain module (no React state); `isPresent` → `!= null`, `findBy` → `.find()` |
+| `app/services/status-bar.js` | `src/context/StatusBarContext.jsx` | ✅ Done | `useState` for statusMessage; `isPresent` → `!= null` |
 | `app/services/input-processor-base.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
 | `app/services/input-processor-computed.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
 | `app/services/input-processor-key-functions.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
