@@ -19,12 +19,12 @@ Tracking conversion progress. Update this file after each conversion.
 ## Phase 1: Constants (Copy As-Is — No Ember Dependencies)
 | Source File | React Destination | Status | Notes |
 |---|---|---|---|
-| `app/constants/command-registry.js` | `src/constants/command-registry.js` | ⬜ Not Started | Drives routing — copy first |
-| `app/constants/story-items.js` | `src/constants/story-items.js` | ⬜ Not Started | |
-| `app/constants/story-rooms.js` | `src/constants/story-rooms.js` | ⬜ Not Started | |
-| `app/constants/environment-values.js` | `src/constants/environment-values.js` | ⬜ Not Started | |
-| `app/constants/magic-numbers.js` | `src/constants/magic-numbers.js` | ⬜ Not Started | |
-| `app/mixins/deformers.js` | `src/utils/deformers.js` | ⬜ Not Started | Pure canvas math, no Ember |
+| `app/const/command-registry.js` | `src/constants/command-registry.js` | ✅ Done | Removed `isPresent` → `!= null` |
+| `app/const/story-items.js` | `src/constants/story-items.js` | ✅ Done | Updated import path |
+| `app/const/story-rooms.js` | `src/constants/story-rooms.js` | ✅ Done | `findBy` → `.find()` |
+| `app/const/environment-values.js` | `src/constants/environment-values.js` | ✅ Done | Copied as-is |
+| `app/const/magic-numbers.js` | `src/constants/magic-numbers.js` | ✅ Done | Copied as-is |
+| `app/mixins/deformers.js` | `src/utils/deformers.js` | ✅ Done | Mixin → named exports; imports `rngeezus` (migrated next) |
 
 ---
 
@@ -103,4 +103,5 @@ _Record any conversion decisions or ambiguities here as they come up._
 
 | File | Decision | Rationale |
 |---|---|---|
-| | | |
+| All constants | Source dir is `app/const/` not `app/constants/` | Discovered during Phase 1 |
+| `deformers.js` | Imports `./rngeezus` directly (not injected) | rngeezus becomes a plain module in Phase 2; deformers calls it as a singleton |
