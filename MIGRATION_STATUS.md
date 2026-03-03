@@ -38,7 +38,7 @@ Tracking conversion progress. Update this file after each conversion.
 | `app/services/input-processor-computed.js` | ↓ merged into useInputProcessor | ✅ Done | `computed()` → pure helper fns outside hook |
 | `app/services/input-processor-key-functions.js` | ↓ merged into useInputProcessor | ✅ Done | |
 | `app/services/input-processor.js` | `src/hooks/useInputProcessor.js` | ✅ Done | `useReducer` + `stateRef` pattern; `normalizeEvent` dropped; `mapBy` → `.map(r => r.commandName)`; `ENV.aws.buildNumber` → `import.meta.env.VITE_BUILD_NUMBER` |
-| `app/services/story-core.js` | `src/context/StoryContext.jsx` + `src/reducers/storyReducer.js` | ⬜ Not Started | 41KB — dedicated subagent task |
+| `app/services/story-core.js` | `src/utils/storyCore.js` | ✅ Done | Plain module — all state in localStorage; `currentRoom`/`xp`/`maxXp` computed → plain functions; `inputProcessor.currentArgs` → param on `useItem(id, currentArgs)` |
 
 ---
 
