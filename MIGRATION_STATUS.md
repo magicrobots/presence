@@ -34,10 +34,10 @@ Tracking conversion progress. Update this file after each conversion.
 | `app/services/rngeezus.js` | `src/utils/rngeezus.js` | ✅ Done | Plain singleton module; pools built at module load time |
 | `app/services/persistence-handler.js` | `src/hooks/usePersistence.js` | ✅ Done | Plain module (no React state); `isPresent` → `!= null`, `findBy` → `.find()` |
 | `app/services/status-bar.js` | `src/context/StatusBarContext.jsx` | ✅ Done | `useState` for statusMessage; `isPresent` → `!= null` |
-| `app/services/input-processor-base.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
-| `app/services/input-processor-computed.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
-| `app/services/input-processor-key-functions.js` | ↓ merged into useInputProcessor | ⬜ Not Started | |
-| `app/services/input-processor.js` | `src/hooks/useInputProcessor.js` | ⬜ Not Started | Merge all 4 input-processor files |
+| `app/services/input-processor-base.js` | ↓ merged into useInputProcessor | ✅ Done | |
+| `app/services/input-processor-computed.js` | ↓ merged into useInputProcessor | ✅ Done | `computed()` → pure helper fns outside hook |
+| `app/services/input-processor-key-functions.js` | ↓ merged into useInputProcessor | ✅ Done | |
+| `app/services/input-processor.js` | `src/hooks/useInputProcessor.js` | ✅ Done | `useReducer` + `stateRef` pattern; `normalizeEvent` dropped; `mapBy` → `.map(r => r.commandName)`; `ENV.aws.buildNumber` → `import.meta.env.VITE_BUILD_NUMBER` |
 | `app/services/story-core.js` | `src/context/StoryContext.jsx` + `src/reducers/storyReducer.js` | ⬜ Not Started | 41KB — dedicated subagent task |
 
 ---
@@ -105,3 +105,5 @@ _Record any conversion decisions or ambiguities here as they come up._
 |---|---|---|
 | All constants | Source dir is `app/const/` not `app/constants/` | Discovered during Phase 1 |
 | `deformers.js` | Imports `./rngeezus` directly (not injected) | rngeezus becomes a plain module in Phase 2; deformers calls it as a singleton |
+| `app/utils/environment-helpers.js` | Migrated to `src/utils/environment-helpers.js` alongside input-processor | Unlisted dep of input-processor; `isPresent` → `!= null` |
+| `useInputProcessor.js` | `handleScreenInput` temporarily mutates `stateRef.current` to make the just-set command available to `_execute` | Workaround for dispatch being async; only lasts for the duration of the call |
