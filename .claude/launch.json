@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "presence-react",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "react:dev"],
+      "port": 5173
+    }
+  ]
+}
