@@ -51,6 +51,7 @@ const initialState = {
     keyOverrides: undefined,
     overrideScope: undefined,
     appContext: null,
+    maxCharsPerLine: 60,
 };
 
 // --------------------------------------------------------------------------
@@ -291,6 +292,13 @@ export default function useInputProcessor() {
                 if (commandName === '?') {
                     dispatch({ type: 'SET_FIELDS', payload: baseUpdates });
                     s.overrideScope['help']();
+                    return;
+                }
+
+                // if the app has a catch-all handler for free-form input (e.g. cmd-contact)
+                if (s.overrideScope['_default'] != null) {
+                    dispatch({ type: 'SET_FIELDS', payload: baseUpdates });
+                    s.overrideScope['_default'](rawUserEntry);
                     return;
                 }
 
@@ -758,6 +766,10 @@ export default function useInputProcessor() {
         }
     }
 
+    function setMaxCharsPerLine(n) {
+        dispatch({ type: 'SET_FIELDS', payload: { maxCharsPerLine: n } });
+    }
+
     function getAppVersion() {
         const versionBuild = import.meta.env.VITE_BUILD_NUMBER;
 
@@ -798,5 +810,6 @@ export default function useInputProcessor() {
         overrideArgs,
         setBgImage,
         getAppVersion,
+        setMaxCharsPerLine,
     };
 }

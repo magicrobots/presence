@@ -241,6 +241,7 @@ export default function IzaComputer({ inputProcessor }) {
     const fontCharacterWidth = _computeFontCharacterWidth(fontSize);
     const viewportMeasurements = _computeViewportMeasurements(containerWidth, containerHeight, isSmallViewport);
     const textEdgeBuffer = Math.max(viewportMeasurements.width, viewportMeasurements.height) * 0.06;
+    const maxCharsPerLine = Math.floor((viewportMeasurements.width - 2 * textEdgeBuffer) / fontCharacterWidth);
     const bgImagePath = inputProcessor.state.bgImage || 'emptyScreen.jpg';
     const visibleDisplayLines = _computeVisibleDisplayLines(
         inputProcessor.allDisplayLines,
@@ -256,6 +257,11 @@ export default function IzaComputer({ inputProcessor }) {
         left: `${viewportMeasurements.left}px`,
         top: `${viewportMeasurements.top}px`,
     };
+
+    // Push maxCharsPerLine into the processor whenever viewport or font changes.
+    // cmd-origin's _makeAsciiProgressBar reads inputProcessor.state.maxCharsPerLine.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { inputProcessor.setMaxCharsPerLine(maxCharsPerLine); }, [maxCharsPerLine]);
 
     // ---- private functions ----
     // (redefined each render; the rAF loop calls them via animFnRef so always fresh)

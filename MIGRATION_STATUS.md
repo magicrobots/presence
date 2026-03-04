@@ -56,34 +56,34 @@ Tracking conversion progress. Update this file after each conversion.
 ## Phase 4: Routes → React Components
 | Source File | Template | React Destination | Status | Notes |
 |---|---|---|---|---|
-| `app/routes/application.js` | `app/templates/application.hbs` | `src/App.jsx` | ⬜ Not Started | Root layout |
-| `app/routes/cmd-about.js` | (template TBD) | `src/routes/CmdAbout.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-beep.js` | (template TBD) | `src/routes/CmdBeep.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-cd.js` | (template TBD) | `src/routes/CmdCd.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-clear.js` | (template TBD) | `src/routes/CmdClear.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-contact.js` | (template TBD) | `src/routes/CmdContact.jsx` | ⬜ Not Started | Commented out in registry |
-| `app/routes/cmd-fling.js` | (template TBD) | `src/routes/CmdFling.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-hello.js` | (template TBD) | `src/routes/CmdHello.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-history.js` | (template TBD) | `src/routes/CmdHistory.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-less.js` | (template TBD) | `src/routes/CmdLess.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-cat.js` | (template TBD) | `src/routes/CmdCat.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-ls.js` | (template TBD) | `src/routes/CmdLs.jsx` | ⬜ Not Started | Complex flags |
-| `app/routes/cmd-man.js` | (template TBD) | `src/routes/CmdMan.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-origin.js` | (template TBD) | `src/routes/CmdOrigin.jsx` | ⬜ Not Started | Uses fun-ctionality mixin |
-| `app/routes/cmd-pwd.js` | (template TBD) | `src/routes/CmdPwd.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-settings.js` | (template TBD) | `src/routes/CmdSettings.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-shop.js` | (template TBD) | `src/routes/CmdShop.jsx` | ⬜ Not Started | Commented out in registry |
-| `app/routes/cmd-version.js` | (template TBD) | `src/routes/CmdVersion.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-viewer.js` | (template TBD) | `src/routes/CmdViewer.jsx` | ⬜ Not Started | |
-| `app/routes/cmd-whoami.js` | (template TBD) | `src/routes/CmdWhoami.jsx` | ⬜ Not Started | |
-| `app/mixins/fun-ctionality.js` | — | merged into `src/routes/CmdOrigin.jsx` | ⬜ Not Started | |
+| `app/routes/application.js` | `app/templates/application.hbs` | `src/App.jsx` | ✅ Done | Root layout (done in Phase 3) |
+| `app/routes/cmd-about.js` | (empty) | `src/routes/CmdAbout.jsx` | ✅ Done | Fire-and-forget |
+| `app/routes/cmd-beep.js` | (empty) | `src/routes/CmdBeep.jsx` | ✅ Done | Fire-and-forget; ASCII heart art |
+| `app/routes/cmd-cd.js` | (empty) | `src/routes/CmdCd.jsx` | ✅ Done | Parses rawUserEntry directly |
+| `app/routes/cmd-clear.js` | (empty) | `src/routes/CmdClear.jsx` | ✅ Done | Calls inputProcessor.clear() only |
+| `app/routes/cmd-contact.js` | (empty) | `src/routes/CmdContact.jsx` | ✅ Done | `_default` handler enables free-form input; Vite env vars for AWS |
+| `app/routes/cmd-fling.js` | (empty) | `src/routes/CmdFling.jsx` | ✅ Done | Game state in useRef; `new` as method name valid ES6+ |
+| `app/routes/cmd-hello.js` | (empty) | `src/routes/CmdHello.jsx` | ✅ Done | Fire-and-forget |
+| `app/routes/cmd-history.js` | (empty) | `src/routes/CmdHistory.jsx` | ✅ Done | Fire-and-forget; static lore text |
+| `app/routes/cmd-less.js` | (empty) | `src/routes/CmdLess.jsx` | ✅ Done | `findBy` → `.find()` |
+| `app/routes/cmd-cat.js` | (empty) | `src/routes/CmdCat.jsx` | ✅ Done | Identical logic to cmd-less |
+| `app/routes/cmd-ls.js` | (empty) | `src/routes/CmdLs.jsx` | ✅ Done | Full flag support; `sortBy` → `.sort()`; `rejectBy` → `.filter()` |
+| `app/routes/cmd-man.js` | (empty) | `src/routes/CmdMan.jsx` | ✅ Done | Serves help + man + ? routes |
+| `app/routes/cmd-origin.js` | (empty) | `src/routes/CmdOrigin.jsx` | ✅ Done | FunCtionality mixin merged in; `_take`/`_use` helpers avoid state mutation; `storyCore.getXp()`/`getMaxXp()` function calls; `storyCore._getIsGameCompleted` added to exports |
+| `app/routes/cmd-pwd.js` | (empty) | `src/routes/CmdPwd.jsx` | ✅ Done | Inline `dasherize()` replaces `@ember/string` |
+| `app/routes/cmd-settings.js` | (empty) | `src/routes/CmdSettings.jsx` | ✅ Done | Overflow args + interactive scope; `isBlank` inlined |
+| `app/routes/cmd-shop.js` | (empty) | `src/routes/CmdShop.jsx` | ✅ Done | Image gallery; arrow key overrides; currentShopIndexRef |
+| `app/routes/cmd-version.js` | (empty) | `src/routes/CmdVersion.jsx` | ✅ Done | Fire-and-forget |
+| `app/routes/cmd-viewer.js` | (empty) | `src/routes/CmdViewer.jsx` | ✅ Done | Image gallery; arrow key overrides; currentImgIndexRef |
+| `app/routes/cmd-whoami.js` | (empty) | `src/routes/CmdWhoami.jsx` | ✅ Done | Fire-and-forget |
+| `app/mixins/fun-ctionality.js` | — | merged into `src/routes/CmdOrigin.jsx` | ✅ Done | Mixin methods inlined as scope object methods |
 
 ---
 
 ## Phase 5: Router
 | Source File | React Destination | Status | Notes |
 |---|---|---|---|
-| `app/router.js` | `src/router.jsx` | ⬜ Not Started | Dynamic route gen from command-registry |
+| `app/router.js` | `src/router.jsx` | ✅ Done | 19 cmd-* child routes registered; contact+shop included even though commented out in registry |
 
 ---
 
@@ -113,3 +113,18 @@ _Record any conversion decisions or ambiguities here as they come up._
 | `IzaComputer.jsx` | `useInputProcessor()` lifted to `App.jsx` and passed as prop | `IzaComputer` and `ScreenInput` are siblings — both need same inputProcessor instance; lifting avoids Context overhead |
 | `IzaComputer.jsx` | `_getIsKeyboardActive()` → hardcoded `true` (always active) | Private method in hook always returns `true`; simplified in component |
 | `IzaComputer.jsx` | Initial bg image load explicit in `useEffect` | Ember initialized via `_setContainerSize` (container size was undefined initially); React pre-initializes state to `window.innerWidth/Height` so explicit call needed |
+| `useInputProcessor.js` | Added `_default` handler in `_execute` | When `overrideScope._default` exists, unrecognized commands call it with `rawUserEntry` (pre-lowercase). Enables cmd-contact's free-form multi-step form. |
+| `useInputProcessor.js` | Added `maxCharsPerLine: 60` to initialState + `setMaxCharsPerLine()` | cmd-origin's `_makeAsciiProgressBar` reads this value. IzaComputer pushes the computed value on every viewport/font change. |
+| `IzaComputer.jsx` | Added `maxCharsPerLine` computed value + `useEffect` to sync to inputProcessor | Computed from `(viewportMeasurements.width - 2 * textEdgeBuffer) / fontCharacterWidth`; effect fires when that value changes. |
+| All cmd-* routes | All render `null` — "side-effect routes" | The Ember templates were all empty placeholders. Real output goes through `inputProcessor.setAppEnvironment()`. Pattern: `useEffect(fn, [])` = Ember's `afterModel()`. |
+| cmd-* routes | `useOutletContext()` provides `inputProcessor` | Set in `IzaComputer.jsx` via `<Outlet context={inputProcessor} />`. |
+| Interactive routes (settings, fling, contact, origin) | `inputProcessorRef` updated every render, used inside scope methods | Prevents stale closures — scope object created once in `useEffect` but always reads fresh state/methods via ref. |
+| `CmdPwd.jsx` | Inline `dasherize()` replaces Ember's `@ember/string` | `str.trim().toLowerCase().replace(/[_\s]+/g, '-')` |
+| `CmdSettings.jsx` | `isBlank()` inlined | `x == null \|\| String(x).trim() === ''` |
+| `CmdOrigin.jsx` | `_take(args)` and `_use(args)` internal helpers | Ember's `pick()` mutated `currentArgs` via `.shift()` before calling `take()`. React state can't be mutated. `_take(args.slice(1))` and `_use(modifiedArgs)` pass args directly. |
+| `CmdOrigin.jsx` | `storyCore.getXp()` / `storyCore.getMaxXp()` | Ember's `this.storyCore.xp` / `this.storyCore.maxXp` were computed properties. In the plain module they're functions. |
+| `CmdOrigin.jsx` | `storyCore._getIsGameCompleted` added to storyCore exports | Called from `status()` in cmd-origin. Was a private function in the module but needed externally. |
+| `CmdOrigin.jsx` | `format()` welcome message fixed | Original had `this.welcomeMessage` (undefined — a bug). Fixed to `'Welcome to Origin ${username}'`. |
+| `CmdViewer.jsx` / `CmdShop.jsx` | `currentImgIndexRef` / `currentShopIndexRef` — mutable state in refs | Arrow key overrides need to read/write index without triggering re-renders. Key handlers are closures over refs created once in `useEffect`. |
+| `CmdContact.jsx` | `_default` scope handler receives `rawUserEntry` | Contact form needs original capitalization preserved. `rawUserEntry` is stored pre-lowercase by `_execute`. |
+| `CmdFling.jsx` | Ember `init()` hook equivalent | `scope.new()` called at top of `useEffect` before `setAppEnvironment()`, matching Ember's `init()` → `new()` call order. |

@@ -1035,4 +1035,5 @@ export default {
     turnOffFlashlight,
     useItem,
     handleCompletionEvent,
+    _getIsGameCompleted,
 };
