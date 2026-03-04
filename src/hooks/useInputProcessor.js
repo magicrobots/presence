@@ -646,7 +646,7 @@ export default function useInputProcessor() {
     function setBgImage(imgPath) {
         if (bgImageCallbackRef.current != null) {
             dispatch({ type: 'SET_FIELDS', payload: { bgImage: imgPath }});
-            bgImageCallbackRef.current();
+            bgImageCallbackRef.current(imgPath);
         }
     }
 
@@ -789,6 +789,8 @@ export default function useInputProcessor() {
         handleEsc,
         handleDirection,
         callArrow,
+        getOlderCommand,
+        getNewerCommand,
         setAppEnvironment,
         quit,
         clear,

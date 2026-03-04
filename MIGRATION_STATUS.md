@@ -45,10 +45,11 @@ Tracking conversion progress. Update this file after each conversion.
 ## Phase 3: Components → React Components
 | Source File | Template | React Destination | Status | Notes |
 |---|---|---|---|---|
-| `app/components/iza-computer/component.js` | `app/templates/components/iza-computer.hbs` | `src/components/IzaComputer.jsx` | ⬜ Not Started | Canvas, resize listener |
-| `app/components/screen-input/component.js` | `app/templates/components/screen-input.hbs` | `src/components/ScreenInput.jsx` | ⬜ Not Started | |
-| `app/components/iza-computer/loading-indicator/component.js` | (template TBD) | `src/components/LoadingIndicator.jsx` | ⬜ Not Started | |
-| `app/components/iza-computer/mpf-indicator/component.js` | (template TBD) | `src/components/MpfIndicator.jsx` | ⬜ Not Started | |
+| `app/components/iza-computer/component.js` | `app/components/iza-computer/template.hbs` | `src/components/IzaComputer.jsx` | ✅ Done | `animFnRef` pattern for rAF loop; computed props → pure fns; `this.$()` → refs; `window.animationScope` → `animFnRef`; accepts `inputProcessor` prop |
+| `app/components/screen-input/component.js` | `app/components/screen-input/template.hbs` | `src/components/ScreenInput.jsx` | ✅ Done | Local `inputValue` state; delegates to `inputProcessor` prop |
+| `app/components/iza-computer/loading-indicator/component.js` | `app/components/iza-computer/loading-indicator/template.hbs` | `src/components/LoadingIndicator.jsx` | ✅ Done | Trivial — conditional img |
+| `app/components/iza-computer/mpf-indicator/component.js` | `app/components/iza-computer/mpf-indicator/template.hbs` | `src/components/MpfIndicator.jsx` | ✅ Done | Trivial — conditional div |
+| `app/application/template.hbs` (root layout) | — | `src/App.jsx` | ✅ Done | Calls `useInputProcessor()`, passes to both children; replaces `<Outlet />` with `<IzaComputer>` (which owns outlet) |
 
 ---
 
@@ -107,3 +108,8 @@ _Record any conversion decisions or ambiguities here as they come up._
 | `deformers.js` | Imports `./rngeezus` directly (not injected) | rngeezus becomes a plain module in Phase 2; deformers calls it as a singleton |
 | `app/utils/environment-helpers.js` | Migrated to `src/utils/environment-helpers.js` alongside input-processor | Unlisted dep of input-processor; `isPresent` → `!= null` |
 | `useInputProcessor.js` | `handleScreenInput` temporarily mutates `stateRef.current` to make the just-set command available to `_execute` | Workaround for dispatch being async; only lasts for the duration of the call |
+| `IzaComputer.jsx` | `animFnRef` pattern: `animFnRef.current = recursiveAnimationFunction` each render; rAF calls `() => animFnRef.current()` | Prevents stale closures over `visibleDisplayLines`, `fontSize`, `viewportMeasurements` in the animation loop |
+| `IzaComputer.jsx` | `_setBgImageRef`, `_setContainerSizeRef`, `_doRedrawHackRef` stable refs updated each render | Allows one-time `useEffect` and resize listener to always call the latest version of these functions |
+| `IzaComputer.jsx` | `useInputProcessor()` lifted to `App.jsx` and passed as prop | `IzaComputer` and `ScreenInput` are siblings — both need same inputProcessor instance; lifting avoids Context overhead |
+| `IzaComputer.jsx` | `_getIsKeyboardActive()` → hardcoded `true` (always active) | Private method in hook always returns `true`; simplified in component |
+| `IzaComputer.jsx` | Initial bg image load explicit in `useEffect` | Ember initialized via `_setContainerSize` (container size was undefined initially); React pre-initializes state to `window.innerWidth/Height` so explicit call needed |
