@@ -21,6 +21,7 @@ const KEY_STORY_DEATH_COUNTER = 'story-death-counter';
 const KEY_STORY_COMPLETION_ITEMS = 'story-completion-items';
 const KEY_FLASHLIGHT_STATUS = 'story-flashlight-status';
 const KEY_CAKE_STATUS = 'story-cake-status';
+const KEY_STORY_IS_INITIAL_VISIT = 'story-is-initial-visit';
 
 function _validateBoolean(value) {
     return ['true', '1', 'yes'].includes(value);
@@ -332,6 +333,15 @@ function getCakeEaten() {
     return _getStorageObject()[KEY_CAKE_STATUS];
 }
 
+function setIsInitialVisit(value) {
+    magicRobotsData[KEY_STORY_IS_INITIAL_VISIT] = value;
+    _setStorageObject();
+}
+
+function getIsInitialVisit() {
+    return _getStorageObject()[KEY_STORY_IS_INITIAL_VISIT];
+}
+
 export default {
     setUsername,
     getUsername,
@@ -375,5 +385,7 @@ export default {
     setFlashlightStatus,
     getFlashlightStatus,
     setCakeEaten,
-    getCakeEaten
+    getCakeEaten,
+    setIsInitialVisit,
+    getIsInitialVisit
 };

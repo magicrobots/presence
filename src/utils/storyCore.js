@@ -275,16 +275,11 @@ function getMaxXp() {
 // ------------------- public methods -------------------
 
 function getIsNewStory() {
-    if (persistence.getStoryInventoryItems() == null) {
-        return true;
-    }
-    // check persistenceHandler values against init values of:
-    // room 1 inventory
-    // user inventory
-    // visited rooms
-    return persistence.getStoryRoomInventoryById(1) === MagicNumbers.INIT_ROOM_ONE_INVENTORY &&
-        persistence.getStoryInventoryItems() === MagicNumbers.INIT_USER_INVENTORY &&
-        persistence.getStoryVisitedRooms() === [];
+    const inventory = persistence.getStoryInventoryItems();
+    if (inventory == null) return true;
+
+    // undefined/true → is initial visit; false → has visited before
+    return persistence.getIsInitialVisit() !== false;
 }
 
 function hasFlashlight() {
@@ -337,6 +332,7 @@ function formatStoryData() {
     persistence.setStoryVisitedRooms([]);
     persistence.setStoryInventoryItems(MagicNumbers.INIT_USER_INVENTORY);
     persistence.setCakeEaten(false);
+    persistence.setIsInitialVisit(true);
     persistence.setStoryRoomInventories([
         {roomId: 1, inventory: MagicNumbers.INIT_ROOM_ONE_INVENTORY},
         {roomId: 2, inventory: [2, 5]},

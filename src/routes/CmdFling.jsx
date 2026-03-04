@@ -169,8 +169,7 @@ export default function CmdFling() {
                 inputProcessorRef.current.handleFunctionFromApp([showTarget()]);
             },
 
-            fling() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            fling(args = []) {
                 const animalName = args[0];
                 const effort = args[1];
 

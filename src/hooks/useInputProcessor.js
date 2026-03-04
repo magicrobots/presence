@@ -23,7 +23,8 @@ function _buildWelcomeMessage() {
     ];
     let welcomeMessage = welcomeBase.concat('');
 
-    const isNarrowScreen = true;
+    const isNarrowScreen = window.innerWidth <= MagicNumbers.SCREEN_BREAK ||
+        window.innerHeight <= MagicNumbers.SCREEN_BREAK;
     if (isNarrowScreen) {
         welcomeMessage = welcomeMessage.concat([
             '* PHYSICAL KEYBOARD RECOMMENDED *'
@@ -36,6 +37,7 @@ function _buildWelcomeMessage() {
 const initialState = {
     currentCommand: '',
     currentArgs: [],
+    promptTimestamp: new Date().getTime().toString().substr(5),
     activeApp: undefined,
     isPromptCursorVisible: true,
     cursorPosition: 0,
@@ -73,17 +75,17 @@ function inputReducer(state, action) {
 
 const BLOCK_DEMARCATION = MagicNumbers.COLORIZE_LINE_PREFIX.concat(MagicNumbers.DEFAULT_FEEDBACK_COLOR);
 
-function _computePromptLine1() {
+function _computePromptLine1(s) {
     const code = navigator.appCodeName;
     const plat = navigator.platform;
     const lang = navigator.language;
-    const username = persistence.getUsername();
+    const timestamp = s.promptTimestamp;
 
-    return `${username} | ${code} ${plat} ${lang} | magicrobots/`;
+    return `${timestamp} | ${code} ${plat} ${lang} | magicrobots/`;
 }
 
 function _computePromptLine2(s) {
-    const timestamp = new Date().getTime().toString().substr(5);
+    const username = persistence.getUsername();
     const context = s.activeApp != null ? `${s.activeApp} ` : '';
 
     // only display context if it's requested
@@ -93,13 +95,13 @@ function _computePromptLine2(s) {
     const promptEnd = s.displayAppNameInPrompt && s.activeApp != null ? '>' : '$:';
 
     // if interrupted, don't show preprompt
-    const prePrompt = s.interruptPrompt != null ? '' : `${timestamp} `;
+    const prePrompt = s.interruptPrompt != null ? '' : `${username} `;
 
     return `${prePrompt}${displayedContext}${promptEnd}`;
 }
 
 function _computeCurrExecutionBlock(s) {
-    const promptLine1 = _computePromptLine1();
+    const promptLine1 = _computePromptLine1(s);
     const promptLine2 = _computePromptLine2(s);
 
     // duplicate command string
@@ -267,6 +269,7 @@ export default function useInputProcessor() {
             previousExecutionBlocks: newPreviousBlocks,
             currentCommand: cmd,
             currentArgs: args,
+            promptTimestamp: new Date().getTime().toString().substr(5),
         };
 
         // find command
@@ -285,7 +288,7 @@ export default function useInputProcessor() {
                 }
 
                 dispatch({ type: 'SET_FIELDS', payload: baseUpdates });
-                s.overrideScope[commandName]();
+                s.overrideScope[commandName](args);
             } else {
 
                 // handle ?
@@ -778,7 +781,7 @@ export default function useInputProcessor() {
 
     // ------------------- derived display values -------------------
 
-    const promptLine1 = _computePromptLine1();
+    const promptLine1 = _computePromptLine1(state);
     const promptLine2 = _computePromptLine2(state);
     const currExecutionBlock = _computeCurrExecutionBlock(state);
     const allDisplayLines = _computeAllDisplayLines(state);

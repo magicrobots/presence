@@ -268,7 +268,7 @@ export default function IzaComputer({ inputProcessor }) {
 
     function _initCanvas() {
         const canvasSource = sourceCanvasRef.current;
-        const ctx = canvasSource.getContext('2d');
+        const ctx = canvasSource.getContext('2d', { willReadFrequently: true });
         const canvasAltered = alteredCanvasRef.current;
         const ctx2 = canvasAltered.getContext('2d');
 
@@ -303,7 +303,7 @@ export default function IzaComputer({ inputProcessor }) {
             setIsLoadingSomething(false);
         };
 
-        imageObj.src = `assets/${imgPath || bgImagePath}`;
+        imageObj.src = `assets/${imgPath || 'emptyScreen.jpg'}`;
     }
     _setBgImageRef.current = _setBgImage;
 

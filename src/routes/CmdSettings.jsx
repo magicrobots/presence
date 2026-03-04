@@ -15,9 +15,8 @@ export default function CmdSettings() {
     inputProcessorRef.current = inputProcessor;
 
     useEffect(() => {
-        function commonProcesses(overflowArg, hideEscText, functionName, appResponse, persistenceSet, validSet) {
-            const inputArg = inputProcessorRef.current.state.currentArgs[0];
-            const newValue = overflowArg || inputArg;
+        function commonProcesses(argValue, hideEscText, functionName, appResponse, persistenceSet, validSet) {
+            const newValue = argValue;
             const escTextLines = hideEscText ? [] : [...ESC_TEXT];
             const jumpIn = inputProcessorRef.current.state.currentCommand === `settings ${functionName}`;
 
@@ -39,32 +38,32 @@ export default function CmdSettings() {
         const scope = {
             settingsCommandRegistry: SETTINGS_COMMAND_REGISTRY,
 
-            username(overflowArg, hideEscText) {
+            username(args = [], hideEscText) {
                 const appResponse = [
                     `Current username: ${persistence.getUsername()}`,
                     '',
                     `enter second parameter to set username - e.g.: 'username HAL9000'`
                 ];
-                commonProcesses(overflowArg, hideEscText, 'username', appResponse, 'setUsername', []);
+                commonProcesses(args[0], hideEscText, 'username', appResponse, 'setUsername', []);
             },
 
-            fontsize(overflowArg, hideEscText) {
+            fontsize(args = [], hideEscText) {
                 const appResponse = [
                     `Current fontsize: ${persistence.getFontSize()}`,
                     '',
                     `enter s, m, or l as second parameter to set fontsize - e.g.: 'fontsize s'`
                 ];
-                commonProcesses(overflowArg, hideEscText, 'fontsize', appResponse, 'setFontSize', ['s', 'm', 'l']);
+                commonProcesses(args[0], hideEscText, 'fontsize', appResponse, 'setFontSize', ['s', 'm', 'l']);
             },
 
-            graphicsmode(overflowArg, hideEscText) {
+            graphicsmode(args = [], hideEscText) {
                 const appResponse = [
                     `Graphics mode is currently: ${persistence.getGraphicsMode()}`,
                     '',
                     `enter 'hi' or 'lo' as second parameter to toggle graphics - e.g.: 'graphicsmode hi'`,
                     'beware, hi graphicsmode can be processor intensive.'
                 ];
-                commonProcesses(overflowArg, hideEscText, 'graphicsmode', appResponse, 'setGraphicsMode', ['hi', 'lo']);
+                commonProcesses(args[0], hideEscText, 'graphicsmode', appResponse, 'setGraphicsMode', ['hi', 'lo']);
             },
 
             commandComplete(fragment, s) {
@@ -78,7 +77,7 @@ export default function CmdSettings() {
             const overflowCommand = currentArgs[0];
             if (SETTINGS_COMMAND_REGISTRY.includes(overflowCommand)) {
                 const overflowArg = currentArgs[1];
-                scope[overflowCommand](overflowArg, true);
+                scope[overflowCommand]([overflowArg], true);
                 inputProcessor.quit();
                 return;
             }

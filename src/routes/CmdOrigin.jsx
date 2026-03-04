@@ -18,6 +18,14 @@ export default function CmdOrigin() {
     const inputProcessorRef = useRef(null);
     inputProcessorRef.current = inputProcessor;
 
+    // Capture whether this is a new story at render time, before any effect-side
+    // mutations touch localStorage. Using a ref ensures Strict Mode's double-invoke
+    // of effects always sees the original pre-mutation value.
+    const isNewStoryRef = useRef(null);
+    if (isNewStoryRef.current === null) {
+        isNewStoryRef.current = storyCore.getIsNewStory();
+    }
+
     useEffect(() => {
 
         // ---- private helpers -----------------------------------------------
@@ -137,6 +145,41 @@ export default function CmdOrigin() {
             }
         }
 
+        function _drop(isThrow, args = []) {
+            const actionWord = isThrow ? 'throw' : 'drop';
+            const targetItemName = args[0] === 'the' ? args[1] : args[0];
+            const userInventory = persistence.getStoryInventoryItems();
+            const targetItemId = storyCore.getItemIdByName(targetItemName);
+
+            if (userInventory.includes(targetItemId)) {
+                persistence.addItemToRoom(storyCore.getCurrentRoomId(), targetItemId);
+                persistence.removeStoryInventoryItem(targetItemId);
+
+                if (targetItemId === 7) {
+                    storyCore.turnOffFlashlight();
+                }
+
+                const response = [`You ${actionWord} the ${targetItemName}`];
+                if (isThrow) {
+                    response.push('');
+                    response.push('It doesn\'t go very far. You feel a little silly.');
+                }
+                inputProcessorRef.current.handleFunctionFromApp(response);
+            } else {
+                if (targetItemName != null) {
+                    inputProcessorRef.current.handleFunctionFromApp([
+                        `You don't have a ${targetItemName}.`
+                    ]);
+                } else {
+                    inputProcessorRef.current.handleFunctionFromApp([
+                        `What do you want to ${actionWord}?`
+                    ]);
+                }
+            }
+
+            handlePotentiallyFatalMistake();
+        }
+
         // ---- scope object (overrideScope) ----------------------------------
         // All methods read args from inputProcessorRef.current.state at call time.
 
@@ -166,9 +209,8 @@ export default function CmdOrigin() {
                 ]);
             },
 
-            destroy() { scope.smash(); },
-            smash() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            destroy(args) { scope.smash(args); },
+            smash(args = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
                 const localInventories = getLocalAndPersonalInventories();
@@ -189,8 +231,7 @@ export default function CmdOrigin() {
                 }
             },
 
-            wave() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            wave(args = []) {
                 let responseObjectName = '';
 
                 if (args[0] === 'to' || args[0] === 'at') {
@@ -204,10 +245,9 @@ export default function CmdOrigin() {
                 inputProcessorRef.current.handleFunctionFromApp([response]);
             },
 
-            stab() { scope.kill(); },
-            attack() { scope.kill(); },
-            kill() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            stab(args) { scope.kill(args); },
+            attack(args) { scope.kill(args); },
+            kill(args = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -246,8 +286,7 @@ export default function CmdOrigin() {
                 }
             },
 
-            feed() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            feed(args = []) {
                 const targetItemName = args[0] === 'the'
                     ? args[1].toLowerCase()
                     : args[0].toLowerCase();
@@ -276,8 +315,7 @@ export default function CmdOrigin() {
                 ]);
             },
 
-            eat() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            eat(args = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -311,8 +349,7 @@ export default function CmdOrigin() {
                 }
             },
 
-            drink() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            drink(args = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -342,11 +379,9 @@ export default function CmdOrigin() {
 
             // --- from cmd-origin route ---
 
-            walk() { scope.go(); },
-            move() { scope.go(); },
-            go() {
-                const args = inputProcessorRef.current.state.currentArgs;
-
+            walk(args) { scope.go(args); },
+            move(args) { scope.go(args); },
+            go(args = []) {
                 if (!args || args.length === 0) {
                     inputProcessorRef.current.handleFunctionFromApp(['Which way do you want to go?']);
                     return;
@@ -398,8 +433,7 @@ export default function CmdOrigin() {
                 inputProcessorRef.current.handleFunctionFromApp(inventoryResponse);
             },
 
-            pick() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            pick(args = []) {
                 if (args[0] === 'up') {
                     // "pick up X" → take X (skip the 'up' arg without mutating state)
                     _take(args.slice(1));
@@ -408,52 +442,18 @@ export default function CmdOrigin() {
                 }
             },
 
-            get() { scope.take(); },
-            take() {
-                _take(inputProcessorRef.current.state.currentArgs);
+            get(args) { scope.take(args); },
+            take(args = []) {
+                _take(args);
             },
 
-            throw() { scope.drop(true); },
-            discard() { scope.drop(); },
-            drop(isThrow) {
-                const args = inputProcessorRef.current.state.currentArgs;
-                const actionWord = isThrow ? 'throw' : 'drop';
-                const targetItemName = args[0] === 'the' ? args[1] : args[0];
-                const userInventory = persistence.getStoryInventoryItems();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
+            throw(args = []) { _drop(true, args); },
+            discard(args = []) { _drop(false, args); },
+            drop(args = []) { _drop(false, args); },
 
-                if (userInventory.includes(targetItemId)) {
-                    persistence.addItemToRoom(storyCore.getCurrentRoomId(), targetItemId);
-                    persistence.removeStoryInventoryItem(targetItemId);
-
-                    if (targetItemId === 7) {
-                        storyCore.turnOffFlashlight();
-                    }
-
-                    const response = [`You ${actionWord} the ${targetItemName}`];
-                    if (isThrow) {
-                        response.push('');
-                        response.push('It doesn\'t go very far. You feel a little silly.');
-                    }
-                    inputProcessorRef.current.handleFunctionFromApp(response);
-                } else {
-                    if (targetItemName != null) {
-                        inputProcessorRef.current.handleFunctionFromApp([
-                            `You don't have a ${targetItemName}.`
-                        ]);
-                    } else {
-                        inputProcessorRef.current.handleFunctionFromApp([
-                            `What do you want to ${actionWord}?`
-                        ]);
-                    }
-                }
-
-                handlePotentiallyFatalMistake();
-            },
-
-            inspect() { scope.examine(); },
+            inspect(args) { scope.examine(args); },
             examine(passedArgs) {
-                const theArgs = passedArgs || inputProcessorRef.current.state.currentArgs;
+                const theArgs = passedArgs || [];
                 const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const objectId = storyCore.getItemIdByName(objectName);
@@ -472,8 +472,7 @@ export default function CmdOrigin() {
                 }
             },
 
-            talk() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            talk(args = []) {
                 let responseObjectName = 'that';
 
                 if (args[0] === 'to') {
@@ -490,8 +489,7 @@ export default function CmdOrigin() {
                 ]);
             },
 
-            turn() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            turn(args = []) {
                 const firstArg = args[0];
 
                 if (firstArg === 'on' || firstArg === 'off') {
@@ -509,12 +507,11 @@ export default function CmdOrigin() {
                 ]);
             },
 
-            use() {
-                _use(inputProcessorRef.current.state.currentArgs);
+            use(args = []) {
+                _use(args);
             },
 
-            give() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            give(args = []) {
                 const targetItemName = args[0];
                 const operator = args[1];
                 const recipientName = args[2] === 'the' ? args[3] : args[2];
@@ -578,8 +575,7 @@ export default function CmdOrigin() {
                 inputProcessorRef.current.handleFunctionFromApp([`What do you want to give?`]);
             },
 
-            read() {
-                const args = inputProcessorRef.current.state.currentArgs;
+            read(args = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -605,10 +601,8 @@ export default function CmdOrigin() {
                 inputProcessorRef.current.handleFunctionFromApp(storyCore.whereAmI());
             },
 
-            surroundings() { scope.look(); },
-            look() {
-                const args = inputProcessorRef.current.state.currentArgs;
-
+            surroundings(args) { scope.look(args); },
+            look(args = []) {
                 if (args != null && args.length > 0) {
                     const chosenDirection = parseDirectionFromEntries(args);
 
@@ -760,12 +754,15 @@ export default function CmdOrigin() {
 
         // ---- afterModel equivalent -----------------------------------------
 
+        const isNewStory = isNewStoryRef.current;
         let welcomePrefix = 'Welcome back';
 
-        if (storyCore.getIsNewStory()) {
+        if (isNewStory) {
             storyCore.formatStoryData();
             welcomePrefix = 'Welcome to Origin';
         }
+
+        persistence.setIsInitialVisit(false);
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: 'cmd-origin',
