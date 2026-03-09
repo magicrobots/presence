@@ -152,23 +152,41 @@ All of these are currently hardcoded constants in `deformers.js` and `IzaCompute
 
 ### Step Ladder Definition
 
-| Level | stride | glow.en | glow.rand | maxContrast | shift.en | adj.Large | adj.Small | bands | Approx cost |
-|---|---|---|---|---|---|---|---|---|---|
-| 0 | 1 | ✓ | ✓ | 120 | ✓ | 24 | 12 | 3 | 100% |
-| 1 | 1 | ✓ | — | 120 | ✓ | 24 | 12 | 3 | ~70% |
-| 2 | 1 | ✓ | — | 150 | ✓ | 22 | 12 | 2 | ~55% |
-| 3 | 2 | ✓ | — | 180 | ✓ | 20 | 10 | 2 | ~35% |
-| 4 | 2 | — | — | — | ✓ | 18 | 10 | 1 | ~22% |
-| 5 | 2 | — | — | — | ✓ | 14 | 8 | 1 | ~18% |
-| 6 | 4 | — | — | — | — | 12 | 6 | 0 | ~8% |
-| 7 | 4 | — | — | — | — | 8 | 4 | 0 | ~5% |
+The table below covers all 16 tunable knobs. It is split into two sub-tables for readability; Level is the join key.
+
+**Sub-table A — Loop, glow pass, and phosphor knobs:**
+
+| Level | stride | glow.en | glow.rand | glow.maxContrast | glow.distance | glow.falloff.near | glow.falloff.mid | glow.falloff.far | adj.Large | adj.Small | Approx cost |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 1 | ✓ | ✓ | 120 | 3 | 1.0 | 0.5 | 0.2 | 24 | 12 | 100% |
+| 1 | 1 | ✓ | — | 120 | 3 | 1.0 | 0.5 | 0.2 | 24 | 12 | ~70% |
+| 2 | 1 | ✓ | — | 150 | 3 | 1.0 | 0.4 | 0.15 | 22 | 12 | ~55% |
+| 3 | 2 | ✓ | — | 180 | 2 | 0.8 | 0.3 | 0.1 | 20 | 10 | ~35% |
+| 4 | 2 | — | — | — | — | — | — | — | 18 | 10 | ~22% |
+| 5 | 2 | — | — | — | — | — | — | — | 14 | 8 | ~18% |
+| 6 | 4 | — | — | — | — | — | — | — | 12 | 6 | ~8% |
+| 7 | 4 | — | — | — | — | — | — | — | 8 | 4 | ~5% |
+
+**Sub-table B — Shift pass and displacement knobs:**
+
+| Level | shift.en | shift.positionFactor | shift.factor | shift.brightnessThreshold | displacement.bands | displacement.travelPixelsPerCycle |
+|---|---|---|---|---|---|---|
+| 0 | ✓ | 5 | 7 | 140 | 3 | 3 |
+| 1 | ✓ | 5 | 7 | 140 | 3 | 3 |
+| 2 | ✓ | 5 | 7 | 160 | 2 | 3 |
+| 3 | ✓ | 4 | 8 | 180 | 2 | 3 |
+| 4 | ✓ | 3 | 9 | 200 | 1 | 2 |
+| 5 | ✓ | 2 | 10 | 220 | 1 | 2 |
+| 6 | — | — | — | — | 0 | — |
+| 7 | — | — | — | — | 0 | — |
 
 **Notes on step design:**
 - Level 1 drops `glow.useRandom` first — this is the single most expensive per-pixel operation (rngeezus pool lookup inside a branch in the hot loop).
-- Levels 2–3 raise `maxContrast` (fewer edges trigger glow) and reduce `adjustmentLarge` before disabling glow entirely. This preserves some phosphor halation character while reducing cost.
-- Level 4 fully disables `glow`. `shift` stays active through level 5 — it's cheap relative to glow.
+- Levels 2–3 raise `glow.maxContrast` (fewer edges trigger glow), reduce falloff multipliers, and reduce `adjustmentLarge` before disabling glow entirely. This preserves some phosphor halation character while reducing cost.
+- Level 4 fully disables `glow`. `shift` stays active through level 5 — it's cheap relative to glow. At higher levels, `shift.positionFactor` is reduced and `shift.factor` raised to lower chromatic aberration intensity before the pass is dropped entirely at level 6.
 - Levels 6–7 apply stride-4 (every fourth pixel, block-fill neighbors). At stride-4 the phosphor triad pattern (`i % 4`) averages out visually; `adjustmentLarge`/`adjustmentSmall` are reduced to compensate.
-- `displacement.bandCount` reaches 0 at level 6 — the scanline-band effect is dropped last among the visual elements because it contributes strongly to the CRT aesthetic, but at 0 bands the `_createDisplacement` calls are skipped entirely (zero cost).
+- `displacement.bands` reaches 0 at level 6 — the scanline-band effect is dropped last among the visual elements because it contributes strongly to the CRT aesthetic, but at 0 bands the `_createDisplacement` calls are skipped entirely (zero cost). `displacement.travelPixelsPerCycle` is marked `—` at levels 6–7 because the displacement loop does not execute at `bands = 0`.
+- `glow.distance`, `glow.falloff.*`, `shift.positionFactor`, `shift.factor`, and `shift.brightnessThreshold` are marked `—` at levels where their parent pass is disabled (`glow.en = —` or `shift.en = —`); these values are ignored by the early-return guard in the respective pass functions.
 - The exact cost percentages are estimates; actual values should be measured during implementation on a reference device and the thresholds tuned accordingly. **The step ladder values are implementation decisions, not contractual — the implementer should adjust parameter values based on real performance measurements.**
 
 ---
