@@ -90,7 +90,7 @@ A user resizes the browser window while the application is running. The CRT disp
 - **SC-002**: Rendering remains visually smooth during normal use at maximum display size on a modern desktop browser — no visible stuttering during regular interaction.
 - **SC-003**: The display correctly recalculates to the new maximum 4:3 size within 500ms of a browser window resize event completing.
 - **SC-004**: The application continues to function correctly (no crashes, errors, or broken layout) at any browser window size from 800×600 up to at least 2560×1440.
-- **SC-005**: Users report the maximum-size CRT experience as visually equivalent or better than the previous fixed-size experience in terms of visual quality.
+- **SC-005**: At maximum display size, all CRT visual effects (scanlines, phosphor glow, screen curvature) are visibly present and applied across the full canvas area, verified by visual inspection at 1920×1080 and 2560×1440 window sizes.
 
 ## Clarifications
 
