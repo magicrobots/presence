@@ -27,3 +27,4 @@
 
 # Claude Code local settings (machine-specific, not for sharing)
 .claude/settings.local.json
+.claude/worktrees/
