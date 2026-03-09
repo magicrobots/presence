@@ -58,7 +58,7 @@ Block-fill copies sampled pixels into skipped neighbors to avoid visible banding
 
 ## FPS Measurement and Adaptive Quality Loop
 
-### Decision: Rolling 3-second evaluation window, bidirectional 3-step quality ladder
+### Decision: Rolling 3-second evaluation window, bidirectional 8-step quality ladder
 
 Replace the current 30-frame one-shot gate (`PERFORMANCE_TEST_LENGTH: 30`, binary `isPerformantRef`) with:
 

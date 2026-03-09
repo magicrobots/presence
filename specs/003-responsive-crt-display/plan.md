@@ -32,7 +32,7 @@ Scale the CRT canvas to fill the browser window (largest 4:3 rectangle, centered
 | Constitution Rule | Status | Notes |
 |---|---|---|
 | Monorepo: `frontend/` + `api/` + `types/` | PASS | This feature establishes the scaffold. Structure defined in Project Structure below. |
-| TypeScript strict mode | PASS | `api/` and `packages/types/` use strict TS. Frontend stays JS per user instruction — constitution says "TypeScript across both frontend and backend" but user has explicitly overridden the frontend for this phase. |
+| TypeScript strict mode | PASS | `api/` and `packages/types/` use strict TS. Frontend stays JS per constitution §6 override for the responsive-crt-display phase. |
 | API: RESTful + `ApiResponse<T>` envelope | PASS | Defined in `contracts/preferences-api.md`. Discriminated union in `@presence/types`. |
 | State: React Context for global terminal state | PASS | No change to existing Context usage. Quality preset goes through `usePersistence` + rAF loop ref, not global Context (it's a hardware-level concern, not terminal state). |
 | No heavy external UI libraries | PASS | No new UI libs introduced. |
@@ -44,7 +44,7 @@ Scale the CRT canvas to fill the browser window (largest 4:3 rectangle, centered
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |---|---|---|
-| Frontend stays JavaScript (not TypeScript) | User explicitly instructed "use existing tech stack (js frontend)" | Full TS migration is a separate workstream; forcing TS on the frontend now would be out-of-scope scope creep and block this feature's delivery |
+| Frontend stays JavaScript (not TypeScript) | Constitution §6 explicitly overrides TS requirement for this phase | Full TS migration is a separate workstream; forcing TS on the frontend now would be out-of-scope scope creep and block this feature's delivery |
 
 ---
 
@@ -60,7 +60,7 @@ specs/003-responsive-crt-display/
 ├── quickstart.md        # Phase 1: local dev setup, run commands, migration workflow
 ├── contracts/
 │   └── preferences-api.md   # Phase 1: GET/PUT /api/preferences contract
-└── tasks.md             # Phase 2 output (created by /speckit.tasks — not yet)
+└── tasks.md             # Phase 2 output (created by /speckit.tasks)
 ```
 
 ### Source Code (repository root — target layout after this feature)
@@ -86,7 +86,7 @@ presence/                            ← repo root (npm workspace root)
 │       ├── utils/
 │       │   └── deformers.js         ← PRIMARY CHANGE: stride + pass-skip, baseIdx pre-computation
 │       ├── constants/
-│       │   └── magic-numbers.js     ← PRIMARY CHANGE: TARGET_FPS, EVAL_WINDOW_MS, RESIZE_DEBOUNCE_MS
+│       │   └── magic-numbers.js     ← PRIMARY CHANGE: TARGET_FPS, EVAL_WINDOW_MS, RESIZE_DEBOUNCE_MS, HEADROOM_FPS, QUALITY_LADDER
 │       ├── hooks/
 │       │   └── usePersistence.js    ← MINOR CHANGE: add getQualityPreset / setQualityPreset
 │       └── routes/
@@ -117,7 +117,7 @@ presence/                            ← repo root (npm workspace root)
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |---|---|---|
-| Frontend stays JS | User instruction | Migrating all existing JSX to TS is a separate workstream |
+| Frontend stays JS | Constitution §6 override | Migrating all existing JSX to TS is a separate workstream |
 | Three-level quality ladder (not binary) | Binary on/off is the exact problem being fixed; the spec explicitly requires a multi-step integer ladder | Binary gate cannot gracefully degrade — it's the floor/ceiling of the old system |
 | Monorepo scaffold (3 packages) | Constitution mandates; quality preset API is the first consumer | A single flat package cannot share TypeScript types between a JS Vite build and a TS Express API without path-aliasing hacks |
 
@@ -130,7 +130,7 @@ All NEEDS CLARIFICATION items resolved. See [research.md](research.md) for full 
 | Question | Decision |
 |---|---|
 | Canvas optimization strategy | Stride-based pixel sampling + conditional pass skipping; `_glowEdgesBit` drops first (rngeezus hot path), then `_shiftPixel`, `_pixelizeBit` never drops |
-| Quality level count | 3 steps: HIGH (stride 1, all passes), MED (stride 2, no glow), LOW (stride 4, no glow, no shift) |
+| Quality level count | 8 steps (0–7): full quality at 0, minimum at 7; each step adjusts 14 deformer knobs — see data-model.md Step Ladder Definition |
 | FPS measurement | `performance.now()` + rolling 3-second evaluation window; replaces `new Date()` + 30-frame one-shot |
 | OffscreenCanvas / Worker | Not implemented — architecture cost too high for a decorative effect; reassess if stride+skip is insufficient |
 | Monorepo tooling | npm workspaces (Node 20); no Turborepo/Nx — overkill for 3 packages |
