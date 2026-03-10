@@ -1,40 +1,48 @@
 version: 0.0.1.{build}
 
-# Test against the latest version of this Node.js version
+# Test against Node.js 20 LTS
 environment:
   AWS_KEY_EMAIL:
     secure: +dPvvxxksecEbtXXj0WeS8eMrQiS91BrStU+Gkn8kAo=
   AWS_SECRET_EMAIL:
     secure: FYJljDShng/1GYBj8YtIgs1NZmgwc0Eab34hLx4QNbTB4bTN6z4bfQ90XgTnvSnM
-  nodejs_version: "8"
+  nodejs_version: "20"
   buildVersion: $(APPVEYOR_BUILD_NUMBER)
+
+services:
+  - postgresql
 
 # Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node.js or io.js
-  - ps: Install-Product node 
-  # install modules
-  - yarn install
+  # Get Node.js 20 LTS
+  - ps: Install-Product node $env:nodejs_version
+  # install all workspace dependencies
+  - npm install
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
-  - yarn --version
+  - npm --version
+  # run typecheck before tests
+  - npm run typecheck
   # run tests
-  - yarn test
+  - npm test --workspaces --if-present
 
 
 # build.
 build_script:
-# add .env file containing aws keys
+  # add .env file containing aws keys
   - echo AWS_KEY=%AWS_KEY_EMAIL% > config/.env
   - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> config/.env
   - echo BUILD_NUMBER=%buildVersion% >> config/.env
-  - yarn build -prod
-  
-# create artifacts for deployment.
+  # build workspaces in dependency order: types → api → frontend
+  - npm run build -w packages/types
+  - npm run build -w api
+  - npm run build -w frontend
+
+# create artifacts for deployment (frontend S3 deploy step).
 artifacts:
-  - path: dist/
+  - path: frontend/dist/
     name: fred
     type: zip

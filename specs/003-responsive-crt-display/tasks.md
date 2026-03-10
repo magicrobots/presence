@@ -112,7 +112,7 @@
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T031 [P] Update `appveyor.yml`: set Node.js version to 20 LTS; add `services: [postgresql]`; update build steps to workspace order `npm run build -w packages/types` → `npm run build -w api` → `npm run build -w frontend`; add `npm run typecheck` step before tests; preserve existing frontend S3 deploy step
+- [x] T031 [P] Update `appveyor.yml`: set Node.js version to 20 LTS; add `services: [postgresql]`; update build steps to workspace order `npm run build -w packages/types` → `npm run build -w api` → `npm run build -w frontend`; add `npm run typecheck` step before tests; preserve existing frontend S3 deploy step
 - [ ] T032 [P] Add required comment blocks per constitution: (a) quality ladder evaluation loop in `frontend/src/components/IzaComputer.jsx` — document the 3s window, bidirectional step, stall threshold, and area re-evaluation logic; (b) stride loop and pass-skip logic in `frontend/src/utils/deformers.js` — document intent for block-fill, drop order rationale, and baseIdx pre-computation; (c) `QUALITY_LADDER` constant in `frontend/src/constants/magic-numbers.js` — add a header comment explaining the 8-step design, and inline each level entry with its drop rationale, approximate CPU cost %, and step-ordering decisions from data-model.md
 - [ ] T033 Validate quickstart.md steps against implemented stack: run `npm install` from repo root, `npm run build -w packages/types`, `cp api/.env.example api/.env` + set DATABASE_URL, `npm run migrate -w api`, `npm run dev -w api` and `npm run dev -w frontend` — confirm all steps succeed without errors
 
