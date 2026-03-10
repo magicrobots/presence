@@ -28,20 +28,23 @@
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Shared types, new magic-number constants, API skeleton, and DB layer — all must exist before any user story implementation can proceed.
+**Purpose**: New magic-number constants that all user story tasks depend on. Only T006 and T012 are hard prerequisites for user story work; they must exist before Phases 3–6 can begin.
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**⚠️ REQUIRED before user stories**: T006 and T012 only. The API/DB scaffold tasks (T005, T007–T011) are non-blocking infrastructure that can proceed in parallel with user story phases — they are not prerequisites for any spec.md functional requirement (FR-001 through FR-008 are all frontend/canvas-only; FR-008 persistence is satisfied by localStorage alone per plan.md).
 
-- [ ] T005 Implement shared types in `packages/types/src/index.ts`: `ApiSuccess<T>`, `ApiError`, `ApiResponse<T>` discriminated union; `QualityPreset` union type (`'high' | 'normal' | 'low'`); `UserPreferences` interface; `UpdatePreferencesRequest` interface (see data-model.md Shared Types section)
 - [ ] T006 Update `frontend/src/constants/magic-numbers.js`: remove `ABSOLUTE_MAX_VIEWPORT_WIDTH`, `MAX_MPF`, `PERFORMANCE_TEST_LENGTH`; add `TARGET_FPS` (30), `TARGET_FPS_HIGH` (60), `TARGET_FPS_LOW` (15), `HEADROOM_FPS` (5), `EVAL_WINDOW_MS` (3000), `STALL_THRESHOLD_MS` (3000), `RESIZE_DEBOUNCE_MS` (200), `CANVAS_ASPECT_RATIO` (4/3); add `QUALITY_LADDER` array — 8 entries (levels 0–7), each entry an object with all 16 knobs per data-model.md Step Ladder Definition table (QUALITY_LADDER lives in this file per plan.md)
-- [ ] T007 [P] Create `api/src/lib/response.ts`: implement `sendSuccess(res, data)` and `sendError(res, message, statusCode, code?)` helper functions using `ApiResponse<T>` envelope from `@presence/types`
-- [ ] T008 [P] Create `api/src/db/schema.ts`: define `userPreferences` Drizzle table with columns `id` (serial PK), `username` (varchar 255, not null, unique), `qualityPreset` (varchar 10, not null, default `'normal'`), `createdAt` (timestamptz, defaultNow), `updatedAt` (timestamptz, defaultNow) per data-model.md Drizzle Schema
-- [ ] T009 Create `api/src/db/migrations/0001_create_user_preferences.sql`: `CREATE TABLE IF NOT EXISTS user_preferences` with all columns and `CHECK (quality_preset IN ('high','normal','low'))` constraint; create index on `username` per data-model.md Migration File
-- [ ] T010 Create `api/src/db/index.ts`: instantiate `pg.Pool` from `process.env.DATABASE_URL`, export `db = drizzle(pool, { schema })`; add `npm run migrate` script to `api/package.json` that applies `.sql` files in `api/src/db/migrations/` in order
-- [ ] T011 Create `api/src/index.ts`: initialize Express app, add `express.json()` middleware, mount `GET /health` returning `{ status: 'ok' }`, mount `preferencesRouter` at `/api/preferences`, add 404 and 500 error handler middleware; add `dev` (tsup watch) and `build` (tsup CJS) scripts to `api/package.json`
 - [ ] T012 Update `frontend/vite.config.js`: add `server.proxy` entry routing `/api` → `http://localhost:3001` (changeOrigin: true)
 
-**Checkpoint**: Workspace installs, types build, API starts, DB migrates — user story implementation can begin.
+**API/DB Scaffold (non-blocking — run in parallel with user story phases):**
+
+- [ ] T005 [OPTIONAL] Implement shared types in `packages/types/src/index.ts`: `ApiSuccess<T>`, `ApiError`, `ApiResponse<T>` discriminated union; `QualityPreset` union type (`'high' | 'normal' | 'low'`); `UserPreferences` interface; `UpdatePreferencesRequest` interface (see data-model.md Shared Types section). Not required by any spec.md functional requirement; supports future API sync only.
+- [ ] T007 [P] [OPTIONAL] Create `api/src/lib/response.ts`: implement `sendSuccess(res, data)` and `sendError(res, message, statusCode, code?)` helper functions using `ApiResponse<T>` envelope from `@presence/types`
+- [ ] T008 [P] [OPTIONAL] Create `api/src/db/schema.ts`: define `userPreferences` Drizzle table with columns `id` (serial PK), `username` (varchar 255, not null, unique), `qualityPreset` (varchar 10, not null, default `'normal'`), `createdAt` (timestamptz, defaultNow), `updatedAt` (timestamptz, defaultNow) per data-model.md Drizzle Schema
+- [ ] T009 [OPTIONAL] Create `api/src/db/migrations/0001_create_user_preferences.sql`: `CREATE TABLE IF NOT EXISTS user_preferences` with all columns and `CHECK (quality_preset IN ('high','normal','low'))` constraint; create index on `username` per data-model.md Migration File
+- [ ] T010 [OPTIONAL] Create `api/src/db/index.ts`: instantiate `pg.Pool` from `process.env.DATABASE_URL`, export `db = drizzle(pool, { schema })`; add `npm run migrate` script to `api/package.json` that applies `.sql` files in `api/src/db/migrations/` in order
+- [ ] T011 [OPTIONAL] Create `api/src/index.ts`: initialize Express app, add `express.json()` middleware, mount `GET /health` returning `{ status: 'ok' }`, mount `preferencesRouter` at `/api/preferences`, add 404 and 500 error handler middleware; add `dev` (tsup watch) and `build` (tsup CJS) scripts to `api/package.json`
+
+**Checkpoint**: T006 (magic-numbers.js) and T012 (vite proxy) complete — user story phases (3–6) can begin. API/DB scaffold tasks may continue in parallel.
 
 ---
 
@@ -86,11 +89,11 @@
 - [ ] T023 [US3] Add `getQualityPreset()` and `setQualityPreset(preset)` to `frontend/src/hooks/usePersistence.js`: read/write `quality_preset` key from the existing `magic-robots-data` localStorage object; default to `'normal'` when key is absent
 - [ ] T024 [US3] Add `qualitypreset` command to `frontend/src/routes/CmdSettings.jsx`: with no arg display current preset and available options (high / normal / low); with valid arg call `setQualityPreset(arg)` and confirm; reject invalid values with usage message
 - [ ] T025 [US3] Read quality preset on mount in `frontend/src/components/IzaComputer.jsx`: initialize `targetFpsRef` from `getQualityPreset()` mapping (`high` → `TARGET_FPS_HIGH`, `normal` → `TARGET_FPS`, `low` → `TARGET_FPS_LOW`); subscribe to preset changes so that when a new preset is selected: (1) `targetFpsRef` updates immediately to the new FPS target, and (2) `qualityLevelRef` resets to 0 (maximum quality) and the evaluation window restarts — so the adapter re-evaluates from full quality at the new target per FR-008 (depends on T021, T023)
-- [ ] T026 [P] [US3] Implement `GET /api/preferences` in `api/src/routes/preferences.ts`: validate `username` query param (400 `MISSING_USERNAME` if blank); query `userPreferences` table; return 404 `NOT_FOUND` if no row; return 200 with `UserPreferences` payload; wrap DB call in try/catch and return 500 `INTERNAL_ERROR` on failure; export `preferencesRouter` per contracts/preferences-api.md
-- [ ] T027 [P] [US3] Implement `PUT /api/preferences` in `api/src/routes/preferences.ts`: validate `username` and `qualityPreset` from request body (400 on missing/invalid); upsert row using Drizzle `.onConflictDoUpdate` on `username`; set `updatedAt: new Date()` in update set; return 200 with saved `UserPreferences` payload per contracts/preferences-api.md
-- [ ] T028 [US3] Add best-effort `PUT /api/preferences` fetch in `frontend/src/routes/CmdSettings.jsx` preset handler: call `setQualityPreset` (localStorage, immediate) first, then fire-and-forget `fetch('/api/preferences', { method: 'PUT', ... })` with `.catch(() => {})` — localStorage is source of truth, API failure is non-critical (depends on T024)
+- [ ] T026 [P] [OPTIONAL] Implement `GET /api/preferences` in `api/src/routes/preferences.ts`: validate `username` query param (400 `MISSING_USERNAME` if blank); query `userPreferences` table; return 404 `NOT_FOUND` if no row; return 200 with `UserPreferences` payload; wrap DB call in try/catch and return 500 `INTERNAL_ERROR` on failure; export `preferencesRouter` per contracts/preferences-api.md. Not required for FR-008 acceptance; localStorage (T023) is the source of truth.
+- [ ] T027 [P] [OPTIONAL] Implement `PUT /api/preferences` in `api/src/routes/preferences.ts`: validate `username` and `qualityPreset` from request body (400 on missing/invalid); upsert row using Drizzle `.onConflictDoUpdate` on `username`; set `updatedAt: new Date()` in update set; return 200 with saved `UserPreferences` payload per contracts/preferences-api.md. Not required for FR-008 acceptance; future-facing API sync only.
+- [ ] T028 [OPTIONAL] Add best-effort `PUT /api/preferences` fetch in `frontend/src/routes/CmdSettings.jsx` preset handler: call `setQualityPreset` (localStorage, immediate) first, then fire-and-forget `fetch('/api/preferences', { method: 'PUT', ... })` with `.catch(() => {})` — localStorage is source of truth, API failure is non-critical (depends on T024, T027)
 
-**Checkpoint**: Preset selector works in settings, persists across sessions, TARGET_FPS updates on change, API sync fires best-effort. US3 fully functional and testable.
+**Checkpoint**: Preset selector works in settings (T023–T025), persists across sessions via localStorage, TARGET_FPS updates on change. US3 is fully functional and testable without T026–T028. API sync (T026–T028) is optional scaffolding for future cross-session sync.
 
 ---
 
@@ -120,10 +123,10 @@
 ### Phase Dependencies
 
 - **Phase 1 (Setup)**: No dependencies — start immediately
-- **Phase 2 (Foundational)**: Depends on Phase 1 completion — **BLOCKS all user stories**
-- **Phase 3 (US1)**: Requires Phase 2 complete; no dependency on other user stories
-- **Phase 4 (US2)**: Requires Phase 2 complete; implementation is independent of US1 (deformer refactor is separate from canvas sizing) but US2 is most useful after US1 expands the canvas
-- **Phase 5 (US3)**: Requires Phase 2 complete; localStorage half (T023–T025) is independent; API half (T026–T027) is independent; T028 depends on T024
+- **Phase 2 (Foundational)**: Depends on Phase 1 completion — **T006 and T012 BLOCK all user stories**; optional API/DB scaffold tasks (T005, T007–T011) do not block and may run in parallel with Phases 3–6
+- **Phase 3 (US1)**: Requires T006 (magic-numbers.js) complete; no dependency on other user stories
+- **Phase 4 (US2)**: Requires T006 complete; implementation is independent of US1 (deformer refactor is separate from canvas sizing) but US2 is most useful after US1 expands the canvas
+- **Phase 5 (US3)**: Requires T006 complete; localStorage half (T023–T025) satisfies FR-008 independently; API half (T026–T028) is optional non-blocking scaffolding; T028 depends on T024 and T027
 - **Phase 6 (US4)**: Requires US1 (T013, T015) and US2 (T021) to be complete
 - **Phase 7 (Polish)**: Requires all desired user stories complete
 
@@ -137,7 +140,7 @@
 ### Within Each User Story
 
 - US2: T016–T018 [P] can run in parallel; T019 depends on T016–T018; T020–T021 are independent of T016–T019; T022 depends on T019, T020, T021
-- US3: T023 and T024 are independent; T025 depends on T021 (US2) and T023; T026–T027 [P] can run in parallel; T028 depends on T024
+- US3: T023 and T024 are independent; T025 depends on T021 (US2) and T023; T026–T027 [OPTIONAL, P] can run in parallel; T028 [OPTIONAL] depends on T024 and T027
 
 ### Parallel Opportunities
 
