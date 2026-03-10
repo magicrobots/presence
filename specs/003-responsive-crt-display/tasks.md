@@ -37,7 +37,7 @@
 
 **API/DB Scaffold (non-blocking — run in parallel with user story phases):**
 
-- [ ] T005 [OPTIONAL] Implement shared types in `packages/types/src/index.ts`: `ApiSuccess<T>`, `ApiError`, `ApiResponse<T>` discriminated union; `QualityPreset` union type (`'high' | 'normal' | 'low'`); `UserPreferences` interface; `UpdatePreferencesRequest` interface (see data-model.md Shared Types section). Not required by any spec.md functional requirement; supports future API sync only.
+- [x] T005 [OPTIONAL] Implement shared types in `packages/types/src/index.ts`: `ApiSuccess<T>`, `ApiError`, `ApiResponse<T>` discriminated union; `QualityPreset` union type (`'high' | 'normal' | 'low'`); `UserPreferences` interface; `UpdatePreferencesRequest` interface (see data-model.md Shared Types section). Not required by any spec.md functional requirement; supports future API sync only.
 - [ ] T007 [P] [OPTIONAL] Create `api/src/lib/response.ts`: implement `sendSuccess(res, data)` and `sendError(res, message, statusCode, code?)` helper functions using `ApiResponse<T>` envelope from `@presence/types`
 - [ ] T008 [P] [OPTIONAL] Create `api/src/db/schema.ts`: define `userPreferences` Drizzle table with columns `id` (serial PK), `username` (varchar 255, not null, unique), `qualityPreset` (varchar 10, not null, default `'normal'`), `createdAt` (timestamptz, defaultNow), `updatedAt` (timestamptz, defaultNow) per data-model.md Drizzle Schema
 - [ ] T009 [OPTIONAL] Create `api/src/db/migrations/0001_create_user_preferences.sql`: `CREATE TABLE IF NOT EXISTS user_preferences` with all columns and `CHECK (quality_preset IN ('high','normal','low'))` constraint; create index on `username` per data-model.md Migration File
