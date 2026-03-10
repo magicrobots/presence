@@ -245,7 +245,7 @@ export default function IzaComputer({ inputProcessor }) {
         fontCharacterWidth
     );
 
-    const routeContainerStyle = {
+    const canvasWrapperStyle = {
         height: `${viewportMeasurements.height}px`,
         width: `${viewportMeasurements.width}px`,
     };
@@ -528,31 +528,31 @@ export default function IzaComputer({ inputProcessor }) {
     return (
         <div
             id="iza-computer"
-            className="route-container iza-computer"
-            style={routeContainerStyle}
             ref={containerRef}
             onClick={() => _setDomFocusToSelf()}
             onKeyDown={(e) => inputProcessor.processKey(e)}
         >
-            <MpfIndicator mpf={mpf} isVisible={isMpfVisible} />
-            <img id="vignette" className="vignette" alt="vignette" src="assets/vignette.png" />
-            <canvas
-                id="source-canvas"
-                ref={sourceCanvasRef}
-                width={viewportMeasurements.width}
-                height={viewportMeasurements.height}
-            />
-            <canvas
-                id="altered-canvas"
-                ref={alteredCanvasRef}
-                width={viewportMeasurements.width}
-                height={viewportMeasurements.height}
-            />
-            <div className="outlet-container">
-                <Outlet context={inputProcessor} />
+            <div className="route-container crt-canvas-wrapper" style={canvasWrapperStyle}>
+                <MpfIndicator mpf={mpf} isVisible={isMpfVisible} />
+                <img id="vignette" className="vignette" alt="vignette" src="assets/vignette.png" />
+                <canvas
+                    id="source-canvas"
+                    ref={sourceCanvasRef}
+                    width={viewportMeasurements.width}
+                    height={viewportMeasurements.height}
+                />
+                <canvas
+                    id="altered-canvas"
+                    ref={alteredCanvasRef}
+                    width={viewportMeasurements.width}
+                    height={viewportMeasurements.height}
+                />
+                <div className="outlet-container">
+                    <Outlet context={inputProcessor} />
+                </div>
+                <LoadingIndicator isVisible={isLoadingSomething} />
+                <img className="footer-light" src="assets/redLight.png" alt="footer light" />
             </div>
-            <LoadingIndicator isVisible={isLoadingSomething} />
-            <img className="footer-light" src="assets/redLight.png" alt="footer light" />
         </div>
     );
 }

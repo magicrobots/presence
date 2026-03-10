@@ -101,6 +101,15 @@ body {
     }
 
     main {
+        #iza-computer {
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .route-container {
             position: relative;
             background-color: rgba(100,100,100,0.75);
