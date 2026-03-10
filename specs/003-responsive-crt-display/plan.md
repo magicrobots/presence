@@ -7,7 +7,7 @@
 
 ## Summary
 
-Scale the CRT canvas to fill the browser window (largest 4:3 rectangle, centered, solid black bars), replace the existing binary performance gate with a continuous 8-step adaptive quality ladder that incrementally dials 16 deformer knobs (stride, glow pass enable/random/threshold/falloff near+mid+far, shift pass enable/intensity/threshold, phosphor adjustment values large+small, displacement band count/speed), evaluated every 3 seconds bidirectionally. The user quality preset (High/Normal/Low) sets only the `TARGET_FPS` goal (60/30/15fps); the adapter moves up or down the step ladder to converge on that target on whatever device is present. Expose the preset selector in `cmd-settings` with cross-session persistence via `localStorage`. Concurrently, establish the full-stack monorepo scaffold (`frontend/` + `api/` + `packages/types/`) with a TypeScript Express API, Drizzle ORM + PostgreSQL, and the shared `ApiResponse<T>` / `UserPreferences` types — targeting quality preset sync as the first API consumer.
+Scale the CRT canvas to fill the browser window (largest 4:3 rectangle, centered, solid black bars), replace the existing binary performance gate with a continuous 8-step adaptive quality ladder that incrementally dials 16 deformer knobs (stride, glow pass enable/random/threshold/falloff near+mid+far, shift pass enable/intensity/threshold, phosphor adjustment values large+small, displacement band count/speed), evaluated every 3 seconds bidirectionally. The quality ladder design (how many steps, which passes are active at each step, which parameter values are used) is an implementation decision informed by performance testing — see data-model.md Step Ladder Definition for the authoritative knob enumeration. The user quality preset (High/Normal/Low) sets only the `TARGET_FPS` goal (60/30/15fps); the adapter moves up or down the step ladder to converge on that target on whatever device is present. Expose the preset selector in `cmd-settings` with cross-session persistence via `localStorage`. Concurrently, establish the full-stack monorepo scaffold (`frontend/` + `api/` + `packages/types/`) with a TypeScript Express API, Drizzle ORM + PostgreSQL, and the shared `ApiResponse<T>` / `UserPreferences` types — targeting quality preset sync as the first API consumer.
 
 ---
 
@@ -130,7 +130,7 @@ All NEEDS CLARIFICATION items resolved. See [research.md](research.md) for full 
 | Question | Decision |
 |---|---|
 | Canvas optimization strategy | Stride-based pixel sampling + conditional pass skipping; `_glowEdgesBit` drops first (rngeezus hot path), then `_shiftPixel`, `_pixelizeBit` never drops |
-| Quality level count | 8 steps (0–7): full quality at 0, minimum at 7; each step adjusts 14 deformer knobs — see data-model.md Step Ladder Definition |
+| Quality level count | 8 steps (0–7): full quality at 0, minimum at 7; each step adjusts 16 deformer knobs — see data-model.md Step Ladder Definition |
 | FPS measurement | `performance.now()` + rolling 3-second evaluation window; replaces `new Date()` + 30-frame one-shot |
 | OffscreenCanvas / Worker | Not implemented — architecture cost too high for a decorative effect; reassess if stride+skip is insufficient |
 | Monorepo tooling | npm workspaces (Node 20); no Turborepo/Nx — overkill for 3 packages |
