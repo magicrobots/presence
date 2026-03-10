@@ -208,7 +208,7 @@ export default function IzaComputer({ inputProcessor }) {
     // ---- state (drives JSX re-renders) ----
     const [containerWidth, setContainerWidth] = useState(window.innerWidth);
     const [containerHeight, setContainerHeight] = useState(window.innerHeight);
-    const [isMpfVisible, setIsMpfVisible] = useState(true);
+    const [isMpfVisible] = useState(() => new URLSearchParams(window.location.search).get('fps') !== '0');
     const [mpf, setMpf] = useState('');
     const [isLoadingSomething, setIsLoadingSomething] = useState(false);
 
@@ -553,6 +553,8 @@ export default function IzaComputer({ inputProcessor }) {
                             qualityLevelRef.current = Math.max(0, qualityLevelRef.current - 1);
                         }
                         // else: FPS within target band — hold current level
+
+                        setMpf(`${Math.round(avgFps)} (q${qualityLevelRef.current})`);
                     }
 
                     // Restart eval window after each check (adjusted or not).

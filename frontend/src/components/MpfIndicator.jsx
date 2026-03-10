@@ -4,6 +4,6 @@ export default function MpfIndicator({ mpf, isVisible }) {
     if (!isVisible) return null;
 
     return (
-        <div className="fps-indicator">testing performance: {mpf}</div>
+        <div className="fps-indicator">fps: {mpf}</div>
     );
 }
