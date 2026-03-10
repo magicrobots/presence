@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import persistence from '../hooks/usePersistence';
 import rngeezus from '../utils/rngeezus';
 import { applyAllDeformers } from '../utils/deformers';
-import MagicNumbers from '../constants/magic-numbers';
+import MagicNumbers, { QUALITY_LADDER } from '../constants/magic-numbers';
 import LoadingIndicator from './LoadingIndicator';
 import MpfIndicator from './MpfIndicator';
 // import { useStatusBar } from '../context/StatusBarContext';  // commented out as in original
@@ -418,8 +418,9 @@ export default function IzaComputer({ inputProcessor }) {
 
         let deformedImage = originalScreenBitmapRef.current;
 
-        // chain pixel modifications
-        deformedImage = applyAllDeformers(deformedImage);
+        // chain pixel modifications — pass current quality level so applyAllDeformers
+        // selects the correct QUALITY_LADDER entry (T022).
+        deformedImage = applyAllDeformers(deformedImage, qualityLevelRef.current);
 
         // make new image for display using contents of deformed image data
         let newImageData = ctx2.createImageData(viewportMeasurements.width, viewportMeasurements.height);
@@ -430,11 +431,20 @@ export default function IzaComputer({ inputProcessor }) {
         // draw deformed image
         ctx2.putImageData(newImageData, 0, 0);
 
-        _doDisplacementCounter();
-        const largeDisplacement = rngeezus.getRandomValue('largeDisplacementPool');
-        _createDisplacement(ctx2, deformedImage, 5, displacementCounterRef.current + 2, 4);
-        _createDisplacement(ctx2, deformedImage, 4, displacementCounterRef.current + 1, largeDisplacement);
-        _createDisplacement(ctx2, deformedImage, 2, displacementCounterRef.current, 1);
+        // Use QUALITY_LADDER bandCount for displacement bands — 0 means skip displacement
+        // entirely (levels 6–7), reducing cost at low quality settings (T022).
+        const bandCount = QUALITY_LADDER[qualityLevelRef.current].displacement.bandCount;
+        if (bandCount > 0) {
+            _doDisplacementCounter();
+            const largeDisplacement = rngeezus.getRandomValue('largeDisplacementPool');
+            if (bandCount >= 3) {
+                _createDisplacement(ctx2, deformedImage, 5, displacementCounterRef.current + 2, 4);
+            }
+            if (bandCount >= 2) {
+                _createDisplacement(ctx2, deformedImage, 4, displacementCounterRef.current + 1, largeDisplacement);
+            }
+            _createDisplacement(ctx2, deformedImage, 2, displacementCounterRef.current, 1);
+        }
     }
 
     // The animation loop — redefined each render so it always closes over fresh
