@@ -39,36 +39,30 @@ function _computeFontCharacterWidth(fontSize) {
     return MagicNumbers.FONT_CHARACTER_WIDTH;
 }
 
-function _computeViewportMeasurements(containerWidth, containerHeight, isSmallViewport) {
-    const outputRatio = 4 / 3;
-    const borderValue = isSmallViewport ? 0 : MagicNumbers.MIN_BORDER;
-    const currHeight = containerHeight;
-    const currWidth = containerWidth > MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH
-        ? MagicNumbers.ABSOLUTE_MAX_VIEWPORT_WIDTH
-        : containerWidth;
-    const maxHeight = currHeight - (borderValue * 2);
-    const maxWidth = currWidth - (borderValue * 2);
-    const isWideViewport = maxWidth / maxHeight > outputRatio;
+function _computeViewportMeasurements() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
 
-    let height, width, left, top;
+    let canvasWidth, canvasHeight;
 
-    if (isWideViewport) {
-        height = maxHeight;
-        width = outputRatio * height;
-        top = 0;
+    if (w / h >= MagicNumbers.CANVAS_ASPECT_RATIO) {
+        canvasWidth = h * MagicNumbers.CANVAS_ASPECT_RATIO;
+        canvasHeight = h;
     } else {
-        width = maxWidth;
-        height = maxWidth * (1 / outputRatio);
-        top = (currHeight - height) / 2 - (borderValue * 1);
+        canvasWidth = w;
+        canvasHeight = w / MagicNumbers.CANVAS_ASPECT_RATIO;
     }
 
-    if (isSmallViewport) {
-        top = 0;
+    // Guard against degenerate inputs: clamp to minimum of 1 so the canvas
+    // does not break at extreme small window sizes (SC-004: down to 320×240).
+    if (!isFinite(canvasWidth) || isNaN(canvasWidth) || canvasWidth <= 0) {
+        canvasWidth = 1;
+    }
+    if (!isFinite(canvasHeight) || isNaN(canvasHeight) || canvasHeight <= 0) {
+        canvasHeight = 1;
     }
 
-    left = (containerWidth - width) / 2;
-
-    return { left, top, width, height };
+    return { width: canvasWidth, height: canvasHeight };
 }
 
 function _fitDisplayLinesInContainerWidth(allDisplayLines, maxCharsPerLine) {
@@ -239,7 +233,7 @@ export default function IzaComputer({ inputProcessor }) {
     const isSmallViewport = _computeIsSmallViewport(containerWidth, containerHeight);
     const fontSize = _computeFontSize(isSmallViewport);
     const fontCharacterWidth = _computeFontCharacterWidth(fontSize);
-    const viewportMeasurements = _computeViewportMeasurements(containerWidth, containerHeight, isSmallViewport);
+    const viewportMeasurements = _computeViewportMeasurements();
     const textEdgeBuffer = Math.max(viewportMeasurements.width, viewportMeasurements.height) * 0.06;
     const maxCharsPerLine = Math.floor((viewportMeasurements.width - 2 * textEdgeBuffer) / fontCharacterWidth);
     const bgImagePath = inputProcessor.state.bgImage || 'emptyScreen.jpg';
@@ -254,8 +248,6 @@ export default function IzaComputer({ inputProcessor }) {
     const routeContainerStyle = {
         height: `${viewportMeasurements.height}px`,
         width: `${viewportMeasurements.width}px`,
-        left: `${viewportMeasurements.left}px`,
-        top: `${viewportMeasurements.top}px`,
     };
 
     // Push maxCharsPerLine into the processor whenever viewport or font changes.
@@ -320,8 +312,7 @@ export default function IzaComputer({ inputProcessor }) {
 
         // re-fill canvases using newly computed viewport (state update is async,
         // so we compute the new viewport directly from window dimensions)
-        const newIsSmall = _computeIsSmallViewport(newW, newH);
-        const newViewport = _computeViewportMeasurements(newW, newH, newIsSmall);
+        const newViewport = _computeViewportMeasurements();
 
         if (ctxRef.current) {
             ctxRef.current.fillRect(0, 0, newViewport.width, newViewport.height);
