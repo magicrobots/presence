@@ -84,9 +84,12 @@ export const QUALITY_LADDER = Object.freeze([
         pixelize: { adjustmentLarge: 10, adjustmentSmall: 5 },
         displacement: { bandCount: 0, travelPixelsPerCycle: null },
     },
-    // Level 7 — Minimum quality; all visual passes off; stride 4; lowest phosphor values
+    // Level 7 — Emergency/minimum quality; stride 2 (text must remain readable); all visual
+    //           passes off; lowest phosphor values. Reached only via stall-threshold emergency
+    //           path (single frame delta > STALL_THRESHOLD_MS). Stride 4 removed — readability
+    //           is paramount even at minimum quality.
     {
-        stride: 4,
+        stride: 2,
         glow: { enabled: false, useRandom: false, maxContrast: null, distance: null, falloff: { near: null, mid: null, far: null } },
         shift: { enabled: false, positionFactor: null, factor: null, brightnessThreshold: null },
         pixelize: { adjustmentLarge: 8, adjustmentSmall: 4 },
@@ -112,9 +115,9 @@ export default {
     SCREEN_BREAK: 768, // match media query max-width at app/styles/app.css
 
     // crt-display adaptive quality
-    TARGET_FPS: 30,
+    TARGET_FPS: 24,
     TARGET_FPS_HIGH: 60,
-    TARGET_FPS_LOW: 15,
+    TARGET_FPS_LOW: 12,
     HEADROOM_FPS: 10,
     EVAL_WINDOW_MS: 3000,
     STALL_THRESHOLD_MS: 3000,
