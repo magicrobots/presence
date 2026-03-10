@@ -215,9 +215,20 @@ export default function IzaComputer({ inputProcessor }) {
     const originalScreenBitmapRef = useRef(null);
     const displacementCounterRef = useRef(null);
     // qualityLevelRef: integer 0–7 where 0 = maximum quality, 7 = minimum quality.
-    // The bidirectional adaptation loop (T021) will step this up/down based on FPS.
+    // The bidirectional adaptation loop steps this up/down based on measured FPS.
     const qualityLevelRef = useRef(0);
     const rafRef = useRef(null);
+
+    // ---- refs (bidirectional quality evaluation loop) ----
+    // targetFpsRef: FPS goal for the current quality preset (set by T025 preset wiring).
+    // Initialized to TARGET_FPS (30) — the 'normal' preset default.
+    const targetFpsRef = useRef(MagicNumbers.TARGET_FPS);
+    // evalWindowStartTimeRef: performance.now() timestamp when the current 3s eval window began.
+    const evalWindowStartTimeRef = useRef(null);
+    // frameTimesRef: array of rAF frame deltas (ms) collected within the current eval window.
+    const frameTimesRef = useRef([]);
+    // lastFrameTimeRef: performance.now() at the end of the previous rAF frame, used to compute deltas.
+    const lastFrameTimeRef = useRef(null);
 
     // animFnRef always points to the latest render's recursiveAnimationFunction
     // so the rAF loop never has stale closures over component state.
@@ -430,6 +441,83 @@ export default function IzaComputer({ inputProcessor }) {
     // computed values. animFnRef.current is updated below so rAF always calls
     // the latest version (no stale closures on visibleDisplayLines etc.)
     function recursiveAnimationFunction() {
+        // -----------------------------------------------------------------------
+        // Bidirectional quality evaluation loop
+        //
+        // Algorithm:
+        //   1. On each rAF tick, compute the frame delta (ms since last frame).
+        //   2. Emergency stall: if delta > STALL_THRESHOLD_MS (3000ms), immediately
+        //      jump qualityLevelRef to 7 (minimum quality) and restart the eval window.
+        //      This handles tab-hidden, CPU spike, or GC pause scenarios.
+        //   3. Normal path: accumulate delta into frameTimesRef array.
+        //   4. Every EVAL_WINDOW_MS (3000ms), compute average FPS from collected deltas:
+        //        avgFps = frameCount / (totalMs / 1000)
+        //   5. Compare avgFps to targetFpsRef.current (default TARGET_FPS=30):
+        //        - FPS < target          → step quality DOWN by 1 (level++ up to 7=minimum)
+        //        - FPS > target + HEADROOM_FPS (5fps) → step quality UP by 1 (level-- down to 0=maximum)
+        //        - Otherwise             → hold current level
+        //   6. After any adjustment, restart the eval window (clear frameTimesRef, reset start).
+        //   7. qualityLevelRef is clamped to [0, 7] at all times.
+        //
+        // Note: qualityLevelRef.current is wired into the render calls by T022.
+        //       targetFpsRef.current is updated by the quality preset selector (T025).
+        // -----------------------------------------------------------------------
+        const now = performance.now();
+        const lastTime = lastFrameTimeRef.current;
+
+        if (lastTime !== null) {
+            const delta = now - lastTime;
+
+            // Emergency stall: single frame delta exceeds STALL_THRESHOLD_MS
+            if (delta > MagicNumbers.STALL_THRESHOLD_MS) {
+                // Jump to minimum quality and restart eval window
+                qualityLevelRef.current = 7;
+                evalWindowStartTimeRef.current = now;
+                frameTimesRef.current = [];
+            } else {
+                // Accumulate this frame's delta into the eval window
+                frameTimesRef.current.push(delta);
+
+                // Check whether the eval window has elapsed
+                const windowStart = evalWindowStartTimeRef.current;
+                const windowElapsed = windowStart !== null ? now - windowStart : 0;
+
+                if (windowStart !== null && windowElapsed >= MagicNumbers.EVAL_WINDOW_MS) {
+                    // Compute average FPS over the evaluation window
+                    const frameTimes = frameTimesRef.current;
+                    const frameCount = frameTimes.length;
+
+                    if (frameCount > 0) {
+                        const totalMs = frameTimes.reduce((sum, t) => sum + t, 0);
+                        const avgFps = frameCount / (totalMs / 1000);
+                        const target = targetFpsRef.current;
+
+                        if (avgFps < target) {
+                            // FPS below target: reduce quality (step level up, max 7)
+                            qualityLevelRef.current = Math.min(7, qualityLevelRef.current + 1);
+                        } else if (avgFps > target + MagicNumbers.HEADROOM_FPS) {
+                            // FPS comfortably above target: improve quality (step level down, min 0)
+                            qualityLevelRef.current = Math.max(0, qualityLevelRef.current - 1);
+                        }
+                        // else: FPS within target band — hold current level
+                    }
+
+                    // Restart eval window after each check (adjusted or not)
+                    evalWindowStartTimeRef.current = now;
+                    frameTimesRef.current = [];
+                }
+            }
+        } else {
+            // First frame: initialize the eval window start time
+            evalWindowStartTimeRef.current = now;
+        }
+
+        // Update last-frame timestamp for next tick
+        lastFrameTimeRef.current = now;
+
+        // -----------------------------------------------------------------------
+        // Render
+        // -----------------------------------------------------------------------
         const bgImage = bgImageDataRef.current;
         const ctx = ctxRef.current;
         const ctx2 = ctx2Ref.current;
@@ -446,7 +534,7 @@ export default function IzaComputer({ inputProcessor }) {
                 // Low graphics mode: skip deformer pipeline entirely
             } else {
                 // 'hi' or 'auto': run deformer pipeline at current quality level.
-                // qualityLevelRef.current is stepped by the bidirectional eval loop (T021).
+                // qualityLevelRef.current is stepped by the bidirectional eval loop above.
                 _deform(ctx2);
             }
 
