@@ -8,10 +8,11 @@ export function applyAllDeformers(imageData) {
     const l = imageData.data.length / 4;
     const glowParams = { enabled: true, useRandom: true, maxContrast: 120, distance: 3, falloff: { near: 1.0, mid: 0.5, far: 0.2 } };
     const shiftParams = { enabled: true, positionFactor: 5, factor: 7, brightnessThreshold: 140 };
+    const pixelizeParams = { adjustmentLarge: 24, adjustmentSmall: 12 };
     const randomValue = rngeezus.getRandomValue('largeDisplacementPool');
 
     for (let i = 0; i < l; i++) {
-        _pixelizeBit(i, imageData);
+        _pixelizeBit(i, imageData, pixelizeParams);
         _shiftPixel(i, imageData, shiftParams);
         _glowEdgesBit(i, imageData, glowParams, randomValue);
     }
@@ -40,13 +41,13 @@ function _shiftPixel(i, imageData, params) {
     }
 }
 
-function _pixelizeBit(i, imageData) {
+function _pixelizeBit(i, imageData, params) {
     let r = imageData.data[i * 4 + 0];
     let g = imageData.data[i * 4 + 1];
     let b = imageData.data[i * 4 + 2];
 
-    const adjustmentSmall = 12;
-    const adjustmentLarge = 24;
+    const adjustmentSmall = params.adjustmentSmall;
+    const adjustmentLarge = params.adjustmentLarge;
 
     if (i % 4 === 1)
     {
