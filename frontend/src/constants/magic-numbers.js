@@ -74,12 +74,14 @@ export const QUALITY_LADDER = Object.freeze([
         pixelize: { adjustmentLarge: 14, adjustmentSmall: 8 },
         displacement: { bandCount: 1, travelPixelsPerCycle: 2 },
     },
-    // Level 6 — Stride 4; glow and shift both disabled; displacement bands=0 (loop skipped)
+    // Level 6 — Stride 2 (same as level 5 — keeps text readable); glow, shift, and displacement
+    //           all disabled. CPU savings come from dropping shift and displacement vs level 5,
+    //           not from increasing stride. Stride 4 was too aggressive and made text unreadable.
     {
-        stride: 4,
+        stride: 2,
         glow: { enabled: false, useRandom: false, maxContrast: null, distance: null, falloff: { near: null, mid: null, far: null } },
         shift: { enabled: false, positionFactor: null, factor: null, brightnessThreshold: null },
-        pixelize: { adjustmentLarge: 12, adjustmentSmall: 6 },
+        pixelize: { adjustmentLarge: 10, adjustmentSmall: 5 },
         displacement: { bandCount: 0, travelPixelsPerCycle: null },
     },
     // Level 7 — Minimum quality; all visual passes off; stride 4; lowest phosphor values
@@ -113,7 +115,7 @@ export default {
     TARGET_FPS: 30,
     TARGET_FPS_HIGH: 60,
     TARGET_FPS_LOW: 15,
-    HEADROOM_FPS: 5,
+    HEADROOM_FPS: 10,
     EVAL_WINDOW_MS: 3000,
     STALL_THRESHOLD_MS: 3000,
     RESIZE_DEBOUNCE_MS: 200,
