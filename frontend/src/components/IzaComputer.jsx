@@ -214,9 +214,9 @@ export default function IzaComputer({ inputProcessor }) {
     const bgImageDataRef = useRef(null);
     const originalScreenBitmapRef = useRef(null);
     const displacementCounterRef = useRef(null);
-    const isEvaluatedRef = useRef(false);
-    const isPerformantRef = useRef(false);
-    const performanceEvalRef = useRef([]);
+    // qualityLevelRef: integer 0–7 where 0 = maximum quality, 7 = minimum quality.
+    // The bidirectional adaptation loop (T021) will step this up/down based on FPS.
+    const qualityLevelRef = useRef(0);
     const rafRef = useRef(null);
 
     // animFnRef always points to the latest render's recursiveAnimationFunction
@@ -426,31 +426,10 @@ export default function IzaComputer({ inputProcessor }) {
         _createDisplacement(ctx2, deformedImage, 2, displacementCounterRef.current, 1);
     }
 
-    function _handlePerformanceEval(mpfValue) {
-        setMpf(`${mpfValue} MPF (${performanceEvalRef.current.length}/${MagicNumbers.PERFORMANCE_TEST_LENGTH})`);
-        performanceEvalRef.current.push(mpfValue);
-
-        const avg = (values) => {
-            let total = 0;
-            for (let i = 0; i < values.length; i++) {
-                total += values[i];
-            }
-            return total / values.length;
-        };
-
-        if (performanceEvalRef.current.length >= MagicNumbers.PERFORMANCE_TEST_LENGTH) {
-            const perf = avg(performanceEvalRef.current);
-            isPerformantRef.current = perf < MagicNumbers.MAX_MPF;
-            isEvaluatedRef.current = true;
-            setIsMpfVisible(false);
-        }
-    }
-
     // The animation loop — redefined each render so it always closes over fresh
     // computed values. animFnRef.current is updated below so rAF always calls
     // the latest version (no stale closures on visibleDisplayLines etc.)
     function recursiveAnimationFunction() {
-        const preTime = new Date().getTime();
         const bgImage = bgImageDataRef.current;
         const ctx = ctxRef.current;
         const ctx2 = ctx2Ref.current;
@@ -463,21 +442,12 @@ export default function IzaComputer({ inputProcessor }) {
             // drawStatusBar(ctx, viewportMeasurements);  // commented out as in original
 
             const userGrafxSetting = persistence.getGraphicsMode();
-            if (userGrafxSetting === 'hi') {
-                _deform(ctx2);
-                if (alteredCanvasRef.current.style.display === 'none') {
-                    alteredCanvasRef.current.style = '';
-                }
-            } else if (userGrafxSetting === 'lo') {
-                // kill ctx2 if you need to
-                alteredCanvasRef.current.style = 'display:none;';
+            if (userGrafxSetting === 'lo') {
+                // Low graphics mode: skip deformer pipeline entirely
             } else {
-                if (!isEvaluatedRef.current || isPerformantRef.current) {
-                    _deform(ctx2);
-                } else {
-                    // kill ctx2 if you need to
-                    alteredCanvasRef.current.style = 'display:none;';
-                }
+                // 'hi' or 'auto': run deformer pipeline at current quality level.
+                // qualityLevelRef.current is stepped by the bidirectional eval loop (T021).
+                _deform(ctx2);
             }
 
             // store canvas image data for manipulation
@@ -487,12 +457,6 @@ export default function IzaComputer({ inputProcessor }) {
 
         // Always call latest version via animFnRef — prevents stale closures
         rafRef.current = window.requestAnimationFrame(() => animFnRef.current());
-
-        const postTime = new Date().getTime();
-
-        if (!isEvaluatedRef.current) {
-            _handlePerformanceEval(postTime - preTime);
-        }
     }
 
     // Keep animFnRef pointing to current render's version
