@@ -601,10 +601,16 @@ export default function IzaComputer({ inputProcessor }) {
             frameTimesRef.current = [];
         });
 
-        // add resize listener
+        // add resize listener — 200ms trailing-edge debounce (T029)
+        // debounceTimer is declared inside the closure (not a ref) so it is
+        // private to this effect instance and cleaned up with the effect.
+        let debounceTimer;
         function handleResize() {
-            _setContainerSizeRef.current();
-            _doRedrawHackRef.current();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                _setContainerSizeRef.current();
+                _doRedrawHackRef.current();
+            }, MagicNumbers.RESIZE_DEBOUNCE_MS);
         }
         window.addEventListener('resize', handleResize);
 
@@ -614,6 +620,7 @@ export default function IzaComputer({ inputProcessor }) {
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            clearTimeout(debounceTimer);
             if (rafRef.current) {
                 cancelAnimationFrame(rafRef.current);
             }
