@@ -86,7 +86,7 @@ presence/                            ← repo root (npm workspace root)
 │       ├── utils/
 │       │   └── deformers.js         ← PRIMARY CHANGE: stride + pass-skip, baseIdx pre-computation
 │       ├── constants/
-│       │   └── magic-numbers.js     ← PRIMARY CHANGE: TARGET_FPS, EVAL_WINDOW_MS, RESIZE_DEBOUNCE_MS, HEADROOM_FPS, QUALITY_LADDER
+│       │   └── magic-numbers.js     ← PRIMARY CHANGE: TARGET_FPS, TARGET_FPS_HIGH, TARGET_FPS_LOW, EVAL_WINDOW_MS, STALL_THRESHOLD_MS, RESIZE_DEBOUNCE_MS, HEADROOM_FPS, CANVAS_ASPECT_RATIO, QUALITY_LADDER
 │       ├── hooks/
 │       │   └── usePersistence.js    ← MINOR CHANGE: add getQualityPreset / setQualityPreset
 │       └── routes/
