@@ -6,11 +6,13 @@ export function applyAllDeformers(imageData) {
     }
 
     const l = imageData.data.length / 4;
+    const glowParams = { enabled: true, useRandom: true, maxContrast: 120, distance: 3, falloff: { near: 1.0, mid: 0.5, far: 0.2 } };
+    const randomValue = rngeezus.getRandomValue('largeDisplacementPool');
 
     for (let i = 0; i < l; i++) {
         _pixelizeBit(i, imageData);
         _shiftPixel(i, imageData);
-        _glowEdgesBit(i, imageData);
+        _glowEdgesBit(i, imageData, glowParams, randomValue);
     }
 
     return imageData;
@@ -69,48 +71,51 @@ function _pixelizeBit(i, imageData) {
     }
 }
 
-function _glowEdgesBit(i, imageData) {
-    const distance = 3;
+function _glowEdgesBit(i, imageData, params, randomValue) {
+    if (!params.enabled) {
+        return;
+    }
 
     let r = imageData.data[i * 4 + 0];
     let g = imageData.data[i * 4 + 1];
     let b = imageData.data[i * 4 + 2];
-    let r1 = imageData.data[(i + distance) * 4 + 0];
-    let g1 = imageData.data[(i + distance) * 4 + 1];
-    let b1 = imageData.data[(i + distance) * 4 + 2];
+    let r1 = imageData.data[(i + params.distance) * 4 + 0];
+    let g1 = imageData.data[(i + params.distance) * 4 + 1];
+    let b1 = imageData.data[(i + params.distance) * 4 + 2];
 
     const currBrightness = r + g + b;
     const nextBrightness = r1 + g1 + b1;
     const contrast = Math.abs(nextBrightness - currBrightness);
-    const maxContrast = 120;
 
-    if (contrast > maxContrast)
+    if (contrast > params.maxContrast)
     {
-        const increaseAmount = 20 + rngeezus.getRandomValue('largeDisplacementPool');
+        const baseIncreaseAmount = params.useRandom ? (20 + randomValue) : 20;
+
         const nextPixelIndex = i + 1;
         const nextPixelR = imageData.data[nextPixelIndex * 4 + 0];
         const nextPixelG = imageData.data[nextPixelIndex * 4 + 1];
         const nextPixelB = imageData.data[nextPixelIndex * 4 + 2];
-        imageData.data[nextPixelIndex * 4 + 0] = nextPixelR + increaseAmount;
-        imageData.data[nextPixelIndex * 4 + 1] = nextPixelG + increaseAmount;
-        imageData.data[nextPixelIndex * 4 + 2] = nextPixelB + increaseAmount;
+        const nearAmount = baseIncreaseAmount * params.falloff.near;
+        imageData.data[nextPixelIndex * 4 + 0] = nextPixelR + nearAmount;
+        imageData.data[nextPixelIndex * 4 + 1] = nextPixelG + nearAmount;
+        imageData.data[nextPixelIndex * 4 + 2] = nextPixelB + nearAmount;
 
-        const middleIncreaseAmount = increaseAmount * 0.5;
         const middlePixelIndex = i + 2;
-        const middlePixelR = imageData.data[middlePixelIndex * 4 + 1];
+        const middlePixelR = imageData.data[middlePixelIndex * 4 + 0];
         const middlePixelG = imageData.data[middlePixelIndex * 4 + 1];
         const middlePixelB = imageData.data[middlePixelIndex * 4 + 2];
-        imageData.data[middlePixelIndex * 4 + 0] = middlePixelR + middleIncreaseAmount;
-        imageData.data[middlePixelIndex * 4 + 1] = middlePixelG + middleIncreaseAmount;
-        imageData.data[middlePixelIndex * 4 + 2] = middlePixelB + middleIncreaseAmount;
+        const midAmount = baseIncreaseAmount * params.falloff.mid;
+        imageData.data[middlePixelIndex * 4 + 0] = middlePixelR + midAmount;
+        imageData.data[middlePixelIndex * 4 + 1] = middlePixelG + midAmount;
+        imageData.data[middlePixelIndex * 4 + 2] = middlePixelB + midAmount;
 
-        const farIncreaseAmount = increaseAmount * 0.2;
         const farPixelIndex = i + 3;
         const farPixelR = imageData.data[farPixelIndex * 4 + 0];
         const farPixelG = imageData.data[farPixelIndex * 4 + 1];
         const farPixelB = imageData.data[farPixelIndex * 4 + 2];
-        imageData.data[farPixelIndex * 4 + 0] = farPixelR + farIncreaseAmount;
-        imageData.data[farPixelIndex * 4 + 1] = farPixelG + farIncreaseAmount;
-        imageData.data[farPixelIndex * 4 + 2] = farPixelB + farIncreaseAmount;
+        const farAmount = baseIncreaseAmount * params.falloff.far;
+        imageData.data[farPixelIndex * 4 + 0] = farPixelR + farAmount;
+        imageData.data[farPixelIndex * 4 + 1] = farPixelG + farAmount;
+        imageData.data[farPixelIndex * 4 + 2] = farPixelB + farAmount;
     }
 }
