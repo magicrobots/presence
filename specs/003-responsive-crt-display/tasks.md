@@ -32,7 +32,7 @@
 
 **⚠️ REQUIRED before user stories**: T006 and T012 only. The API/DB scaffold tasks (T005, T007–T011) are non-blocking infrastructure that can proceed in parallel with user story phases — they are not prerequisites for any spec.md functional requirement (FR-001 through FR-008 are all frontend/canvas-only; FR-008 persistence is satisfied by localStorage alone per plan.md).
 
-- [ ] T006 Update `frontend/src/constants/magic-numbers.js`: remove `ABSOLUTE_MAX_VIEWPORT_WIDTH`, `MAX_MPF`, `PERFORMANCE_TEST_LENGTH`; add `TARGET_FPS` (30), `TARGET_FPS_HIGH` (60), `TARGET_FPS_LOW` (15), `HEADROOM_FPS` (5), `EVAL_WINDOW_MS` (3000), `STALL_THRESHOLD_MS` (3000), `RESIZE_DEBOUNCE_MS` (200), `CANVAS_ASPECT_RATIO` (4/3); add `QUALITY_LADDER` array — 8 entries (levels 0–7), each entry an object with all 16 knobs per data-model.md Step Ladder Definition table (QUALITY_LADDER lives in this file per plan.md)
+- [x] T006 Update `frontend/src/constants/magic-numbers.js`: remove `ABSOLUTE_MAX_VIEWPORT_WIDTH`, `MAX_MPF`, `PERFORMANCE_TEST_LENGTH`; add `TARGET_FPS` (30), `TARGET_FPS_HIGH` (60), `TARGET_FPS_LOW` (15), `HEADROOM_FPS` (5), `EVAL_WINDOW_MS` (3000), `STALL_THRESHOLD_MS` (3000), `RESIZE_DEBOUNCE_MS` (200), `CANVAS_ASPECT_RATIO` (4/3); add `QUALITY_LADDER` array — 8 entries (levels 0–7), each entry an object with all 16 knobs per data-model.md Step Ladder Definition table (QUALITY_LADDER lives in this file per plan.md)
 - [ ] T012 Update `frontend/vite.config.js`: add `server.proxy` entry routing `/api` → `http://localhost:3001` (changeOrigin: true)
 
 **API/DB Scaffold (non-blocking — run in parallel with user story phases):**
