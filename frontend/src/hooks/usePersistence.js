@@ -5,6 +5,7 @@ const KEY_USERNAME = 'username';
 const KEY_FONT_SIZE = 'font-size';
 const KEY_SHOW_KEYBOARD = 'show-keyboard';
 const KEY_GRAPHICS_MODE = 'graphics-mode';
+const KEY_QUALITY_PRESET = 'quality_preset';
 
 // fling
 const KEY_FLING_RECORD = 'fling-record';
@@ -84,6 +85,18 @@ function setGraphicsMode(mode) {
 
 function getGraphicsMode() {
     return _getStorageObject()[KEY_GRAPHICS_MODE];
+}
+
+function setQualityPreset(preset) {
+    const validPresets = ['high', 'normal', 'low'];
+    if (validPresets.includes(preset)) {
+        magicRobotsData[KEY_QUALITY_PRESET] = preset;
+        _setStorageObject();
+    }
+}
+
+function getQualityPreset() {
+    return _getStorageObject()[KEY_QUALITY_PRESET] || 'normal';
 }
 
 // --------------------- fling game vars ------------------------
@@ -351,6 +364,8 @@ export default {
     getShowKeyboard,
     setGraphicsMode,
     getGraphicsMode,
+    setQualityPreset,
+    getQualityPreset,
     setFlingRecord,
     getFlingRecord,
     setStoryPosX,
