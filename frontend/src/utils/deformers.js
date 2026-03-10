@@ -1,32 +1,80 @@
 import rngeezus from './rngeezus';
+import { QUALITY_LADDER } from '../constants/magic-numbers';
 
-export function applyAllDeformers(imageData) {
+// applyAllDeformers — stride loop with block-fill for skipped pixels.
+//
+// Design:
+//   - qualityLevel selects a row from QUALITY_LADDER (0 = max quality, 7 = min quality).
+//   - stride controls how many pixels are sampled vs. skipped: stride=1 processes every
+//     pixel; stride=2 samples every other pixel; stride=4 samples every 4th pixel.
+//   - Skipped pixels (the stride-1 neighbors following each sampled pixel) are block-filled
+//     by copying the sampled pixel's RGBA values directly. This avoids leaving stale data
+//     in skipped slots while keeping cost proportional to 1/stride.
+//   - Drop order rationale: _pixelizeBit first (cheap, always runs), then _shiftPixel
+//     (moderate cost, disabled at levels 6–7), then _glowEdgesBit last (most expensive,
+//     disabled at levels 4–7). This matches the visual priority inversion: phosphor triads
+//     are cheapest to keep active, glow is most expensive.
+//   - baseIdx pre-computation: `const baseIdx = i * 4` is hoisted before all three pass
+//     calls to avoid redundant multiplications in each pass function.
+//   - The random value for glow is hoisted once per frame (not per pixel) via
+//     rngeezus.getRandomValue. The glow pass accepts it as a pre-computed argument so
+//     the pool lookup does not occur in the hot loop.
+export function applyAllDeformers(imageData, qualityLevel) {
     if (!imageData) {
         return false;
     }
 
-    const l = imageData.data.length / 4;
-    const glowParams = { enabled: true, useRandom: true, maxContrast: 120, distance: 3, falloff: { near: 1.0, mid: 0.5, far: 0.2 } };
-    const shiftParams = { enabled: true, positionFactor: 5, factor: 7, brightnessThreshold: 140 };
-    const pixelizeParams = { adjustmentLarge: 24, adjustmentSmall: 12 };
+    // Clamp qualityLevel to valid range [0, 7]
+    const level = (typeof qualityLevel === 'number' && qualityLevel >= 0 && qualityLevel <= 7)
+        ? Math.floor(qualityLevel)
+        : 0;
+
+    const entry = QUALITY_LADDER[level];
+    const stride = entry.stride;
+    const glowParams = entry.glow;
+    const shiftParams = entry.shift;
+    const pixelizeParams = entry.pixelize;
+
+    // Hoist random value once per frame — passed to _glowEdgesBit to avoid
+    // per-pixel pool lookup inside the hot loop.
     const randomValue = rngeezus.getRandomValue('largeDisplacementPool');
 
-    for (let i = 0; i < l; i++) {
-        _pixelizeBit(i, imageData, pixelizeParams);
-        _shiftPixel(i, imageData, shiftParams);
-        _glowEdgesBit(i, imageData, glowParams, randomValue);
+    const l = imageData.data.length / 4;
+
+    for (let i = 0; i < l; i += stride) {
+        const baseIdx = i * 4;
+        _pixelizeBit(i, imageData, pixelizeParams, baseIdx);
+        _shiftPixel(i, imageData, shiftParams, baseIdx);
+        _glowEdgesBit(i, imageData, glowParams, randomValue, baseIdx);
+
+        // Block-fill: copy sampled pixel RGBA to all skipped neighbor pixels so
+        // they do not retain stale data from the previous frame.
+        if (stride > 1) {
+            const r = imageData.data[baseIdx];
+            const g = imageData.data[baseIdx + 1];
+            const b = imageData.data[baseIdx + 2];
+            const a = imageData.data[baseIdx + 3];
+            const end = Math.min(i + stride, l);
+            for (let j = i + 1; j < end; j++) {
+                const jIdx = j * 4;
+                imageData.data[jIdx]     = r;
+                imageData.data[jIdx + 1] = g;
+                imageData.data[jIdx + 2] = b;
+                imageData.data[jIdx + 3] = a;
+            }
+        }
     }
 
     return imageData;
 }
 
-function _shiftPixel(i, imageData, params) {
+function _shiftPixel(i, imageData, params, baseIdx) {
     if (!params.enabled) {
         return;
     }
-    let r = imageData.data[i * 4 + 0];
-    let g = imageData.data[i * 4 + 1];
-    let b = imageData.data[i * 4 + 2];
+    let r = imageData.data[baseIdx + 0];
+    let g = imageData.data[baseIdx + 1];
+    let b = imageData.data[baseIdx + 2];
     let r1 = imageData.data[i * params.positionFactor + 0];
     let g1 = imageData.data[i * params.positionFactor + 1];
     let b1 = imageData.data[i * params.positionFactor + 2];
@@ -41,10 +89,10 @@ function _shiftPixel(i, imageData, params) {
     }
 }
 
-function _pixelizeBit(i, imageData, params) {
-    let r = imageData.data[i * 4 + 0];
-    let g = imageData.data[i * 4 + 1];
-    let b = imageData.data[i * 4 + 2];
+function _pixelizeBit(i, imageData, params, baseIdx) {
+    let r = imageData.data[baseIdx + 0];
+    let g = imageData.data[baseIdx + 1];
+    let b = imageData.data[baseIdx + 2];
 
     const adjustmentSmall = params.adjustmentSmall;
     const adjustmentLarge = params.adjustmentLarge;
@@ -52,36 +100,36 @@ function _pixelizeBit(i, imageData, params) {
     if (i % 4 === 1)
     {
         // red pixel
-        imageData.data[i * 4 + 0] = r + adjustmentLarge;
-        imageData.data[i * 4 + 1] = g - adjustmentLarge;
-        imageData.data[i * 4 + 2] = b - adjustmentLarge;
+        imageData.data[baseIdx + 0] = r + adjustmentLarge;
+        imageData.data[baseIdx + 1] = g - adjustmentLarge;
+        imageData.data[baseIdx + 2] = b - adjustmentLarge;
     }
 
     if (i % 4 === 2)
     {
         // blue pixel
-        imageData.data[i * 4 + 0] = r - adjustmentLarge;
-        imageData.data[i * 4 + 1] = g - adjustmentLarge;
-        imageData.data[i * 4 + 2] = b + adjustmentLarge;
+        imageData.data[baseIdx + 0] = r - adjustmentLarge;
+        imageData.data[baseIdx + 1] = g - adjustmentLarge;
+        imageData.data[baseIdx + 2] = b + adjustmentLarge;
     }
 
     if (i % 4 === 3)
     {
         // brighten pixel
-        imageData.data[i * 4 + 0] = r + adjustmentSmall;
-        imageData.data[i * 4 + 1] = g + adjustmentSmall;
-        imageData.data[i * 4 + 2] = b + adjustmentSmall;
+        imageData.data[baseIdx + 0] = r + adjustmentSmall;
+        imageData.data[baseIdx + 1] = g + adjustmentSmall;
+        imageData.data[baseIdx + 2] = b + adjustmentSmall;
     }
 }
 
-function _glowEdgesBit(i, imageData, params, randomValue) {
+function _glowEdgesBit(i, imageData, params, randomValue, baseIdx) {
     if (!params.enabled) {
         return;
     }
 
-    let r = imageData.data[i * 4 + 0];
-    let g = imageData.data[i * 4 + 1];
-    let b = imageData.data[i * 4 + 2];
+    let r = imageData.data[baseIdx + 0];
+    let g = imageData.data[baseIdx + 1];
+    let b = imageData.data[baseIdx + 2];
     let r1 = imageData.data[(i + params.distance) * 4 + 0];
     let g1 = imageData.data[(i + params.distance) * 4 + 1];
     let b1 = imageData.data[(i + params.distance) * 4 + 2];
