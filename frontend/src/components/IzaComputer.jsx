@@ -314,6 +314,17 @@ export default function IzaComputer({ inputProcessor }) {
         // so we compute the new viewport directly from window dimensions)
         const newViewport = _computeViewportMeasurements();
 
+        // Synchronously update both canvas width/height attributes so source-canvas
+        // and altered-canvas resize in sync on every viewport measurement update (T015).
+        if (sourceCanvasRef.current) {
+            sourceCanvasRef.current.width = newViewport.width;
+            sourceCanvasRef.current.height = newViewport.height;
+        }
+        if (alteredCanvasRef.current) {
+            alteredCanvasRef.current.width = newViewport.width;
+            alteredCanvasRef.current.height = newViewport.height;
+        }
+
         if (ctxRef.current) {
             ctxRef.current.fillRect(0, 0, newViewport.width, newViewport.height);
             ctx2Ref.current.fillRect(0, 0, newViewport.width, newViewport.height);
