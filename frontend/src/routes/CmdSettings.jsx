@@ -5,7 +5,7 @@ import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../hooks/usePersistence';
 
 const ESC_TEXT = Object.freeze(['', 'ESC to quit']);
-const SETTINGS_COMMAND_REGISTRY = Object.freeze(['username', 'fontsize', 'graphicsmode']);
+const SETTINGS_COMMAND_REGISTRY = Object.freeze(['username', 'fontsize', 'graphicsmode', 'qualitypreset']);
 
 export default function CmdSettings() {
     const inputProcessor = useOutletContext();
@@ -66,6 +66,16 @@ export default function CmdSettings() {
                 commonProcesses(args[0], hideEscText, 'graphicsmode', appResponse, 'setGraphicsMode', ['hi', 'lo']);
             },
 
+            qualitypreset(args = [], hideEscText) {
+                const appResponse = [
+                    `Current quality preset: ${persistence.getQualityPreset()}`,
+                    '',
+                    `Available options: high / normal / low`,
+                    `enter one as second parameter to set - e.g.: 'qualitypreset high'`
+                ];
+                commonProcesses(args[0], hideEscText, 'qualitypreset', appResponse, 'setQualityPreset', ['high', 'normal', 'low']);
+            },
+
             commandComplete(fragment, s) {
                 return environmentHelpers.handleTabComplete(fragment, [s.settingsCommandRegistry]);
             }
@@ -93,6 +103,7 @@ export default function CmdSettings() {
                 '  username',
                 '  fontsize',
                 '  graphicsmode',
+                '  qualitypreset',
                 ...ESC_TEXT
             ]
         });
