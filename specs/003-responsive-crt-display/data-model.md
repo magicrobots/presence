@@ -91,7 +91,7 @@ export interface UpdatePreferencesRequest {
 First launch
     │
     ▼
-localStorage 'magic-robots-data'.quality-preset = 'normal'  (immediate, FR-008)
+localStorage 'magic-robots-data'.quality_preset = 'normal'  (immediate, FR-008)
     │
     │  (future: on login / session start)
     ▼
