@@ -22,7 +22,7 @@
 - [x] T001 Create workspace root `package.json`: set `"private": true`, `"workspaces": ["packages/*", "frontend", "api"]`, and top-level scripts (`build`, `typecheck`, `test`) in repo root `package.json`
 - [x] T002 Create `packages/types/` package: `packages/types/package.json` (`name: "@presence/types"`, `main: "dist/index.js"`, `types: "dist/index.d.ts"`, build script using `tsc`), `packages/types/tsconfig.json` (`target: ES2020`, `declaration: true`, `strict: true`, `outDir: dist`)
 - [x] T003 [P] Scaffold `frontend/` workspace: create `frontend/package.json` (react, react-dom, react-router-dom, vite deps; `"@presence/types": "*"`), move existing `src/` to `frontend/src/` preserving all files
-- [ ] T004 [P] Scaffold `api/` workspace: create `api/package.json` (express, drizzle-orm, pg, tsup, `"@presence/types": "*"`), `api/tsconfig.json` (`strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `module: CommonJS`), `api/.env.example` (DATABASE_URL, NODE_ENV, PORT, LOG_LEVEL)
+- [x] T004 [P] Scaffold `api/` workspace: create `api/package.json` (express, drizzle-orm, pg, tsup, `"@presence/types": "*"`), `api/tsconfig.json` (`strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `module: CommonJS`), `api/.env.example` (DATABASE_URL, NODE_ENV, PORT, LOG_LEVEL)
 
 ---
 
