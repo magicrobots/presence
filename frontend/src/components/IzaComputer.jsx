@@ -499,8 +499,21 @@ export default function IzaComputer({ inputProcessor }) {
         //   6. After any adjustment, restart the eval window (clear frameTimesRef, reset start).
         //   7. qualityLevelRef is clamped to [0, 7] at all times.
         //
-        // Note: qualityLevelRef.current is wired into the render calls by T022.
-        //       targetFpsRef.current is updated by the quality preset selector (T025).
+        // Area re-evaluation on resize (FR-007):
+        //   Each routine eval window restart (step 6) also updates lastEvalAreaRef.current
+        //   to the current canvas area. The resize handler (_setContainerSize) compares
+        //   the new canvas area against lastEvalAreaRef after a debounced resize event:
+        //   if the new area is larger, it restarts the eval window WITHOUT resetting
+        //   qualityLevelRef, so the adapter can reassess quality at the bigger canvas
+        //   without forcing the user back to maximum quality. Keeping lastEvalAreaRef
+        //   in sync with every routine window restart prevents false re-triggers on
+        //   subsequent resize events that do not actually grow the canvas.
+        //
+        // Notes:
+        //   - qualityLevelRef.current is wired into the render calls by T022.
+        //   - targetFpsRef.current is updated by the quality preset selector (T025).
+        //   - lastEvalAreaRef.current is updated here (every window reset) and in
+        //     _setContainerSize (on area-increase resize) per T030 / FR-007.
         // -----------------------------------------------------------------------
         const now = performance.now();
         const lastTime = lastFrameTimeRef.current;
