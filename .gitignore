@@ -1,30 +1,48 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
-/dist/
-/tmp/
+# compiled output — workspace-aware (no leading slash so it matches all subdirs)
+dist/
+tmp/
 
-# dependencies
-/bower_components/
-/node_modules/
+# dependencies — workspace-aware
+node_modules/
+bower_components/
+
+# environment secrets
+.env
+.env.*
+!.env.example
 
 # misc
-/.sass-cache
-/connect.lock
-/coverage/
-/libpeerconnection.log
-/npm-debug.log*
-/testem.log
-/yarn-error.log
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+npm-debug.log*
+testem.log
+yarn-error.log
 
 # ember-try
-/.node_modules.ember-try/
-/bower.json.ember-try
-/package.json.ember-try
+.node_modules.ember-try/
+bower.json.ember-try
+package.json.ember-try
 
-# super secrets
+# legacy config secret (pre-monorepo path)
 /config/.env
 
 # Claude Code local settings (machine-specific, not for sharing)
 .claude/settings.local.json
 .claude/worktrees/
+
+# SpecKit loop temp files
+*.ralph-prompt.md*
+*.ralph-prev-output*
+*.ralph-state*
+*.lisa-prompt.md*
+*.lisa-prev-output*
+*.lisa-state*
+*.homer-prompt.md*
+*.homer-prev-output*
+*.homer-state*
+
+.specify/logs/

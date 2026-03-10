@@ -1,7 +1,12 @@
 {
-  "name": "frontend",
+  "name": "presence-monorepo",
   "version": "0.0.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "frontend",
+    "api"
+  ],
   "description": "Small description for frontend goes here",
   "repository": "",
   "license": "MIT",

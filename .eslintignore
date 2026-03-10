@@ -2,6 +2,12 @@
 /blueprints/*/files/
 /vendor/
 
+# React/Vite workspace — linted by frontend/ workspace ESLint config
+/src/
+/frontend/
+/packages/
+/api/
+
 # compiled output
 /dist/
 /tmp/
