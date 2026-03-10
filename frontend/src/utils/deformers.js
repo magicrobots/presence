@@ -7,34 +7,36 @@ export function applyAllDeformers(imageData) {
 
     const l = imageData.data.length / 4;
     const glowParams = { enabled: true, useRandom: true, maxContrast: 120, distance: 3, falloff: { near: 1.0, mid: 0.5, far: 0.2 } };
+    const shiftParams = { enabled: true, positionFactor: 5, factor: 7, brightnessThreshold: 140 };
     const randomValue = rngeezus.getRandomValue('largeDisplacementPool');
 
     for (let i = 0; i < l; i++) {
         _pixelizeBit(i, imageData);
-        _shiftPixel(i, imageData);
+        _shiftPixel(i, imageData, shiftParams);
         _glowEdgesBit(i, imageData, glowParams, randomValue);
     }
 
     return imageData;
 }
 
-function _shiftPixel(i, imageData) {
-    const positionFactor = 5;
+function _shiftPixel(i, imageData, params) {
+    if (!params.enabled) {
+        return;
+    }
     let r = imageData.data[i * 4 + 0];
     let g = imageData.data[i * 4 + 1];
     let b = imageData.data[i * 4 + 2];
-    let r1 = imageData.data[i * positionFactor + 0];
-    let g1 = imageData.data[i * positionFactor + 1];
-    let b1 = imageData.data[i * positionFactor + 2];
-    const factor = 7;
-    if (r + b + g > 140) {
-        imageData.data[i * positionFactor + 0] = r1 + r / factor;
-        imageData.data[i * positionFactor + 1] = g1 + g / factor;
-        imageData.data[i * positionFactor + 2] = b1 + b / factor;
+    let r1 = imageData.data[i * params.positionFactor + 0];
+    let g1 = imageData.data[i * params.positionFactor + 1];
+    let b1 = imageData.data[i * params.positionFactor + 2];
+    if (r + b + g > params.brightnessThreshold) {
+        imageData.data[i * params.positionFactor + 0] = r1 + r / params.factor;
+        imageData.data[i * params.positionFactor + 1] = g1 + g / params.factor;
+        imageData.data[i * params.positionFactor + 2] = b1 + b / params.factor;
     } else {
-        imageData.data[i * positionFactor + 0] = r1 - r / factor;
-        imageData.data[i * positionFactor + 1] = g1 - g / factor;
-        imageData.data[i * positionFactor + 2] = b1 - b / factor;
+        imageData.data[i * params.positionFactor + 0] = r1 - r / params.factor;
+        imageData.data[i * params.positionFactor + 1] = g1 - g / params.factor;
+        imageData.data[i * params.positionFactor + 2] = b1 - b / params.factor;
     }
 }
 
