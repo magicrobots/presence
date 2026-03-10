@@ -241,6 +241,11 @@ export default function IzaComputer({ inputProcessor }) {
     const frameTimesRef = useRef([]);
     // lastFrameTimeRef: performance.now() at the end of the previous rAF frame, used to compute deltas.
     const lastFrameTimeRef = useRef(null);
+    // lastEvalAreaRef: canvas area (width * height) at the time the current eval window began.
+    // Used by the resize handler to detect when the canvas grows — if the new area is larger,
+    // the eval window is restarted (without resetting qualityLevelRef) so the adapter can
+    // reassess quality at the new larger canvas size (T030, FR-007).
+    const lastEvalAreaRef = useRef(0);
 
     // animFnRef always points to the latest render's recursiveAnimationFunction
     // so the rAF loop never has stale closures over component state.
@@ -351,6 +356,19 @@ export default function IzaComputer({ inputProcessor }) {
         if (ctxRef.current) {
             ctxRef.current.fillRect(0, 0, newViewport.width, newViewport.height);
             ctx2Ref.current.fillRect(0, 0, newViewport.width, newViewport.height);
+        }
+
+        // Canvas area tracking (T030, FR-007):
+        // If the new canvas area is larger than the area at the start of the last
+        // eval window, restart the evaluation window so the adapter can reassess
+        // quality at the larger canvas size.  qualityLevelRef is intentionally NOT
+        // reset here — we preserve the current quality level and let the adapter
+        // decide whether it needs to degrade from there.
+        const newArea = newViewport.width * newViewport.height;
+        if (newArea > lastEvalAreaRef.current) {
+            evalWindowStartTimeRef.current = performance.now();
+            frameTimesRef.current = [];
+            lastEvalAreaRef.current = newArea;
         }
 
         _setBgImageRef.current(inputProcessor.state.bgImage);
@@ -524,9 +542,15 @@ export default function IzaComputer({ inputProcessor }) {
                         // else: FPS within target band — hold current level
                     }
 
-                    // Restart eval window after each check (adjusted or not)
+                    // Restart eval window after each check (adjusted or not).
+                    // Also update lastEvalAreaRef so the resize area-increase guard
+                    // uses the current canvas size as its new baseline (T030, FR-007).
+                    // Without this, routine cycle restarts would leave lastEvalAreaRef
+                    // stale, causing the guard to re-trigger on subsequent resize events
+                    // that do not actually grow the canvas.
                     evalWindowStartTimeRef.current = now;
                     frameTimesRef.current = [];
+                    lastEvalAreaRef.current = viewportMeasurements.width * viewportMeasurements.height;
                 }
             }
         } else {
