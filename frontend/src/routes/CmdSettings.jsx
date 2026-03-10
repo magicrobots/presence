@@ -73,7 +73,23 @@ export default function CmdSettings() {
                     `Available options: high / normal / low`,
                     `enter one as second parameter to set - e.g.: 'qualitypreset high'`
                 ];
-                commonProcesses(args[0], hideEscText, 'qualitypreset', appResponse, 'setQualityPreset', ['high', 'normal', 'low']);
+                const preset = args[0];
+                const validPresets = ['high', 'normal', 'low'];
+                const isBlank = (x) => x == null || String(x).trim() === '';
+                const jumpIn = inputProcessorRef.current.state.currentCommand === 'settings qualitypreset';
+                const isValid = !jumpIn && !isBlank(preset) && validPresets.includes(preset);
+                commonProcesses(preset, hideEscText, 'qualitypreset', appResponse, 'setQualityPreset', validPresets);
+                if (isValid) {
+                    // Best-effort API sync — localStorage is source of truth; failure is non-critical
+                    fetch('/api/preferences', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: persistence.getUsername(),
+                            qualityPreset: preset
+                        })
+                    }).catch(() => {});
+                }
             },
 
             commandComplete(fragment, s) {
