@@ -53,8 +53,8 @@ var userPreferences = (0, import_pg_core.pgTable)("user_preferences", {
   id: (0, import_pg_core.serial)("id").primaryKey(),
   username: (0, import_pg_core.varchar)("username", { length: 255 }).notNull().unique(),
   qualityPreset: (0, import_pg_core.varchar)("quality_preset", { length: 10 }).notNull().default("normal"),
-  createdAt: (0, import_pg_core.timestamptz)("created_at").notNull().defaultNow(),
-  updatedAt: (0, import_pg_core.timestamptz)("updated_at").notNull().defaultNow()
+  createdAt: (0, import_pg_core.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: (0, import_pg_core.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
 // src/db/index.ts
