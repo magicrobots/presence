@@ -87,16 +87,27 @@ function getGraphicsMode() {
     return _getStorageObject()[KEY_GRAPHICS_MODE];
 }
 
+// Callback invoked whenever the quality preset changes.
+// Set by IzaComputer on mount so it can react immediately to preset changes.
+let _onQualityPresetChange = null;
+
 function setQualityPreset(preset) {
     const validPresets = ['high', 'normal', 'low'];
     if (validPresets.includes(preset)) {
         magicRobotsData[KEY_QUALITY_PRESET] = preset;
         _setStorageObject();
+        if (_onQualityPresetChange) {
+            _onQualityPresetChange(preset);
+        }
     }
 }
 
 function getQualityPreset() {
     return _getStorageObject()[KEY_QUALITY_PRESET] || 'normal';
+}
+
+function onQualityPresetChange(callback) {
+    _onQualityPresetChange = callback;
 }
 
 // --------------------- fling game vars ------------------------
@@ -366,6 +377,7 @@ export default {
     getGraphicsMode,
     setQualityPreset,
     getQualityPreset,
+    onQualityPresetChange,
     setFlingRecord,
     getFlingRecord,
     setStoryPosX,

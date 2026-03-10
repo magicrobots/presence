@@ -13,6 +13,17 @@ import MpfIndicator from './MpfIndicator';
 // Pure computed helpers (no React deps — safe outside component)
 // --------------------------------------------------------------------------
 
+// Map a quality preset string to its TARGET_FPS value.
+// Used on mount and whenever the preset changes (T025).
+function _presetToFps(preset) {
+    switch (preset) {
+        case 'high':   return MagicNumbers.TARGET_FPS_HIGH;
+        case 'low':    return MagicNumbers.TARGET_FPS_LOW;
+        case 'normal': // fall through
+        default:       return MagicNumbers.TARGET_FPS;
+    }
+}
+
 function _computeIsSmallViewport(containerWidth, containerHeight) {
     return containerWidth <= MagicNumbers.SCREEN_BREAK ||
         containerHeight <= MagicNumbers.SCREEN_BREAK;
@@ -220,9 +231,10 @@ export default function IzaComputer({ inputProcessor }) {
     const rafRef = useRef(null);
 
     // ---- refs (bidirectional quality evaluation loop) ----
-    // targetFpsRef: FPS goal for the current quality preset (set by T025 preset wiring).
-    // Initialized to TARGET_FPS (30) — the 'normal' preset default.
-    const targetFpsRef = useRef(MagicNumbers.TARGET_FPS);
+    // targetFpsRef: FPS goal for the current quality preset.
+    // Initialized from the persisted quality preset on mount (T025).
+    // Updated immediately when the user changes the preset in cmd-settings.
+    const targetFpsRef = useRef(_presetToFps(persistence.getQualityPreset()));
     // evalWindowStartTimeRef: performance.now() timestamp when the current 3s eval window began.
     const evalWindowStartTimeRef = useRef(null);
     // frameTimesRef: array of rAF frame deltas (ms) collected within the current eval window.
@@ -577,6 +589,17 @@ export default function IzaComputer({ inputProcessor }) {
         //  containerHeight/Width were undefined. In React they're pre-initialized
         //  so we call _setBgImage explicitly here.)
         _setBgImageRef.current(null);
+
+        // Subscribe to quality preset changes (T025).
+        // When the user changes the preset in cmd-settings, update targetFpsRef
+        // immediately and reset qualityLevelRef to 0 (maximum quality) so the
+        // adapter re-evaluates from full quality at the new FPS target (FR-008).
+        persistence.onQualityPresetChange(function(newPreset) {
+            targetFpsRef.current = _presetToFps(newPreset);
+            qualityLevelRef.current = 0;
+            evalWindowStartTimeRef.current = performance.now();
+            frameTimesRef.current = [];
+        });
 
         // add resize listener
         function handleResize() {
