@@ -127,7 +127,7 @@ A developer making a change to the codebase can run the test suite and get meani
 
 - **FR-001**: All frontend source files MUST be converted from `.js`/`.jsx` to `.ts`/`.tsx` with no remaining plain JavaScript source files in `frontend/src/`.
 - **FR-002**: The frontend TypeScript configuration MUST enable strict mode consistent with the existing API TypeScript configuration.
-- **FR-002a**: Use of `any` or `unknown` is permitted only as a last resort for genuinely un-typeable dynamic patterns; each occurrence MUST include an inline comment explaining why strict typing is not achievable there.
+- **FR-002a**: `any` is strictly forbidden per the project constitution (§4). Where a genuinely un-typeable dynamic pattern cannot be resolved without disproportionate effort, the developer MUST: (1) use `unknown` with a narrowing type guard as the first alternative; (2) document the specific reason strict typing is not achievable at that site with an inline comment; and (3) track the occurrence as a known exception in the PR description. Unresolved `any` usages that lack an inline comment MUST be treated as type errors and block merge.
 - **FR-003**: All frontend components, hooks, utilities, and constants MUST have explicit type annotations for all exported values, function parameters, and return types.
 - **FR-004**: Types defined in the `@presence/types` shared package MUST be used by the frontend wherever they apply, with no redundant re-declaration of identical shapes.
 
