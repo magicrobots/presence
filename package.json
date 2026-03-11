@@ -16,14 +16,11 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "ember build",
-    "lint:hbs": "ember-template-lint .",
+    "build": "npm run build --workspaces --if-present",
     "lint:js": "eslint .",
-    "start": "ember serve",
-    "test": "ember test",
-    "react:dev": "vite",
-    "react:build": "vite build",
-    "react:preview": "vite preview"
+    "start": "npm run dev -w frontend",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "devDependencies": {
     "@ember/jquery": "^0.6.0",
