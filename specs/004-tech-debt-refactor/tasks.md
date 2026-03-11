@@ -38,7 +38,7 @@
 - [x] T008 [P] Create `frontend/src/types/terminal.ts` with AppEnvironment per data-model.md §2 (InputState and InputAction live in inputReducer.ts)
 - [x] T009 [P] Create `frontend/src/types/game.ts` with GameState, StoryItem, RoomInventory, Room, RoomExit, ExitDirection, FlashlightState, FlashlightStatus per data-model.md §3
 - [x] T010 [P] Add gallery route types GalleryImage, ShopImage, GalleryConfig to `frontend/src/routes/shared/galleryNavigator.ts` per data-model.md §5 (these are route-layer types — they do NOT belong in canvas.ts or terminal.ts)
-- [ ] T011 Verify `npm run typecheck -w frontend` passes with zero errors on all .ts files; confirm tsconfig resolves `packages/types` reference
+- [x] T011 Verify `npm run typecheck -w frontend` passes with zero errors on all .ts files; confirm tsconfig resolves `packages/types` reference
 
 **Checkpoint**: Type scaffolding complete — user story implementation can now begin
 
