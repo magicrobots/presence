@@ -197,6 +197,7 @@ A developer making a change to the codebase can run the test suite and get meani
 
 - **SC-001**: The TypeScript compiler reports zero errors across the entire monorepo when run in strict mode.
 - **SC-002**: No two source files share more than 10 lines of logically identical code (excluding imports and trivial scaffolding).
+- **SC-003**: *(reserved — not used)*
 - **SC-004**: The CRT visual output is perceptually identical before and after the canvas refactor, verified by manual developer side-by-side screenshot comparison at each of the 8 quality levels, documented as a checklist step.
 - **SC-005**: Frame time on equivalent hardware at equivalent quality settings is unchanged or improved after the canvas pipeline refactor.
 - **SC-006**: The repository root contains zero files with "ember" in their filename or whose content references the Ember CLI framework.
