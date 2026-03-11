@@ -146,14 +146,14 @@
 
 ### Implementation for User Story 5
 
-- [ ] T047a [US5] **Before any deletion**: Read the Ember QUnit test file (located in the `/tests/` directory deleted by T048) and record its assertion logic — the exact behavior being tested, its inputs, and expected outcomes — as a comment block at the top of `frontend/src/tests/unit/ember-compat.test.ts` (create the file now with only the comment; implementation follows in T053a). This step MUST complete before T048 runs; without it T053a cannot faithfully port the test.
-- [ ] T048 [US5] Delete Ember artifact files from repo root: `ember-cli-build.js`, `testem.js`, `.ember-cli`, `.template-lintrc.js` (if present); also delete the `/tests/` (QUnit) directory. **Depends on T047a** — assertion logic must be recorded first.
+- [ ] T048a [US5] **Before any deletion**: Read the Ember QUnit test file (located in the `/tests/` directory deleted by T048) and record its assertion logic — the exact behavior being tested, its inputs, and expected outcomes — as a comment block at the top of `frontend/src/tests/unit/ember-compat.test.ts` (create the file now with only the comment; implementation follows in T053a). This step MUST complete before T048 runs; without it T053a cannot faithfully port the test.
+- [ ] T048 [US5] Delete Ember artifact files from repo root: `ember-cli-build.js`, `testem.js`, `.ember-cli`, `.template-lintrc.js` (if present); also delete the `/tests/` (QUnit) directory. **Depends on T048a** — assertion logic must be recorded first.
 - [ ] T049 [P] [US5] Delete `/config/` (Ember environment directory) and `/vendor/` (Ember vendor directory) from repo root
 - [ ] T050 [P] [US5] Move `MIGRATION_STATUS.md` and `EMBER_REACT_PATTERNS.md` to `docs/archive/` (FR-023); create `docs/archive/` if it does not exist
 - [ ] T051 [US5] Remove all Ember devDependencies from root `package.json` (ember-cli, ember-data, ember-source, @ember/*, ember-template-lint, and any related packages)
 - [ ] T052 [US5] Update `.eslintrc.js` — remove Ember plugin and template-lint rules; configure React-appropriate rules (FR-021)
 - [ ] T053 [US5] Audit `appveyor.yml` for stale Ember commands or artifact paths; replace each with React/Vite equivalent per research.md §8 (FR-023a)
-- [ ] T053a [US5] Port the Ember QUnit test assertion concept to Vitest (FR-022 second half): using the assertion logic recorded in `frontend/src/tests/unit/ember-compat.test.ts` by T047a, implement an equivalent test using the Vitest framework, confirming the same behavior is verified in the new test suite. **Depends on T047a** (assertion already recorded); **Depends on T048** (source file deleted, port from recorded notes only).
+- [ ] T053a [US5] Port the Ember QUnit test assertion concept to Vitest (FR-022 second half): using the assertion logic recorded in `frontend/src/tests/unit/ember-compat.test.ts` by T048a, implement an equivalent test using the Vitest framework, confirming the same behavior is verified in the new test suite. **Depends on T048a** (assertion already recorded); **Depends on T048** (source file deleted, port from recorded notes only).
 - [ ] T054 [US5] Verify: `npm install`, `npm run dev -w frontend`, `npm run build --workspaces --if-present` all succeed with zero errors; verify SC-006 (zero ember filenames in repo root) and SC-007
 
 **Checkpoint**: Repository is clean React/Vite. All documented commands work. No Ember artifacts remain.
@@ -227,7 +227,7 @@
 - US1: T012, T013, T014 parallel (different directories); T018 parallel with T012–T014
 - US3: T033, T034, T035, T036, T037 all parallel (different new files)
 - US4: T041, T042 parallel; T043, T044, T045 parallel after tests
-- US5: T047a MUST run first; T049 and T050 are parallel with each other (different files/dirs); T048 depends on T047a; T053a depends on T047a + T048
+- US5: T048a MUST run first; T049 and T050 are parallel with each other (different files/dirs); T048 depends on T048a; T053a depends on T048a + T048
 - US6: T055, T056 parallel
 
 ---
@@ -298,4 +298,4 @@ Task: "Create CanvasRenderer.ts" (T045)
 - Commit after each checkpoint to preserve rollback points
 - Visual fidelity checklist (T047) is a manual step — allocate time before merging US4
 - AppVeyor audit (T053) is critical — root script replacements in T005 must be consistent with appveyor.yml
-- QUnit test port (US5: T047a MUST run before T048) — record the QUnit assertion logic before deleting the tests/ directory; T053a implements the port from T047a's recorded notes
+- QUnit test port (US5: T048a MUST run before T048) — record the QUnit assertion logic before deleting the tests/ directory; T053a implements the port from T048a's recorded notes
