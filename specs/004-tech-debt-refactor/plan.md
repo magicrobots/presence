@@ -143,7 +143,9 @@ docs/
 # test:  "ember test"    → "npm test --workspaces --if-present"
 # lint:hbs removed; all ember devDependencies removed
 
-# appveyor.yml — already React/Vite; root script replacements above make it correct
+# appveyor.yml — MUST be audited (FR-023a / T053): replace any stale Ember build, test, or deploy
+# commands with React/Vite equivalents; root script replacements above are a prerequisite but do
+# not guarantee appveyor.yml is clean. See research.md §8 for audit procedure.
 ```
 
 **Structure Decision**: Monorepo Option 2 (frontend + api + packages). The `frontend/src/utils/game/` subdirectory groups the storyCore decomposition. The `frontend/src/components/canvas/` subdirectory groups the IzaComputer decomposition. Shared route utilities live in `frontend/src/routes/shared/`. No new workspaces are introduced.
