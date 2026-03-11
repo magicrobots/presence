@@ -29,10 +29,6 @@ A web-based application featuring a quirky, interactive terminal emulation envir
 - No external heavy UI component libraries (like Material UI or Ant Design) that would clash with the custom terminal aesthetic.
 - The terminal input must handle standard keyboard shortcuts gracefully (e.g., Up arrow for history, Tab for autocomplete).
 
-## 6. TS requirement override
-
-- During initial update phase (responsive-crt-display phase) we will be using js/jsx, not ts/tsx. We will refactor into TS in a later effort.
-
-## 7. API Response Envelope Exemption
+## 6. API Response Envelope Exemption
 
 - Infrastructure probe endpoints (e.g., `GET /health`) are exempt from the `ApiResponse<T>` envelope. They may return a minimal plain object (e.g., `{ status: 'ok' }`). All application endpoints must still use the full envelope.
