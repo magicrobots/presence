@@ -22,7 +22,7 @@
 - [x] T001 Create `frontend/tsconfig.json` with strict mode, allowJs, noEmit, jsx react-jsx per research.md §2
 - [x] T002 Create `frontend/vitest.config.ts` with jsdom environment, globals, v8 coverage, setupFiles per research.md §3
 - [x] T003 [P] Add devDependencies to `frontend/package.json`: typescript ^5, @types/react ^18, @types/react-dom ^18, vitest ^2, jsdom ^24, @testing-library/react ^15, @testing-library/jest-dom ^6
-- [ ] T004 Add `typecheck`, `test`, `test:watch`, `test:coverage` scripts to `frontend/package.json`
+- [x] T004 Add `typecheck`, `test`, `test:watch`, `test:coverage` scripts to `frontend/package.json`
 - [ ] T005 Update root `package.json` scripts — replace Ember commands (build, start, test, lint:hbs) with workspace-scoped React/Vite equivalents per research.md §7; add workspace-scoped `typecheck` script
 - [ ] T006 Create `frontend/src/tests/setup.ts` importing `@testing-library/jest-dom` matchers
 
