@@ -55,7 +55,7 @@
 - [x] T012 [P] [US1] Rename all 5 `frontend/src/constants/*.js` → `.ts` (magic-numbers, command-registry, environment-values, story-items, story-rooms); add QualityLadder type to QUALITY_LADDER constant in `frontend/src/constants/magic-numbers.ts`
 - [x] T013 [P] [US1] Rename `frontend/src/utils/rngeezus.js` → `frontend/src/utils/rngeezus.ts` with typed exports
 - [x] T014 [P] [US1] Rename `frontend/src/utils/environment-helpers.js` → `frontend/src/utils/environment-helpers.ts` with typed exports
-- [ ] T015 [US1] Verify `frontend/src/utils/text-layout.js` (or .ts) exists in exactly one location; rename to `.ts` and add typed exports; update all import sites in `frontend/src/`
+- [x] T015 [US1] Verify `frontend/src/utils/text-layout.js` (or .ts) exists in exactly one location; rename to `.ts` and add typed exports; update all import sites in `frontend/src/`
 - [ ] T016 [US1] Rename `frontend/src/hooks/usePersistence.js` → `frontend/src/utils/persistence.ts` with full typed exports per `contracts/module-contracts.md` §persistence (all localStorage functions, PersistenceKey type per data-model.md §4)
 - [ ] T017 [US1] Update all import sites of `usePersistence` → `persistence` throughout `frontend/src/` (hooks, game commands, storyCore)
 - [ ] T018 [P] [US1] Rename `frontend/src/components/LoadingIndicator.jsx`, `MpfIndicator.jsx`, `ScreenInput.jsx` → `.tsx`; add prop type annotations
