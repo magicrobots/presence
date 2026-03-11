@@ -173,7 +173,7 @@ A developer making a change to the codebase can run the test suite and get meani
 - **FR-025**: The quality ladder transition logic MUST have test coverage for at minimum: upgrade on sustained high frame rate, downgrade on sustained low frame rate, and prevention of oscillation between adjacent levels.
 - **FR-026**: Each deformer pipeline function MUST have at least one unit test verifying correct output for a known input pixel array.
 - **FR-027**: The persistence module MUST have tests covering: save, load, missing key fallback, corrupt/invalid data recovery, and a regression smoke test confirming that data written under the old module name is still readable after the rename (no shape migration required — this is a read-compatibility guard only).
-- **FR-027a**: Any restructuring of localStorage keys or data shapes MUST include a one-time migration executed on first load, so existing saved game state is preserved rather than wiped.
+- **FR-027a**: The persistence module MUST have a test covering corrupt/invalid data recovery (e.g., a malformed JSON value stored under a known key is handled gracefully without crashing). This is a safety-net test only — not a migration path. localStorage key names are preserved unchanged (see FR-014 and clarification 2026-03-10), so no first-load migration is required or permitted.
 - **FR-028**: At least 8 terminal route commands MUST have tests covering their initialization and output generation.
 
 **Zero Warnings & Errors**
