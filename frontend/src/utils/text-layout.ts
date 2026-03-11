@@ -8,7 +8,7 @@
  * storyCore.js during the 004-tech-debt-refactor).
  */
 
-import persistence from '../hooks/usePersistence';
+import persistence from './persistence';
 
 /** Text that varies based on whether the player holds the translator item (ID 12). */
 export interface TranslatedText {

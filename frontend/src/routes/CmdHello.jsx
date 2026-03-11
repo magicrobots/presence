@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 
 export default function CmdHello() {
     const inputProcessor = useOutletContext();

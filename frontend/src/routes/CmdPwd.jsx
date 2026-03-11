@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 
 // Ember's @ember/string dasherize: trim, lowercase, replace underscores/spaces with dashes
 function dasherize(str) {

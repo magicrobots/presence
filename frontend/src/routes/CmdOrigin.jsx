@@ -5,7 +5,7 @@ import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../constants/environment-values';
 import items from '../constants/story-items';
 import storyCore from '../utils/storyCore';
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 
 // --------------------------------------------------------------------------
 // Component

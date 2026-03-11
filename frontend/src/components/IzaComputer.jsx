@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 import rngeezus from '../utils/rngeezus';
 import { applyAllDeformers } from '../utils/deformers';
 import MagicNumbers, { QUALITY_LADDER } from '../constants/magic-numbers';

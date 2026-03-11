@@ -6,7 +6,7 @@ import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../constants/environment-values';
 import MagicNumbers from '../constants/magic-numbers';
 import { useStatusBar } from '../context/StatusBarContext';
-import persistence from './usePersistence';
+import persistence from '../utils/persistence';
 
 // --------------------------------------------------------------------------
 // Initial state

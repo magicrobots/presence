@@ -310,3 +310,53 @@ export function getStoryIsInitialVisit(): boolean {
   if (typeof raw === 'string') return ['true', '1', 'yes'].includes(raw);
   return false;
 }
+
+/**
+ * Namespace default export — preserves the `import persistence from './persistence'`
+ * call-site pattern while the module transitions to named exports (FR-014, T017).
+ * New code should prefer the named exports above; this default export exists for
+ * backward compatibility with existing consumers during the US1 migration.
+ */
+const persistence = {
+  setUsername,
+  getUsername,
+  setFontSize,
+  getFontSize,
+  setShowKeyboard,
+  getShowKeyboard,
+  setGraphicsMode,
+  getGraphicsMode,
+  setQualityPreset,
+  getQualityPreset,
+  onQualityPresetChange,
+  setFlingRecord,
+  getFlingRecord,
+  setStoryPosX,
+  getStoryPosX,
+  setStoryPosY,
+  getStoryPosY,
+  setStoryDeaths,
+  getStoryDeaths,
+  addStoryVisitedRoom,
+  getStoryVisitedRooms,
+  addStoryInventoryItem,
+  removeStoryInventoryItem,
+  getStoryInventoryItems,
+  getStoryRoomInventories,
+  addItemToRoom,
+  removeItemFromRoom,
+  getIsUnlockedDirectionFromRoom,
+  setIsUnlockedDirectionInRoom,
+  getAllUnlockedItems,
+  unlockItem,
+  addStoryCompletionItemCollected,
+  getStoryCompletionItemsCollected,
+  setFlashlightStatus,
+  getFlashlightStatus,
+  setCakeStatus,
+  getCakeStatus,
+  setStoryIsInitialVisit,
+  getStoryIsInitialVisit,
+} as const;
+
+export default persistence;

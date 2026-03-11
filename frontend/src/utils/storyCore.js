@@ -3,7 +3,7 @@ import items from '../constants/story-items';
 import environmentValues from '../constants/environment-values';
 import MagicNumbers from '../constants/magic-numbers';
 import environmentHelpers from './environment-helpers';
-import persistence from '../hooks/usePersistence';
+import persistence from './persistence';
 
 // ------------------- private methods -------------------
 

@@ -57,7 +57,7 @@
 - [x] T014 [P] [US1] Rename `frontend/src/utils/environment-helpers.js` → `frontend/src/utils/environment-helpers.ts` with typed exports
 - [x] T015 [US1] Verify `frontend/src/utils/text-layout.js` (or .ts) exists in exactly one location; rename to `.ts` and add typed exports; update all import sites in `frontend/src/`
 - [x] T016 [US1] Rename `frontend/src/hooks/usePersistence.js` → `frontend/src/utils/persistence.ts` with full typed exports per `contracts/module-contracts.md` §persistence (all localStorage functions, PersistenceKey type per data-model.md §4)
-- [ ] T017 [US1] Update all import sites of `usePersistence` → `persistence` throughout `frontend/src/` (hooks, game commands, storyCore)
+- [x] T017 [US1] Update all import sites of `usePersistence` → `persistence` throughout `frontend/src/` (hooks, game commands, storyCore)
 - [ ] T018 [P] [US1] Rename `frontend/src/components/LoadingIndicator.jsx`, `MpfIndicator.jsx`, `ScreenInput.jsx` → `.tsx`; add prop type annotations
 - [ ] T019 [US1] Rename `frontend/src/App.jsx` → `App.tsx`, `router.jsx` → `router.tsx`, `main.jsx` → `main.tsx`; add type annotations
 - [ ] T020 [US1] Rename all `frontend/src/routes/Cmd*.jsx` → `.tsx` (CmdCat, CmdLess, CmdViewer, CmdShop, and all remaining ×15 routes); add prop/context types

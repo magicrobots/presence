@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import AWS from 'aws-sdk';
 
 import environmentHelpers from '../utils/environment-helpers';
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 
 // Vite env vars replace Ember's config/environment.js
 const ses = new AWS.SES({

@@ -4,7 +4,7 @@ import { useOutletContext } from 'react-router-dom';
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
 import MagicNumbers from '../constants/magic-numbers';
-import persistence from '../hooks/usePersistence';
+import persistence from '../utils/persistence';
 
 // --------------------------------------------------------------------------
 // Pure helpers — all take lsArgs explicitly to avoid module-level state
