@@ -114,16 +114,16 @@ frontend/
 │   │   └── StatusBarContext.tsx         EVALUATE — remove if still unused after decomp
 │   ├── App.tsx                          RENAMED .jsx → .tsx
 │   ├── router.tsx                       RENAMED .jsx → .tsx
-│   └── main.tsx                         RENAMED .jsx → .tsx
-├── tests/
-│   ├── unit/
-│   │   ├── deformers.test.ts            NEW — FR-026: each pass with known pixel input
-│   │   ├── qualityAdapter.test.ts       NEW — FR-025: upgrade/downgrade/oscillation
-│   │   ├── persistence.test.ts          NEW — FR-027: save/load/missing/corrupt/compat
-│   │   ├── inputReducer.test.ts         NEW — reducer action coverage
-│   │   └── routes/
-│   │       └── cmd-*.test.tsx           NEW — FR-028: ≥8 route command tests
-│   └── setup.ts                         NEW — @testing-library/jest-dom setup
+│   ├── main.tsx                         RENAMED .jsx → .tsx
+│   └── tests/
+│       ├── unit/
+│       │   ├── deformers.test.ts        NEW — FR-026: each pass with known pixel input
+│       │   ├── qualityAdapter.test.ts   NEW — FR-025: upgrade/downgrade/oscillation
+│       │   ├── persistence.test.ts      NEW — FR-027: save/load/missing/corrupt/compat
+│       │   ├── inputReducer.test.ts     NEW — reducer action coverage
+│       │   └── routes/
+│       │       └── cmd-*.test.tsx       NEW — FR-028: ≥8 route command tests
+│       └── setup.ts                     NEW — @testing-library/jest-dom setup
 
 packages/types/
 └── src/

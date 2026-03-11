@@ -72,7 +72,7 @@ npm run build -w frontend
 | `frontend/src/reducers/inputReducer.ts` | Pure reducer + typed actions for useInputProcessor |
 | `frontend/src/routes/shared/` | Shared gallery navigator + showItemContent utility |
 | `frontend/src/types/` | Frontend-specific TypeScript types |
-| `frontend/tests/` | Vitest test files |
+| `frontend/src/tests/` | Vitest test files |
 | `docs/archive/` | Archived Ember migration docs |
 
 ## Running the Type-Check Gate Locally (mirrors CI)
