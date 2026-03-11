@@ -15,9 +15,9 @@ export interface GlowParams {
 
 export interface ShiftParams {
   enabled: boolean;
-  positionFactor: number;
-  factor: number;
-  brightnessThreshold: number;
+  positionFactor: number | null;
+  factor: number | null;
+  brightnessThreshold: number | null;
 }
 
 export interface PixelizeParams {
@@ -27,7 +27,7 @@ export interface PixelizeParams {
 
 export interface DisplacementParams {
   bandCount: number;
-  travelPixelsPerCycle: number;
+  travelPixelsPerCycle: number | null;
 }
 
 export interface QualityLevelConfig {

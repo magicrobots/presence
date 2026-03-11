@@ -1,3 +1,5 @@
+import type { QualityLadder } from '../types/canvas';
+
 /**
  * QUALITY_LADDER — 8-step adaptive quality ladder for the CRT deformer pipeline.
  *
@@ -25,7 +27,7 @@
  *   Level 0: 100% | Level 1: ~70% | Level 2: ~55% | Level 3: ~35%
  *   Level 4: ~22% | Level 5: ~18% | Level 6: ~8%  | Level 7: ~5%
  */
-export const QUALITY_LADDER = Object.freeze([
+export const QUALITY_LADDER: QualityLadder = Object.freeze([
     // Level 0 — Maximum quality, all passes enabled, stride 1
     {
         stride: 1,
@@ -95,7 +97,7 @@ export const QUALITY_LADDER = Object.freeze([
         pixelize: { adjustmentLarge: 8, adjustmentSmall: 4 },
         displacement: { bandCount: 0, travelPixelsPerCycle: null },
     },
-]);
+] as const) as QualityLadder;
 
 export default {
     VERSION_MAJOR: 1,

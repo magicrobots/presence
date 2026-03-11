@@ -52,7 +52,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Rename all 5 `frontend/src/constants/*.js` → `.ts` (magic-numbers, command-registry, environment-values, story-items, story-rooms); add QualityLadder type to QUALITY_LADDER constant in `frontend/src/constants/magic-numbers.ts`
+- [x] T012 [P] [US1] Rename all 5 `frontend/src/constants/*.js` → `.ts` (magic-numbers, command-registry, environment-values, story-items, story-rooms); add QualityLadder type to QUALITY_LADDER constant in `frontend/src/constants/magic-numbers.ts`
 - [ ] T013 [P] [US1] Rename `frontend/src/utils/rngeezus.js` → `frontend/src/utils/rngeezus.ts` with typed exports
 - [ ] T014 [P] [US1] Rename `frontend/src/utils/environment-helpers.js` → `frontend/src/utils/environment-helpers.ts` with typed exports
 - [ ] T015 [US1] Verify `frontend/src/utils/text-layout.js` (or .ts) exists in exactly one location; rename to `.ts` and add typed exports; update all import sites in `frontend/src/`

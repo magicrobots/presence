@@ -1,14 +1,51 @@
 import environmentValues from './environment-values';
 
-export default {
+export interface ItemUseUnlock {
+    room?: number;
+    direction?: string;
+    item?: number;
+}
 
-    getItemById(itemId) {
+export interface ItemUseResponse {
+    first: string;
+    subsequent: string;
+}
+
+export interface ItemUse {
+    unlocks: ItemUseUnlock;
+    response: ItemUseResponse;
+}
+
+export interface ItemKeyEntry {
+    room: number;
+    direction: string;
+}
+
+export interface StoryItem {
+    id: number;
+    type: string;
+    name: string;
+    description: string;
+    details?: string;
+    detailsUsed?: string;
+    use?: ItemUse | null;
+    isKey?: ItemKeyEntry[] | { item: number } | null;
+    weight: number;
+    onEat?: string;
+    onDrink?: string;
+    content?: string[];
+    isTrophy?: boolean;
+}
+
+const storyItems = {
+
+    getItemById(itemId: number): StoryItem | undefined {
         return this.items.filter((currItem) => {
             return currItem.id === itemId;
         })[0];
     },
 
-    getItemByName(itemName) {
+    getItemByName(itemName: string): StoryItem | undefined {
         return this.items.filter((currItem) => {
             return currItem.name === itemName;
         })[0];
@@ -352,5 +389,7 @@ export default {
             isKey: null,
             weight: 2
         }
-    ]
-}
+    ] as StoryItem[]
+};
+
+export default storyItems;

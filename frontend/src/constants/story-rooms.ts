@@ -1,7 +1,31 @@
+export interface RoomExit {
+    closed: string | null;
+    opened: string | { unknown: string; translated: string } | { dark: string; illuminated: string } | null;
+}
 
-export default {
+export interface RoomExits {
+    N: RoomExit | null;
+    E: RoomExit | null;
+    W: RoomExit | null;
+    S: RoomExit | null;
+}
 
-    getRoom(coords) {
+export interface StoryRoom {
+    id: number;
+    x: number;
+    y: number;
+    summary: string | { dark: string; illuminated: string };
+    description: string | { dark: string; illuminated: string };
+    completed: string | { dark: string; illuminated: string };
+    exits: RoomExits;
+    isDarkTrap?: boolean;
+    isInSpace?: boolean;
+    isAirlock?: boolean;
+}
+
+const storyRooms = {
+
+    getRoom(coords: { x: number; y: number }): StoryRoom | undefined {
         return this.rooms.filter((currRoom) => {
             if(currRoom.x === coords.x && currRoom.y === coords.y) {
                 return true;
@@ -9,7 +33,7 @@ export default {
         })[0];
     },
 
-    getRoomById(roomId) {
+    getRoomById(roomId: number): StoryRoom | undefined {
         return this.rooms.find(r => r.id === roomId);
     },
 
@@ -614,5 +638,7 @@ export default {
                 S: null
             }
         }
-    ]
-}
+    ] as StoryRoom[]
+};
+
+export default storyRooms;

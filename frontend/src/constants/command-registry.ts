@@ -3,8 +3,30 @@ const helpText = 'Help, and ? are proxies to the MAN command. Enter either of th
 const helpUsage = 'man origin';
 const originYear = 1996;
 
-export default {
-    getMatchingCommand(command) {
+export interface CommandRegistryEntry {
+    commandName: string;
+    routeName?: string;
+    helpText: string;
+    usage?: string | null;
+    date?: Date;
+    size?: number;
+    isExec?: boolean;
+    isInvisible?: boolean;
+    isHidden?: boolean;
+    isDir?: boolean;
+    owner?: { uname: string; uid: string };
+    content?: string[];
+}
+
+interface CommandRegistry {
+    getMatchingCommand(command: string): CommandRegistryEntry | undefined;
+    getIsDirectory(name: string): boolean;
+    getIsInvisible(name: string): boolean;
+    registry: CommandRegistryEntry[];
+}
+
+const commandRegistry: CommandRegistry = {
+    getMatchingCommand(command: string): CommandRegistryEntry | undefined {
         const testCommandName = command.toUpperCase();
 
         return this.registry.filter((currCmdDef) => {
@@ -14,16 +36,16 @@ export default {
         })[0];
     },
 
-    getIsDirectory(name) {
+    getIsDirectory(name: string): boolean {
         const matchedCommand = this.getMatchingCommand(name);
 
-        return matchedCommand != null ? matchedCommand.isDir : false;
+        return matchedCommand != null ? !!matchedCommand.isDir : false;
     },
 
-    getIsInvisible(name) {
+    getIsInvisible(name: string): boolean {
         const matchedCommand = this.getMatchingCommand(name);
 
-        return matchedCommand != null ? matchedCommand.isInvisible : false;
+        return matchedCommand != null ? !!matchedCommand.isInvisible : false;
     },
 
     registry: [
@@ -302,4 +324,6 @@ export default {
             ]
         },
     ]
-}
+};
+
+export default commandRegistry;
