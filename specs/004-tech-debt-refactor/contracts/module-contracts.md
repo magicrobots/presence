@@ -93,9 +93,17 @@ export function triggerRepaint(canvas: HTMLCanvasElement): void;
 **New module** (extracted from useInputProcessor.js)
 
 ```typescript
-import type { InputState, InputAction } from '../types/terminal';
+// InputState and InputAction are defined in this file (see data-model.md §2).
+// They are NOT imported from types/terminal.ts — that file defines only AppEnvironment.
 
-export { InputState, InputAction };
+export interface InputState { /* ...see data-model.md §2 for full shape... */ }
+
+export type InputAction =
+  | { type: 'SET_FIELDS'; payload: Partial<InputState> }
+  | { type: 'SET_CURSOR'; payload: number }
+  | { type: 'PUSH_HISTORY'; payload: string }
+  | { type: 'CLEAR' }
+  | { type: 'RESET' };
 
 export const initialInputState: InputState;
 
