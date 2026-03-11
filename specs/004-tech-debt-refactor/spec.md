@@ -210,6 +210,10 @@ A developer making a change to the codebase can run the test suite and get meani
 
 ## Clarifications
 
+### Session 2026-03-11
+
+- Q: Constitution §6 ("TS requirement override") states JS/JSX is permitted during the initial migration phase. Does this feature formally close that override? → A: **Yes — §6 is closed by this feature.** Constitution §6 was written to allow JS/JSX "during initial update phase (responsive-crt-display phase)." That phase is complete. This feature (`004-tech-debt-refactor`) IS the TypeScript migration phase referenced in §6. Upon merge of this feature, §6's condition is fully met: all frontend source files are TypeScript strict mode. No JS/JSX source files will remain in `frontend/src/`. After this feature ships, §6 no longer provides any exemption — strict TypeScript is the law of the codebase per constitution §2 and §4. This note is the spec-layer record that §6's override period has ended. (Constitution cannot be modified here per guardrail 998; this clarification is the authoritative record in the spec artifacts.)
+
 ### Session 2026-03-10
 
 - Q: If a user has saved game progress before this refactor ships, should that data continue to work after the restructure — or is wiping/resetting saved state acceptable? → A: Preserve — existing localStorage data MUST be migrated or remain readable after restructuring.
