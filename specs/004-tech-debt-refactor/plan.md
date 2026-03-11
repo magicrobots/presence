@@ -33,7 +33,7 @@ Resolve accumulated technical debt from the Ember→React migration by: (1) comp
 |---|---|---|
 | React function components + hooks | ✅ Pass | All new code uses function components |
 | TypeScript strict mode | ✅ Pass (this feature enables it) | Frontend currently JS — this feature completes the migration |
-| No `any` without justification | ✅ Pass | FR-002a: `any` is strictly forbidden per constitution §4. Where a genuinely un-typeable pattern cannot be resolved, `unknown` + narrowing guard is the required alternative; any remaining exception must have an inline comment and be tracked in the PR description. No spec override — constitution is authoritative. |
+| No `any` without justification | ✅ Pass | FR-002a: `any` is strictly and unconditionally forbidden per constitution §4 — no exceptions of any kind. The only permitted fallback for un-typeable patterns is `unknown` + narrowing type guard, documented with an inline comment. No PR-level carve-outs for `any` exist. Constitution is authoritative. |
 | Monorepo structure (frontend / api / packages) | ✅ Pass | No structural changes to workspace layout |
 | State: React Context for global terminal state | ✅ Pass | `useInputProcessor` remains a hook; `useReducer` is the correct upgrade pattern |
 | API: RESTful + JSON envelope | ✅ Pass | API is out of scope; no changes |
