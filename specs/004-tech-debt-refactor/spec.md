@@ -150,7 +150,7 @@ A developer making a change to the codebase can run the test suite and get meani
 **Canvas Graphics Pipeline Modernization**
 
 - **FR-015**: The canvas rendering pipeline MUST be modernized using GPU-accelerated 2D context APIs, replacing manual pixel-loop implementations wherever the native API achieves equivalent or better output:
-  - `ctx.filter` MUST be used for blur, contrast, and brightness effects in place of any manual per-pixel "ghosting" or glow calculations.
+  - `ctx.filter` MUST be used for blur, contrast, and brightness effects in place of any manual per-pixel "ghosting" or glow calculations, **except** for the three proprietary CRT deformer passes (`pixelizeBit`, `shiftPixel`, `glowEdgesBit`) — research (see research.md §1) confirms that `ctx.filter` cannot achieve equivalent output for these passes, so their pixel loops are retained.
   - `imageSmoothingEnabled = false` MUST be set wherever pixel-art sharpness is required, eliminating manual pixelation math.
   - Workers and OffscreenCanvas are explicitly out of scope; all rendering remains on the main thread.
   - Standard loop optimizations apply: minimize redundant state changes, avoid unnecessary pixel reads, batch operations where possible.
