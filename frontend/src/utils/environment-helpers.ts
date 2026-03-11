@@ -1,23 +1,27 @@
-export default {
+import type { AppEnvironment } from '../types/terminal';
 
-    generateEnvironmentWithDefaults: function(options) {
+/** Partial options for constructing an AppEnvironment; all fields optional with sensible defaults */
+export type EnvironmentOptions = Partial<AppEnvironment>;
+
+const environmentHelpers = {
+    generateEnvironmentWithDefaults(options: EnvironmentOptions): AppEnvironment {
         return {
-            activeAppName: options.activeAppName || 'index',
+            activeAppName: options.activeAppName ?? 'index',
             displayAppNameInPrompt: options.displayAppNameInPrompt,
             interruptPrompt: options.interruptPrompt,
-            response: options.response || ['no application response provided'],
+            response: options.response ?? ['no application response provided'],
             keyOverrides: options.keyOverrides,
-            overrideScope: options.overrideScope
-        }
+            overrideScope: options.overrideScope,
+        };
     },
 
-    getRandomResponseFromList(list) {
+    getRandomResponseFromList(list: string[]): string {
         const randomResponseIndex = Math.floor(Math.random() * list.length);
 
         return list[randomResponseIndex];
     },
 
-    handleTabComplete(fragment, itemSets) {
+    handleTabComplete(fragment: string, itemSets: string[][]): string | null {
         // check for arguments
         const splitFrag = fragment.toLowerCase().split(' ');
         const itemFrag = splitFrag[splitFrag.length - 1];
@@ -42,16 +46,16 @@ export default {
         return this.getItemFromSetByFragment(itemFrag, listOfItemNames);
     },
 
-    getItemFromSetByFragment(fragment, set) {
+    getItemFromSetByFragment(fragment: string, set: string[]): string | null {
         const testEntry = fragment.toUpperCase();
 
         const matches = set.filter((currCmdDef) => {
             const currCommandUpper = currCmdDef.toUpperCase();
-            if (currCommandUpper.indexOf(testEntry) === 0) {
-                return true;
-            }
+            return currCommandUpper.indexOf(testEntry) === 0;
         });
 
         return matches.length === 1 ? matches[0] : null;
-    }
-}
+    },
+};
+
+export default environmentHelpers;
