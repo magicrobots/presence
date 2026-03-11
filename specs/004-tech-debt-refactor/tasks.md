@@ -152,6 +152,7 @@
 - [ ] T051 [US5] Remove all Ember devDependencies from root `package.json` (ember-cli, ember-data, ember-source, @ember/*, ember-template-lint, and any related packages)
 - [ ] T052 [US5] Update `.eslintrc.js` — remove Ember plugin and template-lint rules; configure React-appropriate rules (FR-021)
 - [ ] T053 [US5] Audit `appveyor.yml` for stale Ember commands or artifact paths; replace each with React/Vite equivalent per research.md §8 (FR-023a)
+- [ ] T053a [US5] Port the Ember QUnit test assertion concept to Vitest (FR-022 second half): identify the assertion logic in the deleted QUnit test (from T048); write an equivalent test in `frontend/src/tests/unit/ember-compat.test.ts` using the Vitest framework, confirming the same behavior is verified in the new test suite
 - [ ] T054 [US5] Verify: `npm install`, `npm run dev -w frontend`, `npm run build --workspaces --if-present` all succeed with zero errors; verify SC-006 (zero ember filenames in repo root) and SC-007
 
 **Checkpoint**: Repository is clean React/Vite. All documented commands work. No Ember artifacts remain.
