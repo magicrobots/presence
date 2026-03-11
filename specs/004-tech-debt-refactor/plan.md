@@ -263,4 +263,4 @@ The following order minimizes risk: each step is independently verifiable and le
 | stateRef fix changes command execution timing | Low | Medium | Add integration test for handleScreenInput; verify history navigation works |
 | Canvas visual regression after IzaComputer split | Low | High | SC-004 visual checklist at all 8 quality levels before and after Stage 4 |
 | Ember script removal breaks AppVeyor CI | Low | Medium | Replace root scripts in Stage 2 before pushing; run build locally first |
-| TypeScript strict mode reveals many `any` patterns in dynamic code | High | Low | `allowJs` mode during migration; fix incrementally; document each `any` with comment |
+| TypeScript strict mode reveals many `any` patterns in dynamic code | High | Low | `allowJs` mode during migration; fix incrementally; replace each `any` with `unknown` + a narrowing type guard; document with an inline comment explaining why static narrowing is needed — `any` is unconditionally forbidden per constitution §4 and FR-002a |
