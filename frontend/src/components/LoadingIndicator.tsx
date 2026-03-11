@@ -1,6 +1,8 @@
-import React from 'react';
+interface LoadingIndicatorProps {
+    isVisible: boolean;
+}
 
-export default function LoadingIndicator({ isVisible }) {
+export default function LoadingIndicator({ isVisible }: LoadingIndicatorProps) {
     if (!isVisible) return null;
 
     return (

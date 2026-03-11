@@ -1,6 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-export default function ScreenInput({ inputProcessor }) {
+interface ScreenInputProcessor {
+    handleScreenInput: (value: string) => void;
+    handleEsc: () => void;
+    callArrow: (direction: string) => void;
+    getOlderCommand: () => string;
+    getNewerCommand: () => string;
+}
+
+interface ScreenInputProps {
+    inputProcessor: ScreenInputProcessor;
+}
+
+export default function ScreenInput({ inputProcessor }: ScreenInputProps) {
     const [inputValue, setInputValue] = useState('');
 
     const {
