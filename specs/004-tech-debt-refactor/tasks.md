@@ -123,7 +123,7 @@
 
 ### Tests for User Story 4
 
-- [ ] T041 [P] [US4] Write deformer unit tests with known pixel input arrays for pixelizeBit, shiftPixel, glowEdgesBit in `frontend/src/tests/unit/deformers.test.ts` (FR-026) — write BEFORE refactoring deformers.js
+- [x] T041 [P] [US4] Write deformer unit tests with known pixel input arrays for pixelizeBit, shiftPixel, glowEdgesBit in `frontend/src/tests/unit/deformers.test.ts` (FR-026) — write BEFORE refactoring deformers.js
 - [ ] T042 [P] [US4] Write quality adapter transition tests (upgrade on high FPS, downgrade on low FPS, oscillation prevention with debounce) in `frontend/src/tests/unit/qualityAdapter.test.ts` (FR-025)
 
 ### Implementation for User Story 4

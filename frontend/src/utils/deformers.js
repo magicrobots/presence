@@ -170,3 +170,28 @@ function _glowEdgesBit(i, imageData, params, randomValue, baseIdx) {
         imageData.data[farPixelIndex * 4 + 2] = farPixelB + farAmount;
     }
 }
+
+// Named exports for unit testing (FR-026).
+// The public contract (contracts/module-contracts.md §deformers) takes a raw Uint8ClampedArray
+// rather than a full ImageData object. These adapter exports match the target TypeScript
+// signatures so tests can be written now (TDD) before T043 converts this file to .ts.
+//
+// T043 will inline these into proper TypeScript function declarations.
+
+/** @param {number} i @param {Uint8ClampedArray} data @param {import('../types/canvas').PixelizeParams} params @param {number} baseIdx */
+export function pixelizeBit(i, data, params, baseIdx) {
+    const mockImageData = { data };
+    _pixelizeBit(i, mockImageData, params, baseIdx);
+}
+
+/** @param {number} i @param {Uint8ClampedArray} data @param {import('../types/canvas').ShiftParams} params @param {number} baseIdx */
+export function shiftPixel(i, data, params, baseIdx) {
+    const mockImageData = { data };
+    _shiftPixel(i, mockImageData, params, baseIdx);
+}
+
+/** @param {number} i @param {Uint8ClampedArray} data @param {import('../types/canvas').GlowParams} params @param {number} randomValue @param {number} baseIdx */
+export function glowEdgesBit(i, data, params, randomValue, baseIdx) {
+    const mockImageData = { data };
+    _glowEdgesBit(i, mockImageData, params, randomValue, baseIdx);
+}
