@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useRef } from 'react';
 
 import environmentHelpers from '../utils/environment-helpers';
 import { createGalleryEnvironment } from './shared/galleryNavigator';
+import { useRouteInit } from './shared/useRouteInit';
 import type { GalleryImage, GalleryConfig } from './shared/galleryNavigator';
 import type { InputProcessor } from '../types/terminal';
 
@@ -16,14 +16,13 @@ const STILL_IMAGES: readonly GalleryImage[] = Object.freeze([
 ]);
 
 export default function CmdViewer() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
     // Keep a fresh ref to inputProcessor so the keyOverride closures (created
     // once in useEffect) can always call the latest setBgImage.
     const inputProcessorRef = useRef<InputProcessor | null>(null);
-    inputProcessorRef.current = inputProcessor;
 
-    useEffect(() => {
+    const inputProcessor = useRouteInit((ip) => {
+        inputProcessorRef.current = ip;
+
         const config: GalleryConfig<GalleryImage> = {
             images: STILL_IMAGES,
             getImagePath: (item) => {
@@ -43,11 +42,13 @@ export default function CmdViewer() {
             interruptPrompt: true,
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
+        ip.setAppEnvironment(appEnvironment);
         // Display initial image
         inputProcessorRef.current!.setBgImage(`stills/${STILL_IMAGES[0].path}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    });
+
+    // Keep ref current on every render so gallery closures always have latest instance.
+    inputProcessorRef.current = inputProcessor;
 
     return null;
 }

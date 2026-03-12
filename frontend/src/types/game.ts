@@ -46,9 +46,7 @@ export interface Room {
   isInSpace?: boolean;
 }
 
-export type FlashlightStatus = 'on' | 'off' | 'dead';
-
 export interface FlashlightState {
-  status: FlashlightStatus;
-  batteryLevel: number;   // 0–100
+  isOn: boolean;
+  batteryLevel: number;   // 0 = dead, positive = remaining charge
 }

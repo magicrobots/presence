@@ -1,9 +1,6 @@
-import { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
-import type { InputProcessor } from '../types/terminal';
+import { useRouteInit } from './shared/useRouteInit';
 
 function getCdResponse(rawUserEntry: string): string | undefined {
     const rawInputArgs = rawUserEntry.split(' ')[1];
@@ -39,18 +36,15 @@ function getCdResponse(rawUserEntry: string): string | undefined {
 }
 
 export default function CmdCd() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
-    useEffect(() => {
-        const cdResponse = getCdResponse(inputProcessor.state.rawUserEntry);
+    useRouteInit((ip) => {
+        const cdResponse = getCdResponse(ip.state.rawUserEntry);
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: 'cmd-cd',
             response: cdResponse != null ? [cdResponse] : []
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
 
     return null;
 }

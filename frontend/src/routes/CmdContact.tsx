@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useRef } from 'react';
 import AWS from 'aws-sdk';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import { useRouteInit } from './shared/useRouteInit';
 import type { InputProcessor } from '../types/terminal';
 
 // Vite env vars replace Ember's config/environment.js
@@ -17,18 +17,17 @@ const ses = new AWS.SES({
 const INIT_MESSAGE = Object.freeze(['Enter a message:', '', 'ESC to quit']);
 
 export default function CmdContact() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
     // Keep a fresh ref so scope methods always read the latest state/methods.
     const inputProcessorRef = useRef<InputProcessor | null>(null);
-    inputProcessorRef.current = inputProcessor;
 
     // Mutable form state — no need for React re-renders.
     const stepIndexRef = useRef(0);
     const messageBodyRef = useRef('');
     const messageFromRef = useRef('');
 
-    useEffect(() => {
+    const inputProcessor = useRouteInit((ip) => {
+        inputProcessorRef.current = ip;
+
         function resetContact() {
             stepIndexRef.current = 0;
         }
@@ -122,9 +121,11 @@ export default function CmdContact() {
             response: [...INIT_MESSAGE],
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
+
+    // Keep ref current on every render so async callbacks always have latest instance.
+    inputProcessorRef.current = inputProcessor;
 
     return null;
 }

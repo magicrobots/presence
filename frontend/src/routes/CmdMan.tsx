@@ -1,9 +1,6 @@
-import { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
-import type { InputProcessor } from '../types/terminal';
+import { useRouteInit } from './shared/useRouteInit';
 
 function getResponse(currentArgs: string[] | null): string[] {
     if (currentArgs != null && currentArgs.length > 0) {
@@ -32,17 +29,14 @@ function getResponse(currentArgs: string[] | null): string[] {
 }
 
 export default function CmdMan() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
-    useEffect(() => {
+    useRouteInit((ip) => {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: 'cmd-man',
-            response: getResponse(inputProcessor.state.currentArgs)
+            response: getResponse(ip.state.currentArgs)
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
 
     return null;
 }

@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-
 import environmentHelpers from '../utils/environment-helpers';
-import type { InputProcessor } from '../types/terminal';
+import { useRouteInit } from './shared/useRouteInit';
 
 export default function CmdBeep() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
-    useEffect(() => {
+    useRouteInit((ip) => {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: 'cmd-beep',
             response: [
@@ -35,9 +30,8 @@ export default function CmdBeep() {
             ]
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
 
     return null;
 }

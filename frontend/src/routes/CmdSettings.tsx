@@ -1,21 +1,20 @@
-import { useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useRef } from 'react';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import { useRouteInit } from './shared/useRouteInit';
 import type { InputProcessor } from '../types/terminal';
 
 const ESC_TEXT = Object.freeze(['', 'ESC to quit']);
 const SETTINGS_COMMAND_REGISTRY = Object.freeze(['username', 'fontsize', 'graphicsmode', 'qualitypreset']);
 
 export default function CmdSettings() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
     // Keep a fresh ref so scope methods always read the latest state/methods.
     const inputProcessorRef = useRef<InputProcessor | null>(null);
-    inputProcessorRef.current = inputProcessor;
 
-    useEffect(() => {
+    const inputProcessor = useRouteInit((ip) => {
+        inputProcessorRef.current = ip;
+
         function commonProcesses(
             argValue: string | undefined,
             hideEscText: boolean | undefined,
@@ -107,14 +106,14 @@ export default function CmdSettings() {
         };
 
         // Handle overflow arguments — user typed e.g. "settings fontsize l" at base prompt
-        const currentArgs = inputProcessor.state.currentArgs;
+        const currentArgs = ip.state.currentArgs;
         if (currentArgs.length > 0) {
             const overflowCommand = currentArgs[0] as keyof typeof scope;
             if (SETTINGS_COMMAND_REGISTRY.includes(overflowCommand as string)) {
                 const overflowArg = currentArgs[1];
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic dispatch
                 (scope as any)[overflowCommand]([overflowArg], true);
-                inputProcessor.quit();
+                ip.quit();
                 return;
             }
         }
@@ -134,9 +133,11 @@ export default function CmdSettings() {
             ]
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
+
+    // Keep ref current on every render so scope closures always have latest instance.
+    inputProcessorRef.current = inputProcessor;
 
     return null;
 }

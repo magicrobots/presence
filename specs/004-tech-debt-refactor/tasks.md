@@ -87,7 +87,7 @@
 - [x] T028 [US2] Create `frontend/src/routes/shared/galleryNavigator.ts` per `contracts/module-contracts.md` §galleryNavigator with ARROWLEFT/ARROWRIGHT handlers and wrapping index logic
 - [x] T029 [US2] Simplify `frontend/src/routes/CmdViewer.tsx` and `frontend/src/routes/CmdShop.tsx` to delegate to `galleryNavigator`; remove duplicated logic
 - [x] T030 [US2] Extract common route command initialization pattern (context retrieval, setAppEnvironment setup) into shared utility in `frontend/src/routes/shared/`
-- [ ] T031 [US2] Apply shared init pattern to all `frontend/src/routes/Cmd*.tsx` files; remove per-file duplication
+- [x] T031 [US2] Apply shared init pattern to all `frontend/src/routes/Cmd*.tsx` files; remove per-file duplication
 - [ ] T032 [US2] Verify SC-002 — confirm no two `frontend/src/` source files share >10 lines of identical logic
 
 **Checkpoint**: Shared utilities extracted. CmdCat+CmdLess, CmdViewer+CmdShop, and all route init patterns consolidated.

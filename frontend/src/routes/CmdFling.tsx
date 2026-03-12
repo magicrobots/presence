@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useRef } from 'react';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import { useRouteInit } from './shared/useRouteInit';
 import type { InputProcessor } from '../types/terminal';
 
 // --------------------------------------------------------------------------
@@ -50,18 +50,17 @@ const ANIMALS: readonly Animal[] = Object.freeze([
 // --------------------------------------------------------------------------
 
 export default function CmdFling() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
     // Keep a fresh ref so scope methods always read the latest state/methods.
     const inputProcessorRef = useRef<InputProcessor | null>(null);
-    inputProcessorRef.current = inputProcessor;
 
     // Mutable game state — no need for React re-renders.
     const windRef = useRef({ velocity: 0, direction: WIND_DIRECTION_BEHIND });
     const distanceToTargetRef = useRef(0);
     const tryCounterRef = useRef(0);
 
-    useEffect(() => {
+    const inputProcessor = useRouteInit((ip) => {
+        inputProcessorRef.current = ip;
+
         function getWindDescription() {
             const wind = windRef.current;
             let directionDescription = wind.direction === WIND_DIRECTION_BEHIND
@@ -240,9 +239,11 @@ export default function CmdFling() {
             ],
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
+
+    // Keep ref current on every render so scope closures always have latest instance.
+    inputProcessorRef.current = inputProcessor;
 
     return null;
 }

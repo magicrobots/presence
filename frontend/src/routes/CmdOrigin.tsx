@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useRef } from 'react';
 
 import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../constants/environment-values';
@@ -8,6 +7,7 @@ import storeCoreRaw from '../utils/storyCore';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- storyCore is untyped JS; pending typed replacement in T033-T038
 const storyCore = storeCoreRaw as any; // any: storyCore is untyped JS
 import persistence from '../utils/persistence';
+import { useRouteInit } from './shared/useRouteInit';
 import type { InputProcessor } from '../types/terminal';
 
 // --------------------------------------------------------------------------
@@ -15,11 +15,8 @@ import type { InputProcessor } from '../types/terminal';
 // --------------------------------------------------------------------------
 
 export default function CmdOrigin() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
     // Keep a fresh ref so scope methods always read the latest state/methods.
     const inputProcessorRef = useRef<InputProcessor | null>(null);
-    inputProcessorRef.current = inputProcessor;
 
     // Capture whether this is a new story at render time, before any effect-side
     // mutations touch localStorage. Using a ref ensures Strict Mode's double-invoke
@@ -29,7 +26,8 @@ export default function CmdOrigin() {
         isNewStoryRef.current = storyCore.getIsNewStory();
     }
 
-    useEffect(() => {
+    const inputProcessor = useRouteInit((ip) => {
+        inputProcessorRef.current = ip;
 
         // ---- private helpers -----------------------------------------------
 
@@ -784,9 +782,11 @@ export default function CmdOrigin() {
                 .concat(storyCore.getCurrentRoomDescription())
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
+
+    // Keep ref current on every render so scope closures always have latest instance.
+    inputProcessorRef.current = inputProcessor;
 
     return null;
 }

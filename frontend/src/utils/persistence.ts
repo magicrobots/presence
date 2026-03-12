@@ -1,3 +1,5 @@
+import type { FlashlightState } from '../types/game';
+
 /** localStorage key names — these MUST NOT change (see FR-014, FR-027) */
 export type PersistenceKey =
   | 'magic-robots-data'
@@ -281,13 +283,23 @@ export function addStoryCompletionItemCollected(itemId: string): void {
   }
 }
 
-export function setFlashlightStatus(value: string): void {
-  magicRobotsData[KEY_FLASHLIGHT_STATUS] = value;
+export function setFlashlightStatus(value: FlashlightState): void {
+  // FlashlightState is a plain serializable object — stored directly as a sub-object
+  // within the StorageRecord. The unknown cast is required because StorageRecord values
+  // are typed as `unknown`; the object is safe to store as-is since JSON.stringify handles it.
+  magicRobotsData[KEY_FLASHLIGHT_STATUS] = value as unknown;
   _setStorageObject();
 }
 
-export function getFlashlightStatus(): string | null {
-  return (_getStorageObject()[KEY_FLASHLIGHT_STATUS] as string | undefined) ?? null;
+export function getFlashlightStatus(): FlashlightState | null {
+  const raw = _getStorageObject()[KEY_FLASHLIGHT_STATUS];
+  if (raw == null || typeof raw !== 'object') return null;
+  // Validate required FlashlightState fields before trusting the deserialized shape.
+  // 'in' narrowing is the only way to check properties on an unknown object without 'any'.
+  if (!('isOn' in raw) || !('batteryLevel' in raw)) return null;
+  const candidate = raw as Record<string, unknown>;
+  if (typeof candidate['isOn'] !== 'boolean' || typeof candidate['batteryLevel'] !== 'number') return null;
+  return { isOn: candidate['isOn'], batteryLevel: candidate['batteryLevel'] };
 }
 
 export function setCakeStatus(value: string): void {

@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
 import MagicNumbers from '../constants/magic-numbers';
 import persistence from '../utils/persistence';
-import type { InputProcessor } from '../types/terminal';
+import { useRouteInit } from './shared/useRouteInit';
 
 // --------------------------------------------------------------------------
 // Pure helpers — all take lsArgs explicitly to avoid module-level state
@@ -152,10 +149,8 @@ function buildLsResponse(_rawUserEntry: string, lsArgs: string | null): string[]
 // --------------------------------------------------------------------------
 
 export default function CmdLs() {
-    const inputProcessor = useOutletContext<InputProcessor>();
-
-    useEffect(() => {
-        const rawUserEntry = inputProcessor.state.rawUserEntry;
+    useRouteInit((ip) => {
+        const rawUserEntry = ip.state.rawUserEntry;
         let lsArgs: string | null = rawUserEntry.split(' ')[1] || null;
 
         // ls ./ is same as ls with no args
@@ -168,9 +163,8 @@ export default function CmdLs() {
             response: buildLsResponse(rawUserEntry, lsArgs)
         });
 
-        inputProcessor.setAppEnvironment(appEnvironment);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        ip.setAppEnvironment(appEnvironment);
+    });
 
     return null;
 }
