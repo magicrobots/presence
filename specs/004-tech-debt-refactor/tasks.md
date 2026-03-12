@@ -104,7 +104,7 @@
 
 - [x] T033 [P] [US3] Create `frontend/src/reducers/inputReducer.ts` with InputState, InputAction, initialInputState, and pure inputReducer function per `contracts/module-contracts.md` §inputReducer
 - [x] T034 [P] [US3] Create `frontend/src/utils/game/gameState.ts` with initGameState, reportGameState, handleCompletionEvent, getXp, getMaxXp, getIsNewGame, getIsGameCompleted per `contracts/module-contracts.md` §gameState
-- [ ] T035 [P] [US3] Create `frontend/src/utils/game/inventoryManager.ts` with getItemById, getItemByName, getWeightOfUserInventory, canTakeItem, getRoomInventory, getItemIsLocked, useItem per `contracts/module-contracts.md` §inventoryManager
+- [x] T035 [P] [US3] Create `frontend/src/utils/game/inventoryManager.ts` with getItemById, getItemByName, getWeightOfUserInventory, canTakeItem, getRoomInventory, getItemIsLocked, useItem per `contracts/module-contracts.md` §inventoryManager
 - [ ] T036 [P] [US3] Create `frontend/src/utils/game/roomNavigator.ts` with getCurrentRoom, getCurrentRoomId, getCurrentRoomDescription, getFullRoomDescription, getExitDescriptions, getIsExitUnlocked, isValidDirection, handlePositionChange, whereAmI, getIsRoomInSpace per `contracts/module-contracts.md` §roomNavigator
 - [ ] T037 [P] [US3] Create `frontend/src/utils/game/flashlightManager.ts` with hasFlashlight, turnOffFlashlight, useFlashlight, getUserCanSeeInTheDark, getIsFlashlightWorking per `contracts/module-contracts.md` §flashlightManager
 - [ ] T038 [US3] Update all `storyCore.js` consumers throughout `frontend/src/` to import from new game modules; delete `frontend/src/utils/storyCore.js` after zero remaining imports verified
