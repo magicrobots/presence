@@ -218,9 +218,16 @@ export function removeStoryInventoryItem(itemId: number): void {
 }
 
 export function getStoryRoomInventories(): Record<string, number[]> {
-  return (
-    (_getStorageObject()[KEY_STORY_ROOM_INVENTORIES] as Record<string, number[]> | undefined) ?? {}
-  );
+  const raw = _getStorageObject()[KEY_STORY_ROOM_INVENTORIES];
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  // Validate each entry is an array — stale localStorage may contain objects
+  // (e.g. { roomId, itemIds } shape from the pre-refactor storyCore).
+  const record = raw as Record<string, unknown>;
+  const result: Record<string, number[]> = {};
+  for (const [key, val] of Object.entries(record)) {
+    result[key] = Array.isArray(val) ? (val as number[]) : [];
+  }
+  return result;
 }
 
 export function addItemToRoom(roomId: string, itemId: number): void {
