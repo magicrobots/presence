@@ -77,7 +77,7 @@
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Write unit tests for `showItemContent` utility in `frontend/src/tests/unit/routes/cmd-cat-less.test.tsx`
+- [x] T024 [P] [US2] Write unit tests for `showItemContent` utility in `frontend/src/tests/unit/routes/cmd-cat-less.test.tsx`
 - [ ] T025 [P] [US2] Write unit tests for `galleryNavigator` utility in `frontend/src/tests/unit/routes/cmd-gallery.test.tsx`
 
 ### Implementation for User Story 2
