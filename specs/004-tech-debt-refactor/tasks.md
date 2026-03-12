@@ -63,7 +63,7 @@
 - [x] T020 [US1] Rename all `frontend/src/routes/Cmd*.jsx` → `.tsx` (CmdCat, CmdLess, CmdViewer, CmdShop, and all remaining ×15 routes); add prop/context types
 - [x] T021 [US1] Evaluate `frontend/src/context/StatusBarContext.tsx` — remove file if unused after all refactors; update any remaining references
 - [x] T022 [US1] Fix all TypeScript strict mode errors surfaced by `tsc --noEmit` across `frontend/src/`; add inline comment for each `any`/`unknown` usage per FR-002a
-- [ ] T023 [US1] Disable `allowJs` in `frontend/tsconfig.json` (or verify no .js remain in `frontend/src/`); run strict typecheck to confirm SC-001
+- [x] T023 [US1] Disable `allowJs` in `frontend/tsconfig.json` (or verify no .js remain in `frontend/src/`); run strict typecheck to confirm SC-001
 
 **Checkpoint**: All frontend source is TypeScript. `npm run typecheck --workspaces --if-present` — zero errors.
 
