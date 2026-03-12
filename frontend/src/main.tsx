@@ -5,7 +5,12 @@ import { StatusBarProvider } from './context/StatusBarContext';
 import { router } from './router';
 import './styles/app.scss';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+    throw new Error('Root element #root not found in document');
+}
+
+ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
         <StatusBarProvider>
             <RouterProvider router={router} />

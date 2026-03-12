@@ -1,5 +1,5 @@
-import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import type { Router as RemixRouter } from '@remix-run/router';
 
 import App from './App';
 
@@ -29,7 +29,7 @@ import CmdWhoami   from './routes/CmdWhoami';
 // contact and shop are commented out in the registry but registered here so they
 // can be restored without a router change.
 
-export const router = createBrowserRouter([
+export const router: RemixRouter = createBrowserRouter([
     {
         path: '/',
         element: <App />,

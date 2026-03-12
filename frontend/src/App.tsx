@@ -8,7 +8,7 @@ import ScreenInput from './components/ScreenInput';
 // useInputProcessor() is the React equivalent of the Ember inputProcessor service —
 // lifted here so both IzaComputer and ScreenInput share the same instance.
 // IzaComputer renders <Outlet context={inputProcessor} /> so cmd routes can access it.
-export default function App() {
+export default function App(): React.ReactElement {
     const inputProcessor = useInputProcessor();
 
     return (
