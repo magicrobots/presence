@@ -263,3 +263,58 @@ export function getIsNewGame(): boolean {
 export function getIsGameCompleted(): boolean {
   return _getIsGameCompleted();
 }
+
+// --------------------------------------------------------------------------
+// Death / respawn logic
+// --------------------------------------------------------------------------
+
+/**
+ * Find which room currently contains the item with the given id.
+ * Returns the roomId string, or null if the item is not in any room.
+ */
+function _findRoomThatContainsItem(itemId: number): string | null {
+  const allRooms = persistence.getStoryRoomInventories();
+  for (const [roomId, inventory] of Object.entries(allRooms)) {
+    if (inventory.includes(itemId)) {
+      return roomId;
+    }
+  }
+  return null;
+}
+
+/**
+ * Reset an item back to its original room if the player does not have it in
+ * their inventory (used on death to redistribute dropped items).
+ */
+function _resetItemLocationOnDeath(itemResetObject: { roomId: number; itemId: number }): void {
+  const userInventory = persistence.getStoryInventoryItems();
+  if (userInventory.includes(itemResetObject.itemId)) {
+    // Player still has it — nothing to reset
+    return;
+  }
+  const currRoomLocationForItem = _findRoomThatContainsItem(itemResetObject.itemId);
+  if (currRoomLocationForItem == null) {
+    return;
+  }
+  persistence.removeItemFromRoom(currRoomLocationForItem, itemResetObject.itemId);
+  persistence.addItemToRoom(String(itemResetObject.roomId), itemResetObject.itemId);
+}
+
+/**
+ * Handle player death: increment death counter, reset special items, respawn.
+ * Equivalent to storyCore.handleDeath().
+ */
+export function handleDeath(): void {
+  // Increment deaths
+  const currDeaths = persistence.getStoryDeaths();
+  persistence.setStoryDeaths(currDeaths + 1);
+
+  // Reset badge, helmet, translator if not in player inventory
+  _resetItemLocationOnDeath(environmentValues.ROOM_RESET_BADGE);
+  _resetItemLocationOnDeath(environmentValues.ROOM_RESET_HELMET);
+  _resetItemLocationOnDeath(environmentValues.ROOM_RESET_TRANSLATOR);
+
+  // Respawn at home coords
+  persistence.setStoryPosX(environmentValues.RESPAWN_COORDS.x);
+  persistence.setStoryPosY(environmentValues.RESPAWN_COORDS.y);
+}

@@ -3,10 +3,12 @@ import { useRef } from 'react';
 import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../constants/environment-values';
 import items from '../constants/story-items';
-import storeCoreRaw from '../utils/storyCore';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- storyCore is untyped JS; pending typed replacement in T033-T038
-const storyCore = storeCoreRaw as any; // any: storyCore is untyped JS
+import rooms from '../constants/story-rooms';
 import persistence from '../utils/persistence';
+import * as gameState from '../utils/game/gameState';
+import * as inventoryManager from '../utils/game/inventoryManager';
+import * as roomNavigator from '../utils/game/roomNavigator';
+import * as flashlightManager from '../utils/game/flashlightManager';
 import { useRouteInit } from './shared/useRouteInit';
 import type { InputProcessor } from '../types/terminal';
 
@@ -23,7 +25,7 @@ export default function CmdOrigin() {
     // of effects always sees the original pre-mutation value.
     const isNewStoryRef = useRef<boolean | null>(null);
     if (isNewStoryRef.current === null) {
-        isNewStoryRef.current = storyCore.getIsNewStory();
+        isNewStoryRef.current = gameState.getIsNewGame();
     }
 
     const inputProcessor = useRouteInit((ip) => {
@@ -33,7 +35,7 @@ export default function CmdOrigin() {
 
         function getLocalAndPersonalInventories(): number[] {
             const yourItems = persistence.getStoryInventoryItems();
-            const roomItems = storyCore.getRoomInventory();
+            const roomItems = inventoryManager.getRoomInventory(roomNavigator.getCurrentRoomId()).itemIds;
             return yourItems.concat(roomItems);
         }
 
@@ -62,13 +64,14 @@ export default function CmdOrigin() {
             return chosenDirection;
         }
 
-        function handlePotentiallyFatalMistake(roomOverride?: string | number): boolean {
-            const isInSpace = storyCore.getIsRoomInSpace(roomOverride);
+        function handlePotentiallyFatalMistake(nextRoomId?: string): boolean {
+            const roomIdToCheck = nextRoomId ?? roomNavigator.getCurrentRoomId();
+            const isInSpace = roomNavigator.getIsRoomInSpace(roomIdToCheck);
             if (isInSpace && !persistence.getStoryInventoryItems().includes(15)) {
                 inputProcessorRef.current!.handleFunctionFromApp([
                     'You clutch your throat as all the air rushes out of your lungs and you feel like you\'re being pulled inside out. Outer space is a dangerous place. You die quickly.'
                 ]);
-                storyCore.handleDeath();
+                gameState.handleDeath();
                 return true;
             }
             return false;
@@ -76,7 +79,7 @@ export default function CmdOrigin() {
 
         function showFlashlightStatus(): string[] {
             const lightStatus = persistence.getFlashlightStatus();
-            if (storyCore.hasFlashlight() && lightStatus != null) {
+            if (flashlightManager.hasFlashlight() && lightStatus != null) {
                 const power = lightStatus.batteryLevel < 1
                     ? 'Dead'
                     : lightStatus.isOn ? 'On' : 'Off';
@@ -106,12 +109,14 @@ export default function CmdOrigin() {
 
         function _take(args: string[]) {
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
-            const roomItems: number[] = storyCore.getRoomInventory();
-            const targetItemId: number | null = storyCore.getItemIdByName(targetItemName);
+            const currentRoomId = roomNavigator.getCurrentRoomId();
+            const roomItems: number[] = inventoryManager.getRoomInventory(currentRoomId).itemIds;
+            const targetItemId: number | null = inventoryManager.getItemIdByName(targetItemName);
 
             if (targetItemId != null && roomItems.includes(targetItemId)) {
-                if (storyCore.canTakeItem(targetItemId)) {
-                    persistence.removeItemFromRoom(storyCore.getCurrentRoomId(), targetItemId);
+                const canTake = inventoryManager.canTakeItem(targetItemId);
+                if (canTake.allowed) {
+                    persistence.removeItemFromRoom(currentRoomId, targetItemId);
                     persistence.addStoryInventoryItem(targetItemId);
                     inputProcessorRef.current!.handleFunctionFromApp([`You take the ${targetItemName}`]);
                 } else {
@@ -134,14 +139,36 @@ export default function CmdOrigin() {
         function _use(args: string[]) {
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
             const localInventories = getLocalAndPersonalInventories();
-            const targetItemId = storyCore.getItemIdByName(targetItemName);
-            const itemType = storyCore.getItemTypeById(targetItemId);
+            const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+            const itemType = targetItemId != null ? inventoryManager.getItemTypeById(targetItemId) : null;
 
-            if (localInventories.includes(targetItemId) &&
-                itemType === environmentValues.ITEM_TYPE_THING) {
-                inputProcessorRef.current!.handleFunctionFromApp(
-                    storyCore.useItem(targetItemId, args)
-                );
+            if (targetItemId != null && localInventories.includes(targetItemId)) {
+                if (itemType === environmentValues.ITEM_TYPE_THING) {
+                    // Flashlight (item 7) uses flashlightManager
+                    if (targetItemId === 7) {
+                        const flashlightResponse = flashlightManager.useFlashlight(args);
+                        // Check for fatal mistake after toggling flashlight
+                        if (roomNavigator.getIsRoomTrap() && !flashlightManager.getUserCanSeeInTheDark()) {
+                            gameState.handleDeath();
+                            inputProcessorRef.current!.handleFunctionFromApp(
+                                flashlightResponse.concat(roomNavigator.getCurrentRoomDescription())
+                            );
+                        } else {
+                            const showRoom = flashlightManager.getUserCanSeeInTheDark();
+                            inputProcessorRef.current!.handleFunctionFromApp(
+                                showRoom
+                                    ? flashlightResponse.concat(['', ...roomNavigator.getFullRoomDescription()])
+                                    : flashlightResponse
+                            );
+                        }
+                    } else {
+                        inputProcessorRef.current!.handleFunctionFromApp(
+                            inventoryManager.useItem(targetItemId)
+                        );
+                    }
+                } else {
+                    inputProcessorRef.current!.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+                }
             } else {
                 if (targetItemName != null) {
                     inputProcessorRef.current!.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
@@ -155,14 +182,14 @@ export default function CmdOrigin() {
             const actionWord = isThrow ? 'throw' : 'drop';
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
             const userInventory = persistence.getStoryInventoryItems();
-            const targetItemId = storyCore.getItemIdByName(targetItemName);
+            const targetItemId = inventoryManager.getItemIdByName(targetItemName);
 
-            if (userInventory.includes(targetItemId)) {
-                persistence.addItemToRoom(storyCore.getCurrentRoomId(), targetItemId);
+            if (targetItemId != null && userInventory.includes(targetItemId)) {
+                persistence.addItemToRoom(roomNavigator.getCurrentRoomId(), targetItemId);
                 persistence.removeStoryInventoryItem(targetItemId);
 
                 if (targetItemId === 7) {
-                    storyCore.turnOffFlashlight();
+                    flashlightManager.turnOffFlashlight();
                 }
 
                 const response = [`You ${actionWord} the ${targetItemName}`];
@@ -218,7 +245,7 @@ export default function CmdOrigin() {
             destroy(args: string[]) { scope.smash(args); },
             smash(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
                 const localInventories = getLocalAndPersonalInventories();
 
                 if (targetItemName == null || targetItemName === '') {
@@ -226,7 +253,7 @@ export default function CmdOrigin() {
                     return;
                 }
 
-                if (localInventories.includes(targetItemId)) {
+                if (targetItemId != null && localInventories.includes(targetItemId)) {
                     inputProcessorRef.current!.handleFunctionFromApp([
                         `You're like RAAAAAA and you smash the ${targetItemName} real hard. You wish you were a giant robot though 'cause nothing really happens - you weren't cut out for smashing.`
                     ]);
@@ -256,14 +283,15 @@ export default function CmdOrigin() {
             kill(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+                const currentRoomIdNum = parseInt(roomNavigator.getCurrentRoomId(), 10);
 
                 if (targetItemName == null || targetItemName === '') {
                     inputProcessorRef.current!.handleFunctionFromApp(['What do you want to attack?']);
                     return;
                 }
 
-                if (targetItemName === 'robot' && storyCore.getCurrentRoomId() === 10) {
+                if (targetItemName === 'robot' && currentRoomIdNum === 10) {
                     const attackRobotResponses = [
                         'Seriously? It\'s a robot the size of a building. Don\'t be ridiculous.',
                         'Hahahahah what are you gonna destroy it with harsh language? Stop it.',
@@ -275,12 +303,14 @@ export default function CmdOrigin() {
                 } else if (['yourself', 'self'].includes(targetItemName)) {
                     inputProcessorRef.current!.handleFunctionFromApp(['Come on now it\'s not that bad.']);
                 } else if (['alien', 'aliens'].includes(targetItemName) &&
-                           [13, 27].includes(storyCore.getCurrentRoomId())) {
-                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.attackAlien());
+                           [13, 27].includes(currentRoomIdNum)) {
+                    inputProcessorRef.current!.handleFunctionFromApp(
+                        inventoryManager.attackAlien(() => gameState.handleDeath())
+                    );
                 } else if (['ducks', 'geese', 'fish'].includes(targetItemName) &&
-                           storyCore.getCurrentRoomId() === 2) {
+                           currentRoomIdNum === 2) {
                     inputProcessorRef.current!.handleFunctionFromApp(['That would just be cruel.']);
-                } else if (localInventories.includes(targetItemId)) {
+                } else if (targetItemId != null && localInventories.includes(targetItemId)) {
                     inputProcessorRef.current!.handleFunctionFromApp([
                         `You fling yourself at the ${targetItemName} and immediately discover that you've played too many videogames because you just fall down and vow to make better decisions in the future as you dust yourself off and lift yourself off the floor.`,
                         `The ${targetItemName} is unaffected.`
@@ -296,23 +326,30 @@ export default function CmdOrigin() {
                 const targetItemName = args[0] === 'the'
                     ? args[1].toLowerCase()
                     : args[0].toLowerCase();
-                const currentRoomId = storyCore.getCurrentRoomId();
+                const currentRoomId = roomNavigator.getCurrentRoomId();
+                const currentRoomIdNum = parseInt(currentRoomId, 10);
 
-                if (currentRoomId === 2) {
+                if (currentRoomIdNum === 2) {
                     if (['ducks', 'geese', 'fish'].includes(targetItemName)) {
-                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedDucks());
+                        inputProcessorRef.current!.handleFunctionFromApp(
+                            inventoryManager.feedDucks(currentRoomId)
+                        );
                         return;
                     }
                 }
-                if (currentRoomId === 10) {
+                if (currentRoomIdNum === 10) {
                     if (targetItemName === 'robot') {
-                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedRobot());
+                        inputProcessorRef.current!.handleFunctionFromApp(
+                            inventoryManager.feedRobot(currentRoomId)
+                        );
                         return;
                     }
                 }
-                if (currentRoomId === 13 || currentRoomId === 27) {
+                if (currentRoomIdNum === 13 || currentRoomIdNum === 27) {
                     if (targetItemName === 'alien' || targetItemName === 'aliens') {
-                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedAliens());
+                        inputProcessorRef.current!.handleFunctionFromApp(
+                            inventoryManager.feedAliens(() => gameState.handleDeath())
+                        );
                         return;
                     }
                 }
@@ -324,23 +361,28 @@ export default function CmdOrigin() {
             eat(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
-                const itemType = storyCore.getItemTypeById(targetItemId);
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+                const itemType = targetItemId != null ? inventoryManager.getItemTypeById(targetItemId) : null;
+                const currentRoomId = roomNavigator.getCurrentRoomId();
 
-                if (localInventories.includes(targetItemId) &&
+                if (targetItemId != null && localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_FOOD) {
-                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.eatObject(targetItemId));
+                    inputProcessorRef.current!.handleFunctionFromApp(
+                        inventoryManager.eatObject(currentRoomId, targetItemId)
+                    );
                 } else {
                     if (targetItemName != null) {
-                        if (localInventories.includes(targetItemId) && targetItemId === 11) {
-                            if (storyCore.getIsRoomInSpace()) {
-                                inputProcessorRef.current!.handleFunctionFromApp(storyCore.eatCake());
+                        if (targetItemId != null && localInventories.includes(targetItemId) && targetItemId === 11) {
+                            if (roomNavigator.getIsRoomInSpace(currentRoomId)) {
+                                inputProcessorRef.current!.handleFunctionFromApp(
+                                    inventoryManager.eatCake(currentRoomId)
+                                );
                             } else {
                                 inputProcessorRef.current!.handleFunctionFromApp([
                                     'You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.'
                                 ]);
                             }
-                        } else if (localInventories.includes(targetItemId)) {
+                        } else if (targetItemId != null && localInventories.includes(targetItemId)) {
                             inputProcessorRef.current!.handleFunctionFromApp([
                                 `You can't eat a ${targetItemName}. That would be crazy.`
                             ]);
@@ -358,17 +400,22 @@ export default function CmdOrigin() {
             drink(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
-                const itemType = storyCore.getItemTypeById(targetItemId);
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+                const itemType = targetItemId != null ? inventoryManager.getItemTypeById(targetItemId) : null;
+                const currentRoomId = roomNavigator.getCurrentRoomId();
 
-                if (localInventories.includes(targetItemId) &&
+                if (targetItemId != null && localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_DRINK) {
-                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.drinkObject(targetItemId));
+                    inputProcessorRef.current!.handleFunctionFromApp(
+                        inventoryManager.drinkObject(currentRoomId, targetItemId)
+                    );
                 } else {
                     if (targetItemName != null) {
-                        if (localInventories.includes(targetItemId) && targetItemId === 16) {
-                            inputProcessorRef.current!.handleFunctionFromApp(storyCore.drinkPoison(targetItemId));
-                        } else if (localInventories.includes(targetItemId)) {
+                        if (targetItemId != null && localInventories.includes(targetItemId) && targetItemId === 16) {
+                            inputProcessorRef.current!.handleFunctionFromApp(
+                                inventoryManager.drinkPoison(currentRoomId, targetItemId, () => gameState.handleDeath())
+                            );
+                        } else if (targetItemId != null && localInventories.includes(targetItemId)) {
                             inputProcessorRef.current!.handleFunctionFromApp([
                                 `You can't drink ${targetItemName}. That's preposterous.`
                             ]);
@@ -400,22 +447,42 @@ export default function CmdOrigin() {
                     return;
                 }
 
-                if (storyCore.isValidDirection(chosenDirection)) {
-                    const nextRoomInfo = storyCore.getNextRoomInfo(chosenDirection);
+                // Convert uppercase abbr (N/E/W/S) to lowercase ExitDirection (n/e/w/s)
+                const directionLower = chosenDirection.abbr.toLowerCase();
 
-                    if (handlePotentiallyFatalMistake(nextRoomInfo.nextRoom)) {
-                        return;
+                if (roomNavigator.isValidDirection(directionLower)) {
+                    // Compute destination room id to check for space fatal mistake before moving
+                    const currentRoom = roomNavigator.getCurrentRoom();
+                    const possibility = environmentValues.exitPossibilities.find(
+                        (p) => p.abbr.toLowerCase() === directionLower
+                    );
+                    if (possibility != null) {
+                        const changeAxis = possibility.coordModifier.direction;
+                        const amount = possibility.coordModifier.amount;
+                        const nextX = changeAxis === 'X' ? currentRoom.x + amount : currentRoom.x;
+                        const nextY = changeAxis === 'Y' ? currentRoom.y + amount : currentRoom.y;
+                        const nextRoom = rooms.getRoom({ x: nextX, y: nextY });
+                        const nextRoomId = nextRoom != null ? String(nextRoom.id) : roomNavigator.getCurrentRoomId();
+
+                        if (handlePotentiallyFatalMistake(nextRoomId)) {
+                            return;
+                        }
                     }
 
-                    storyCore.handlePositionChange(nextRoomInfo);
-                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.getCurrentRoomDescription());
+                    const moveResponse = roomNavigator.handlePositionChange(directionLower);
+                    if (moveResponse.length > 0) {
+                        // Error response (e.g. room not found)
+                        inputProcessorRef.current!.handleFunctionFromApp(moveResponse);
+                    } else {
+                        inputProcessorRef.current!.handleFunctionFromApp(roomNavigator.getCurrentRoomDescription());
+                    }
                 } else {
                     inputProcessorRef.current!.handleFunctionFromApp(['you can\'t go that way.']);
                 }
             },
 
             exits() {
-                inputProcessorRef.current!.handleFunctionFromApp([storyCore.getExitDescriptions()]);
+                inputProcessorRef.current!.handleFunctionFromApp([roomNavigator.getExitDescriptions()]);
             },
 
             items() { scope.list(); },
@@ -428,12 +495,12 @@ export default function CmdOrigin() {
                     return;
                 }
 
-                const curr = storyCore.getWeightOfUserInventory();
+                const curr = inventoryManager.getWeightOfUserInventory();
                 const weightStats = `[${curr}/${environmentValues.WEIGHT_CAPACITY}]`;
                 const inventoryResponse = [`You're carrying ${weightStats}:`];
 
                 yourItems.forEach((currItem: number) => {
-                    inventoryResponse.push(` - ${storyCore.getItemNameById(currItem)}`);
+                    inventoryResponse.push(` - ${inventoryManager.getItemNameById(currItem)}`);
                 });
 
                 inputProcessorRef.current!.handleFunctionFromApp(inventoryResponse);
@@ -462,10 +529,10 @@ export default function CmdOrigin() {
                 const theArgs = passedArgs || [];
                 const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
                 const localInventories = getLocalAndPersonalInventories();
-                const objectId = storyCore.getItemIdByName(objectName);
+                const objectId = inventoryManager.getItemIdByName(objectName);
 
                 if (objectId != null && localInventories.includes(objectId)) {
-                    const itemDescription = storyCore.getItemDetailsById(objectId);
+                    const itemDescription = inventoryManager.getItemDetailsById(objectId) ?? '';
                     inputProcessorRef.current!.handleFunctionFromApp([itemDescription]);
                 } else {
                     if (objectName != null) {
@@ -522,10 +589,10 @@ export default function CmdOrigin() {
                 const operator = args[1];
                 const recipientName = args[2] === 'the' ? args[3] : args[2];
                 const yourItems = persistence.getStoryInventoryItems();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
-                const currRoom = storyCore.getCurrentRoomId();
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+                const currRoom = parseInt(roomNavigator.getCurrentRoomId(), 10);
 
-                if (targetItemId == null || targetItemId === '') {
+                if (targetItemId == null) {
                     inputProcessorRef.current!.handleFunctionFromApp([`What's a ${targetItemName}?`]);
                     return;
                 }
@@ -549,7 +616,7 @@ export default function CmdOrigin() {
                         if (currRoom === 10) {
                             if (environmentValues.COMPLETION_ITEM_IDS.includes(targetItemId)) {
                                 inputProcessorRef.current!.handleFunctionFromApp(
-                                    storyCore.handleCompletionEvent(targetItemId)
+                                    gameState.handleCompletionEvent(targetItemId)
                                 );
                                 return;
                             }
@@ -584,13 +651,13 @@ export default function CmdOrigin() {
             read(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
-                const targetItemId = storyCore.getItemIdByName(targetItemName);
-                const itemType = storyCore.getItemTypeById(targetItemId);
+                const targetItemId = inventoryManager.getItemIdByName(targetItemName);
+                const itemType = targetItemId != null ? inventoryManager.getItemTypeById(targetItemId) : null;
 
-                if (localInventories.includes(targetItemId) &&
+                if (targetItemId != null && localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_DOC) {
                     inputProcessorRef.current!.handleFunctionFromApp(
-                        storyCore.readDocument(targetItemId)
+                        inventoryManager.readDocument(targetItemId)
                     );
                 } else {
                     if (targetItemName != null) {
@@ -604,7 +671,7 @@ export default function CmdOrigin() {
             },
 
             where() {
-                inputProcessorRef.current!.handleFunctionFromApp(storyCore.whereAmI());
+                inputProcessorRef.current!.handleFunctionFromApp(roomNavigator.whereAmI());
             },
 
             surroundings(args: string[]) { scope.look(args); },
@@ -616,16 +683,16 @@ export default function CmdOrigin() {
                         scope.examine(args.slice(1));
                     } else if (chosenDirection != null) {
                         inputProcessorRef.current!.handleFunctionFromApp(
-                            storyCore.getDescriptionInDirection(chosenDirection)
+                            roomNavigator.getDescriptionInDirection(chosenDirection)
                         );
                     } else {
                         inputProcessorRef.current!.handleFunctionFromApp(
-                            storyCore.getFullRoomDescription()
+                            roomNavigator.getFullRoomDescription()
                         );
                     }
                 } else {
                     inputProcessorRef.current!.handleFunctionFromApp(
-                        storyCore.getFullRoomDescription()
+                        roomNavigator.getFullRoomDescription()
                     );
                 }
             },
@@ -638,12 +705,14 @@ export default function CmdOrigin() {
 
             xp() {
                 inputProcessorRef.current!.handleFunctionFromApp([
-                    `Your XP: ${storyCore.getXp()} / ${storyCore.getMaxXp()}`
+                    `Your XP: ${gameState.getXp()} / ${gameState.getMaxXp()}`
                 ]);
             },
 
             report() {
-                storyCore.reportStoryData();
+                const reportLines = gameState.reportGameState();
+                // eslint-disable-next-line no-console -- intentional debug output for 'report' command
+                console.log(reportLines[0]);
                 inputProcessorRef.current!.handleFunctionFromApp([
                     'Processing report...', 'Done.', '', 'See console.'
                 ]);
@@ -653,8 +722,8 @@ export default function CmdOrigin() {
             status() {
                 let result = showFlashlightStatus();
 
-                const maxXp = storyCore.getMaxXp();
-                const currXp = storyCore.getXp();
+                const maxXp = gameState.getMaxXp();
+                const currXp = gameState.getXp();
                 const deathCount = persistence.getStoryDeaths();
                 const barProgress = makeAsciiProgressBar(currXp, maxXp);
 
@@ -665,7 +734,7 @@ export default function CmdOrigin() {
                 const hasUnlockedRobot = persistence.getAllUnlockedItems().includes(10);
 
                 if (hasUnlockedRobot) {
-                    const hasCompletedGame = storyCore._getIsGameCompleted();
+                    const hasCompletedGame = gameState.getIsGameCompleted();
                     completionReport.push('');
 
                     if (hasCompletedGame) {
@@ -708,10 +777,10 @@ export default function CmdOrigin() {
             },
 
             format() {
-                storyCore.formatStoryData();
+                gameState.initGameState();
                 inputProcessorRef.current!.handleFunctionFromApp(
                     [`Welcome to Origin ${persistence.getUsername()}`, '']
-                        .concat(storyCore.getCurrentRoomDescription())
+                        .concat(roomNavigator.getCurrentRoomDescription())
                 );
             },
 
@@ -767,7 +836,7 @@ export default function CmdOrigin() {
         let welcomePrefix = 'Welcome back';
 
         if (isNewStory) {
-            storyCore.formatStoryData();
+            gameState.initGameState();
             welcomePrefix = 'Welcome to Origin';
         }
 
@@ -779,7 +848,7 @@ export default function CmdOrigin() {
             interruptPrompt: true,
             overrideScope: scope,
             response: [`${welcomePrefix} ${persistence.getUsername()}`, '']
-                .concat(storyCore.getCurrentRoomDescription())
+                .concat(roomNavigator.getCurrentRoomDescription())
         });
 
         ip.setAppEnvironment(appEnvironment);

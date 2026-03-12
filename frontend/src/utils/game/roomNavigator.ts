@@ -495,3 +495,30 @@ export function getIsRoomInSpace(roomId: string): boolean {
   if (room == null) return false;
   return room.isInSpace === true;
 }
+
+/**
+ * Return true if the current room is a dark trap or airlock.
+ * Equivalent to storyCore.getIsRoomTrap().
+ */
+export function getIsRoomTrap(): boolean {
+  const currentRoom = getCurrentRoom();
+  return currentRoom.isDarkTrap === true || currentRoom.isAirlock === true;
+}
+
+/**
+ * Return descriptive lines for what lies in a given direction from the current room.
+ * If the exit exists, returns the exit description. Otherwise returns a "nothing of interest" message.
+ * Equivalent to storyCore.getDescriptionInDirection().
+ */
+export function getDescriptionInDirection(direction: { abbr: string; word: string }): string[] {
+  const currentRoom = getCurrentRoom();
+  const exitKey = direction.abbr as 'N' | 'E' | 'W' | 'S';
+  const exitObject: RoomExit | null = currentRoom.exits[exitKey];
+  if (exitObject != null) {
+    const desc = _getExitDescription(currentRoom.id, exitKey);
+    if (desc != null) {
+      return [desc];
+    }
+  }
+  return [`There is nothing of interest to the ${direction.word.toLowerCase()}`];
+}
