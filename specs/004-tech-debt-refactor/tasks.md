@@ -182,7 +182,7 @@
 
 **Purpose**: Final verification of all success criteria across all user stories.
 
-- [ ] T060 [P] Verify SC-010 — grep for `setTimeout` in `frontend/src/components/`; confirm zero occurrences in rendering pipeline after CanvasRenderer refactor
+- [x] T060 [P] Verify SC-010 — grep for `setTimeout` in `frontend/src/components/`; confirm zero occurrences in rendering pipeline after CanvasRenderer refactor
 - [ ] T061 [P] Verify SC-011 + SC-012 — start `npm run dev -w frontend`; open browser; navigate through commands and canvas rendering; confirm zero terminal warnings and zero browser console errors/warnings
 - [ ] T061a [P] Verify FR-030 + SC-011 (API) — start `npm run dev -w api`; confirm zero deprecation warnings and startup errors in terminal output
 - [ ] T062 [P] Run production build (`npm run build -w packages/types && npm run build -w api && npm run build -w frontend`); confirm zero errors and zero warnings (FR-032)
