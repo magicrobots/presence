@@ -83,7 +83,7 @@
 ### Implementation for User Story 2
 
 - [x] T026 [US2] Create `frontend/src/routes/shared/showItemContent.ts` per `contracts/module-contracts.md` §showItemContent
-- [ ] T027 [US2] Simplify `frontend/src/routes/CmdCat.tsx` and `frontend/src/routes/CmdLess.tsx` to delegate to `showItemContent`; remove duplicated logic
+- [x] T027 [US2] Simplify `frontend/src/routes/CmdCat.tsx` and `frontend/src/routes/CmdLess.tsx` to delegate to `showItemContent`; remove duplicated logic
 - [ ] T028 [US2] Create `frontend/src/routes/shared/galleryNavigator.ts` per `contracts/module-contracts.md` §galleryNavigator with ARROWLEFT/ARROWRIGHT handlers and wrapping index logic
 - [ ] T029 [US2] Simplify `frontend/src/routes/CmdViewer.tsx` and `frontend/src/routes/CmdShop.tsx` to delegate to `galleryNavigator`; remove duplicated logic
 - [ ] T030 [US2] Extract common route command initialization pattern (context retrieval, setAppEnvironment setup) into shared utility in `frontend/src/routes/shared/`
