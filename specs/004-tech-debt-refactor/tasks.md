@@ -171,7 +171,7 @@
 - [x] T055 [P] [US6] Write persistence module tests (save, load, missing key fallback, corrupt/invalid data recovery, read-compat smoke test confirming renamed module reads data written by old module name) in `frontend/src/tests/unit/persistence.test.ts` (FR-027)
 - [x] T056 [P] [US6] Write 6+ additional terminal route command tests to reach ≥8 total across `frontend/src/tests/unit/routes/cmd-*.test.tsx` (combined with T024 + T025 = FR-028); cover command initialization and output generation
 - [x] T057 [US6] Run complete test suite (`npm test --workspaces --if-present`); confirm all tests pass; verify SC-008 (quality transitions, deformer functions, persistence, ≥8 commands all covered)
-- [ ] T058 [US6] Review `packages/types/src/index.ts` for gaps exposed by TS migration (missing type guards, incorrect shapes, untested serialization); add tests in `packages/types/` if gaps found (FR-024)
+- [x] T058 [US6] Review `packages/types/src/index.ts` for gaps exposed by TS migration (missing type guards, incorrect shapes, untested serialization); add tests in `packages/types/` if gaps found (FR-024)
 - [ ] T059 [US6] Verify monorepo test script wiring per quickstart.md — `npm test -w frontend`, `npm run test:watch -w frontend`, `npm run test:coverage -w frontend` all work correctly
 
 **Checkpoint**: Full test suite passing. All FR-024 through FR-028 criteria met.
