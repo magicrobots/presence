@@ -185,7 +185,7 @@
 - [x] T060 [P] Verify SC-010 — grep for `setTimeout` in `frontend/src/components/`; confirm zero occurrences in rendering pipeline after CanvasRenderer refactor
 - [x] T061 [P] Verify SC-011 + SC-012 — start `npm run dev -w frontend`; open browser; navigate through commands and canvas rendering; confirm zero terminal warnings and zero browser console errors/warnings
 - [x] T061a [P] Verify FR-030 + SC-011 (API) — start `npm run dev -w api`; confirm zero deprecation warnings and startup errors in terminal output
-- [ ] T062 [P] Run production build (`npm run build -w packages/types && npm run build -w api && npm run build -w frontend`); confirm zero errors and zero warnings (FR-032)
+- [x] T062 [P] Run production build (`npm run build -w packages/types && npm run build -w api && npm run build -w frontend`); confirm zero errors and zero warnings (FR-032)
 - [ ] T063 Verify SC-009 — confirm any behavior (quality adaptation, inventory management, gallery navigation) can be located within 2 minutes from directory structure alone; cross-check against quickstart.md §Key Directories
 - [ ] T064 Run full quickstart.md end-to-end verification checklist: typecheck → test → build; all three pass with zero errors as required for PR merge
 
