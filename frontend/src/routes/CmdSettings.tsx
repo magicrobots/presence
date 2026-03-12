@@ -3,34 +3,43 @@ import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import type { InputProcessor } from '../types/terminal';
 
 const ESC_TEXT = Object.freeze(['', 'ESC to quit']);
 const SETTINGS_COMMAND_REGISTRY = Object.freeze(['username', 'fontsize', 'graphicsmode', 'qualitypreset']);
 
 export default function CmdSettings() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref so scope methods always read the latest state/methods.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     useEffect(() => {
-        function commonProcesses(argValue, hideEscText, functionName, appResponse, persistenceSet, validSet) {
+        function commonProcesses(
+            argValue: string | undefined,
+            hideEscText: boolean | undefined,
+            functionName: string,
+            appResponse: string[],
+            persistenceSet: keyof typeof persistence,
+            validSet: string[]
+        ) {
             const newValue = argValue;
             const escTextLines = hideEscText ? [] : [...ESC_TEXT];
-            const jumpIn = inputProcessorRef.current.state.currentCommand === `settings ${functionName}`;
+            const jumpIn = inputProcessorRef.current!.state.currentCommand === `settings ${functionName}`;
 
             // isBlank equivalent: null/undefined or empty-after-trim
-            const isBlank = (x) => x == null || String(x).trim() === '';
+            const isBlank = (x: string | undefined | null) => x == null || String(x).trim() === '';
 
             if (jumpIn || isBlank(newValue) ||
-                (validSet.length && !validSet.includes(newValue))) {
-                inputProcessorRef.current.handleFunctionFromApp(appResponse.concat(escTextLines));
+                (validSet.length && !validSet.includes(newValue!))) {
+                inputProcessorRef.current!.handleFunctionFromApp(appResponse.concat(escTextLines));
                 return;
             }
 
-            persistence[persistenceSet](newValue);
-            inputProcessorRef.current.handleFunctionFromApp(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic method dispatch on persistence
+            (persistence as any)[persistenceSet](newValue);
+            inputProcessorRef.current!.handleFunctionFromApp(
                 [`${functionName} changed to ${newValue}.`].concat(escTextLines)
             );
         }
@@ -38,7 +47,7 @@ export default function CmdSettings() {
         const scope = {
             settingsCommandRegistry: SETTINGS_COMMAND_REGISTRY,
 
-            username(args = [], hideEscText) {
+            username(args: string[] = [], hideEscText?: boolean) {
                 const appResponse = [
                     `Current username: ${persistence.getUsername()}`,
                     '',
@@ -47,7 +56,7 @@ export default function CmdSettings() {
                 commonProcesses(args[0], hideEscText, 'username', appResponse, 'setUsername', []);
             },
 
-            fontsize(args = [], hideEscText) {
+            fontsize(args: string[] = [], hideEscText?: boolean) {
                 const appResponse = [
                     `Current fontsize: ${persistence.getFontSize()}`,
                     '',
@@ -56,7 +65,7 @@ export default function CmdSettings() {
                 commonProcesses(args[0], hideEscText, 'fontsize', appResponse, 'setFontSize', ['s', 'm', 'l']);
             },
 
-            graphicsmode(args = [], hideEscText) {
+            graphicsmode(args: string[] = [], hideEscText?: boolean) {
                 const appResponse = [
                     `Graphics mode is currently: ${persistence.getGraphicsMode()}`,
                     '',
@@ -66,7 +75,7 @@ export default function CmdSettings() {
                 commonProcesses(args[0], hideEscText, 'graphicsmode', appResponse, 'setGraphicsMode', ['hi', 'lo']);
             },
 
-            qualitypreset(args = [], hideEscText) {
+            qualitypreset(args: string[] = [], hideEscText?: boolean) {
                 const appResponse = [
                     `Current quality preset: ${persistence.getQualityPreset()}`,
                     '',
@@ -75,8 +84,8 @@ export default function CmdSettings() {
                 ];
                 const preset = args[0];
                 const validPresets = ['high', 'normal', 'low'];
-                const isBlank = (x) => x == null || String(x).trim() === '';
-                const jumpIn = inputProcessorRef.current.state.currentCommand === 'settings qualitypreset';
+                const isBlank = (x: string | undefined | null) => x == null || String(x).trim() === '';
+                const jumpIn = inputProcessorRef.current!.state.currentCommand === 'settings qualitypreset';
                 const isValid = !jumpIn && !isBlank(preset) && validPresets.includes(preset);
                 commonProcesses(preset, hideEscText, 'qualitypreset', appResponse, 'setQualityPreset', validPresets);
                 if (isValid) {
@@ -92,18 +101,19 @@ export default function CmdSettings() {
                 }
             },
 
-            commandComplete(fragment, s) {
-                return environmentHelpers.handleTabComplete(fragment, [s.settingsCommandRegistry]);
+            commandComplete(fragment: string, s: { settingsCommandRegistry: readonly string[] }) {
+                return environmentHelpers.handleTabComplete(fragment, [[...s.settingsCommandRegistry]]);
             }
         };
 
         // Handle overflow arguments — user typed e.g. "settings fontsize l" at base prompt
         const currentArgs = inputProcessor.state.currentArgs;
         if (currentArgs.length > 0) {
-            const overflowCommand = currentArgs[0];
-            if (SETTINGS_COMMAND_REGISTRY.includes(overflowCommand)) {
+            const overflowCommand = currentArgs[0] as keyof typeof scope;
+            if (SETTINGS_COMMAND_REGISTRY.includes(overflowCommand as string)) {
                 const overflowArg = currentArgs[1];
-                scope[overflowCommand]([overflowArg], true);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic dispatch
+                (scope as any)[overflowCommand]([overflowArg], true);
                 inputProcessor.quit();
                 return;
             }

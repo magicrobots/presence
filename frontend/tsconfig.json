@@ -16,7 +16,8 @@
     "allowJs": true,
     "checkJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["vite/client"]
   },
   "include": ["src"],
   "references": [{ "path": "../packages/types" }]

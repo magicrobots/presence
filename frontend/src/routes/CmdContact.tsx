@@ -4,6 +4,7 @@ import AWS from 'aws-sdk';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import type { InputProcessor } from '../types/terminal';
 
 // Vite env vars replace Ember's config/environment.js
 const ses = new AWS.SES({
@@ -16,10 +17,10 @@ const ses = new AWS.SES({
 const INIT_MESSAGE = Object.freeze(['Enter a message:', '', 'ESC to quit']);
 
 export default function CmdContact() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref so scope methods always read the latest state/methods.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     // Mutable form state — no need for React re-renders.
@@ -33,7 +34,7 @@ export default function CmdContact() {
         }
 
         function sendEmail() {
-            inputProcessorRef.current.handleFunctionFromApp(['sending message...']);
+            inputProcessorRef.current!.handleFunctionFromApp(['sending message...']);
 
             const emailParams = {
                 Destination: { ToAddresses: ['Admin <adam@magicrobots.com>'] },
@@ -50,9 +51,9 @@ export default function CmdContact() {
 
             ses.sendEmail(emailParams, function(error) {
                 if (error) {
-                    inputProcessorRef.current.handleFunctionFromApp([`message sending error: ${error}.`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`message sending error: ${error}.`]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         'message sent.',
                         '',
                         'ESC to quit, or enter another message.',
@@ -62,8 +63,8 @@ export default function CmdContact() {
             });
         }
 
-        function handleContactInput(inputString) {
-            let appResponse = [...INIT_MESSAGE];
+        function handleContactInput(inputString: string) {
+            let appResponse: string[] = [...INIT_MESSAGE];
 
             switch (stepIndexRef.current) {
                 case 0:
@@ -92,7 +93,7 @@ export default function CmdContact() {
                         }
                     }
                     resetContact();
-                    inputProcessorRef.current.handleFunctionFromApp([...INIT_MESSAGE]);
+                    inputProcessorRef.current!.handleFunctionFromApp([...INIT_MESSAGE]);
                     return;
                 default:
                     appResponse = ['press any key to continue.'];
@@ -100,13 +101,13 @@ export default function CmdContact() {
             }
 
             stepIndexRef.current = stepIndexRef.current + 1;
-            inputProcessorRef.current.handleFunctionFromApp(appResponse);
+            inputProcessorRef.current!.handleFunctionFromApp(appResponse);
         }
 
         const scope = {
             // _default is the catch-all for free-form input — receives rawUserEntry
             // before lowercasing so the message body preserves user capitalisation.
-            _default(rawInput) {
+            _default(rawInput: string) {
                 handleContactInput(rawInput);
             },
         };

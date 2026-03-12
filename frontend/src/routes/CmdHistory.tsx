@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
+import type { InputProcessor } from '../types/terminal';
 
 export default function CmdHistory() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     useEffect(() => {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({

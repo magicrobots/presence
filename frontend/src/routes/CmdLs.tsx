@@ -5,23 +5,24 @@ import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
 import MagicNumbers from '../constants/magic-numbers';
 import persistence from '../utils/persistence';
+import type { InputProcessor } from '../types/terminal';
 
 // --------------------------------------------------------------------------
 // Pure helpers — all take lsArgs explicitly to avoid module-level state
 // --------------------------------------------------------------------------
 
-function hasArg(lsArgs, pChar) {
+function hasArg(lsArgs: string | null, pChar: string): true | null {
     return !lsArgs || lsArgs.indexOf(pChar) === -1 ? null : true;
 }
 
-function getPrunedCommandList(addHiddenItems) {
+function getPrunedCommandList(addHiddenItems: true | null) {
     return commandRegistry.registry
         .filter(r => addHiddenItems ? !r.isInvisible : (!r.isHidden && !r.isInvisible))
         .slice()
         .sort((a, b) => a.commandName.localeCompare(b.commandName));
 }
 
-function formatSize(size) {
+function formatSize(size: number): string {
     const sizeWithCommas = size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     const sizeAsArray = sizeWithCommas.split(',');
     switch (sizeAsArray.length) {
@@ -33,7 +34,7 @@ function formatSize(size) {
     }
 }
 
-function getLongestValue(commandList, formatter) {
+function getLongestValue(commandList: ReturnType<typeof getPrunedCommandList>, formatter: (item: ReturnType<typeof getPrunedCommandList>[number]) => number): number {
     let longest = 0;
     commandList.forEach((currItem) => {
         const len = formatter(currItem);
@@ -42,13 +43,14 @@ function getLongestValue(commandList, formatter) {
     return longest;
 }
 
-function getOwner(appConfigObject, longstName, lsArgs) {
+function getOwner(appConfigObject: ReturnType<typeof getPrunedCommandList>[number], longstName: number, lsArgs: string | null): string {
     const hardlinks = Math.ceil(Math.random() * 5);
-    const owner = appConfigObject.owner || { uname: persistence.getUsername(), uid: '1000' };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy JS property, not in typed registry
+    const owner = (appConfigObject as any).owner || { uname: persistence.getUsername(), uid: '1000' };
     return ` ${hardlinks} ${hasArg(lsArgs, 'n') ? owner.uid.padStart(4) : owner.uname.padStart(longstName)} `;
 }
 
-function createDetailedLine(appConfigObject, longestSize, longstName, lsArgs) {
+function createDetailedLine(appConfigObject: ReturnType<typeof getPrunedCommandList>[number], longestSize: number, longstName: number, lsArgs: string | null): string {
     const itemPrefix = '-rw-r--r--';
     const itemPrefixExec = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.EXEC_COLOR}-rwxr-xr-x`;
     const itemPrefixDir = `${MagicNumbers.COLORIZE_LINE_PREFIX}${MagicNumbers.DIRECTORY_LIST_COLOR}drwxr-xr-x`;
@@ -60,10 +62,10 @@ function createDetailedLine(appConfigObject, longestSize, longstName, lsArgs) {
     const suffix = appConfigObject.isDir ? '/' : '';
 
     const displaySize = hasArg(lsArgs, 'h')
-        ? formatSize(appConfigObject.size)
-        : appConfigObject.size.toString();
+        ? formatSize(appConfigObject.size ?? 0)
+        : (appConfigObject.size ?? 0).toString();
 
-    const dateString = appConfigObject.date.toString();
+    const dateString = (appConfigObject.date ?? new Date()).toString();
     const dateArray = dateString.split(' ');
     const month = dateArray[1];
     const day = dateArray[2];
@@ -77,13 +79,14 @@ function createDetailedLine(appConfigObject, longestSize, longstName, lsArgs) {
         .concat(appConfigObject.commandName.concat(suffix));
 }
 
-function responseTall(commandList, lsArgs) {
-    const sizeFormatter = (item) => hasArg(lsArgs, 'h')
-        ? formatSize(item.size).length
-        : item.size.toString().length;
+function responseTall(commandList: ReturnType<typeof getPrunedCommandList>, lsArgs: string | null): string[] {
+    const sizeFormatter = (item: ReturnType<typeof getPrunedCommandList>[number]) => hasArg(lsArgs, 'h')
+        ? formatSize(item.size ?? 0).length
+        : (item.size ?? 0).toString().length;
 
-    const nameFormatter = (item) => {
-        const owner = item.owner || { uname: persistence.getUsername(), uid: '1000' };
+    const nameFormatter = (item: ReturnType<typeof getPrunedCommandList>[number]) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy JS property
+        const owner = (item as any).owner || { uname: persistence.getUsername(), uid: '1000' };
         return owner.uname.length;
     };
 
@@ -93,7 +96,7 @@ function responseTall(commandList, lsArgs) {
     return commandList.map(item => createDetailedLine(item, longestSize, longstName, lsArgs));
 }
 
-function responseWide(commandList) {
+function responseWide(commandList: ReturnType<typeof getPrunedCommandList>): string[] {
     const distanceBetweenItems = 2;
     const longestLen = getLongestValue(commandList, (item) => item.commandName.length) + distanceBetweenItems;
     let response = '';
@@ -103,7 +106,7 @@ function responseWide(commandList) {
     return [response];
 }
 
-function handleNonModifierArgument(lsArgs) {
+function handleNonModifierArgument(lsArgs: string): string[] {
     if (commandRegistry.getIsDirectory(lsArgs) || lsArgs.indexOf('/') > -1) {
         return [`ls: ACCESS DENIED (${lsArgs})`];
     } else if (commandRegistry.getMatchingCommand(lsArgs) != null &&
@@ -113,16 +116,16 @@ function handleNonModifierArgument(lsArgs) {
     return [`ls: cannot access '${lsArgs}': No such file or directory`];
 }
 
-function buildLsResponse(rawUserEntry, lsArgs) {
+function buildLsResponse(_rawUserEntry: string, lsArgs: string | null): string[] {
     const addHiddenItems = hasArg(lsArgs, 'a');
     let commandList = getPrunedCommandList(addHiddenItems);
 
     // apply sort flags (each creates a new sorted array to avoid mutation)
     if (hasArg(lsArgs, 'S')) {
-        commandList = commandList.slice().sort((a, b) => a.size - b.size).reverse();
+        commandList = commandList.slice().sort((a, b) => (a.size ?? 0) - (b.size ?? 0)).reverse();
     }
     if (hasArg(lsArgs, 't')) {
-        commandList = commandList.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).reverse();
+        commandList = commandList.slice().sort((a, b) => new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime()).reverse();
     }
     if (hasArg(lsArgs, 'r')) {
         commandList = commandList.slice().reverse();
@@ -149,11 +152,11 @@ function buildLsResponse(rawUserEntry, lsArgs) {
 // --------------------------------------------------------------------------
 
 export default function CmdLs() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     useEffect(() => {
         const rawUserEntry = inputProcessor.state.rawUserEntry;
-        let lsArgs = rawUserEntry.split(' ')[1] || null;
+        let lsArgs: string | null = rawUserEntry.split(' ')[1] || null;
 
         // ls ./ is same as ls with no args
         if (lsArgs === './' || lsArgs === '.') {

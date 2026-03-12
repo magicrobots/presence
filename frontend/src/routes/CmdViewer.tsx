@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
+import type { InputProcessor } from '../types/terminal';
 
 const STILL_IMAGES = Object.freeze([
     'bot_00.jpg',
@@ -13,11 +14,11 @@ const STILL_IMAGES = Object.freeze([
 ]);
 
 export default function CmdViewer() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref to inputProcessor so the keyOverride closures (created
     // once in useEffect) can always call the latest setBgImage.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     // Mutable index that doesn't need to trigger re-renders.
@@ -29,7 +30,7 @@ export default function CmdViewer() {
         }
 
         function displayImage() {
-            inputProcessorRef.current.setBgImage(getImagePath());
+            inputProcessorRef.current!.setBgImage(getImagePath());
         }
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({

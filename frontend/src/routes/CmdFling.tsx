@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
 import persistence from '../utils/persistence';
+import type { InputProcessor } from '../types/terminal';
 
 // --------------------------------------------------------------------------
 // Constants
@@ -12,7 +13,22 @@ const MISSING_INPUT_PREFIX = '  ERROR: Missing required input: ';
 const WIND_DIRECTION_BEHIND = 1;
 const WIND_DIRECTION_AGAINST = -1;
 
-const COMMANDS = Object.freeze([
+interface Command {
+    cmdName: string;
+    description: string;
+}
+
+interface Animal {
+    name: string;
+    weight: number;
+    airResistance: number;
+    exclamation: string;
+    waver: string;
+    lander: string;
+    landInteraction: string;
+}
+
+const COMMANDS: readonly Command[] = Object.freeze([
     { cmdName: 'fling',   description: 'fling stuff' },
     { cmdName: 'target',  description: 'display environmental variables' },
     { cmdName: 'critters', description: 'list launchable animals' },
@@ -21,7 +37,7 @@ const COMMANDS = Object.freeze([
 ]);
 
 // weight scale: worm=1, elephant=100   air resistance scale: bullet=1, feather=100
-const ANIMALS = Object.freeze([
+const ANIMALS: readonly Animal[] = Object.freeze([
     { name: 'chicken', weight: 8,  airResistance: 50, exclamation: 'BUKAAAAAAAARK!',        waver: 'wings',       lander: 'face',  landInteraction: 'careens' },
     { name: 'piglet',  weight: 16, airResistance: 25, exclamation: 'SQUEEEEEEEEEEE!',        waver: 'legs',        lander: 'snout', landInteraction: 'rolls'   },
     { name: 'turkey',  weight: 24, airResistance: 47, exclamation: 'GOBBLEGOBBLEGOBBLE!',    waver: 'floppy neck', lander: 'claws', landInteraction: 'scrabbles' },
@@ -34,10 +50,10 @@ const ANIMALS = Object.freeze([
 // --------------------------------------------------------------------------
 
 export default function CmdFling() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref so scope methods always read the latest state/methods.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     // Mutable game state — no need for React re-renders.
@@ -71,7 +87,7 @@ export default function CmdFling() {
             ));
         }
 
-        function doFling(animal, effort) {
+        function doFling(animal: Animal, effort: number): string[] {
             const windChillFactor = 0.03;
             const windAdjustment = windRef.current.velocity *
                 windRef.current.direction *
@@ -95,7 +111,7 @@ export default function CmdFling() {
             const intro = environmentHelpers.getRandomResponseFromList(introSet);
             const preLanding = environmentHelpers.getRandomResponseFromList(landingSet);
 
-            let response = [
+            let response: string[] = [
                 'There is a moment of quiet.',
                 '',
                 `${intro} and "${animal.exclamation}" the ${animal.name} flies skyward, its ${animal.waver} waving helplessly in the air.`,
@@ -123,16 +139,16 @@ export default function CmdFling() {
 
         const scope = {
             help() {
-                inputProcessorRef.current.handleFunctionFromApp(showCommands());
+                inputProcessorRef.current!.handleFunctionFromApp(showCommands());
             },
 
             stats() {
                 const oldRecord = persistence.getFlingRecord();
                 const responseBase = 'Number of tries till perfect fling:';
                 if (oldRecord != null) {
-                    inputProcessorRef.current.handleFunctionFromApp([`${responseBase} ${oldRecord}`, 'Nice.']);
+                    inputProcessorRef.current!.handleFunctionFromApp([`${responseBase} ${oldRecord}`, 'Nice.']);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `${responseBase} N/A`,
                         'You have yet to achieve a perfect fling. Keep at it, I have faith in you.',
                     ]);
@@ -140,7 +156,7 @@ export default function CmdFling() {
             },
 
             critters() {
-                inputProcessorRef.current.handleFunctionFromApp(
+                inputProcessorRef.current!.handleFunctionFromApp(
                     ANIMALS.map(critter =>
                         `${critter.name} [ weight: ${critter.weight}, air resistance: ${critter.airResistance} ]`
                     )
@@ -166,17 +182,17 @@ export default function CmdFling() {
             },
 
             target() {
-                inputProcessorRef.current.handleFunctionFromApp([showTarget()]);
+                inputProcessorRef.current!.handleFunctionFromApp([showTarget()]);
             },
 
-            fling(args = []) {
+            fling(args: string[] = []) {
                 const animalName = args[0];
                 const effort = args[1];
 
                 tryCounterRef.current = tryCounterRef.current + 1;
 
                 if (animalName == null) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `${MISSING_INPUT_PREFIX} animal you want to fling, effort value.`
                     ]);
                     return;
@@ -184,23 +200,23 @@ export default function CmdFling() {
 
                 const matchedAnimal = ANIMALS.find(a => a.name === animalName);
                 if (matchedAnimal == null) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `Sorry, we don't have a ${animalName} in the flingagerie yet.`
                     ]);
                     return;
                 }
 
-                if (effort == null || isNaN(effort)) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                if (effort == null || isNaN(Number(effort))) {
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `${MISSING_INPUT_PREFIX} effort value as number.`
                     ]);
                     return;
                 }
 
-                inputProcessorRef.current.handleFunctionFromApp(doFling(matchedAnimal, effort));
+                inputProcessorRef.current!.handleFunctionFromApp(doFling(matchedAnimal, Number(effort)));
             },
 
-            commandComplete(fragment) {
+            commandComplete(fragment: string) {
                 const commandRegistry = COMMANDS.map(c => c.cmdName);
                 const critterList = ANIMALS.map(a => a.name);
                 return environmentHelpers.handleTabComplete(fragment, [commandRegistry, critterList]);

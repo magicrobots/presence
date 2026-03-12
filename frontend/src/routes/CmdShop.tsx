@@ -2,8 +2,21 @@ import { useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
+import type { InputProcessor } from '../types/terminal';
 
-const SHOP_IMAGES = Object.freeze([
+interface ShopImage {
+    url: string;
+    itemMapId: number | null;
+}
+
+interface ShopItem {
+    id: number;
+    name: string;
+    price: number;
+    desc: string;
+}
+
+const SHOP_IMAGES: readonly ShopImage[] = Object.freeze([
     { url: 'shop.jpg', itemMapId: null },
     { url: 'teeshirt1.jpg', itemMapId: 0 },
     { url: 'hoodie2.jpg', itemMapId: 1 },
@@ -15,7 +28,7 @@ const SHOP_IMAGES = Object.freeze([
     { url: 'teeshirt3.jpg', itemMapId: 0 },
 ]);
 
-const SHOP_ITEMS = Object.freeze([
+const SHOP_ITEMS: readonly ShopItem[] = Object.freeze([
     { id: 0, name: 'Teeshirt', price: 35, desc: 'Yellow.' },
     { id: 1, name: 'Hoodie (light weight)', price: 65, desc: 'Black.' },
     { id: 2, name: 'Sticker Pack', price: 7, desc: 'Five assorted stickers.' },
@@ -31,16 +44,16 @@ const MAIN_DESCRIPTION = Object.freeze([
     '? to show this message again.',
 ]);
 
-function getItems() {
+function getItems(): string[] {
     return SHOP_ITEMS.map(item => ` - $${item.price}.00 | ${item.name}`);
 }
 
 export default function CmdShop() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref to inputProcessor so the keyOverride closures (created
     // once in useEffect) can always call the latest setBgImage.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     // Mutable index that doesn't need to trigger re-renders.
@@ -52,16 +65,16 @@ export default function CmdShop() {
         }
 
         function displayImage() {
-            inputProcessorRef.current.setBgImage(getImagePath());
+            inputProcessorRef.current!.setBgImage(getImagePath());
         }
 
         const scope = {
             help() {
-                inputProcessorRef.current.handleFunctionFromApp([...MAIN_DESCRIPTION]);
+                inputProcessorRef.current!.handleFunctionFromApp([...MAIN_DESCRIPTION]);
             },
             inventory() { scope.items(); },
             items() {
-                inputProcessorRef.current.handleFunctionFromApp(getItems());
+                inputProcessorRef.current!.handleFunctionFromApp(getItems());
             },
         };
 

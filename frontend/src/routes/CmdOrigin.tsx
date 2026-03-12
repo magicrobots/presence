@@ -4,24 +4,27 @@ import { useOutletContext } from 'react-router-dom';
 import environmentHelpers from '../utils/environment-helpers';
 import environmentValues from '../constants/environment-values';
 import items from '../constants/story-items';
-import storyCore from '../utils/storyCore';
+import storeCoreRaw from '../utils/storyCore';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- storyCore is untyped JS; pending typed replacement in T033-T038
+const storyCore = storeCoreRaw as any; // any: storyCore is untyped JS
 import persistence from '../utils/persistence';
+import type { InputProcessor } from '../types/terminal';
 
 // --------------------------------------------------------------------------
 // Component
 // --------------------------------------------------------------------------
 
 export default function CmdOrigin() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     // Keep a fresh ref so scope methods always read the latest state/methods.
-    const inputProcessorRef = useRef(null);
+    const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
     // Capture whether this is a new story at render time, before any effect-side
     // mutations touch localStorage. Using a ref ensures Strict Mode's double-invoke
     // of effects always sees the original pre-mutation value.
-    const isNewStoryRef = useRef(null);
+    const isNewStoryRef = useRef<boolean | null>(null);
     if (isNewStoryRef.current === null) {
         isNewStoryRef.current = storyCore.getIsNewStory();
     }
@@ -30,19 +33,24 @@ export default function CmdOrigin() {
 
         // ---- private helpers -----------------------------------------------
 
-        function getLocalAndPersonalInventories() {
+        function getLocalAndPersonalInventories(): number[] {
             const yourItems = persistence.getStoryInventoryItems();
             const roomItems = storyCore.getRoomInventory();
             return yourItems.concat(roomItems);
         }
 
-        function getItemArticle(itemName) {
+        function getItemArticle(itemName: string): string {
             const firstLetter = itemName.charAt(0);
             return ['a', 'e', 'i', 'o', 'u'].includes(firstLetter.toLowerCase()) ? 'an' : 'a';
         }
 
-        function parseDirectionFromEntries(entries) {
-            let chosenDirection = null;
+        interface ExitPossibility {
+            abbr: string;
+            word: string;
+        }
+
+        function parseDirectionFromEntries(entries: string[]): ExitPossibility | null {
+            let chosenDirection: ExitPossibility | null = null;
             for (let i = 0; i < entries.length; i++) {
                 const currArg = entries[i];
                 for (let j = 0; j < environmentValues.exitPossibilities.length; j++) {
@@ -56,10 +64,10 @@ export default function CmdOrigin() {
             return chosenDirection;
         }
 
-        function handlePotentiallyFatalMistake(roomOverride) {
+        function handlePotentiallyFatalMistake(roomOverride?: string | number): boolean {
             const isInSpace = storyCore.getIsRoomInSpace(roomOverride);
             if (isInSpace && !persistence.getStoryInventoryItems().includes(15)) {
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     'You clutch your throat as all the air rushes out of your lungs and you feel like you\'re being pulled inside out. Outer space is a dangerous place. You die quickly.'
                 ]);
                 storyCore.handleDeath();
@@ -68,9 +76,10 @@ export default function CmdOrigin() {
             return false;
         }
 
-        function showFlashlightStatus() {
-            const lightStatus = persistence.getFlashlightStatus();
-            if (storyCore.hasFlashlight()) {
+        function showFlashlightStatus(): string[] {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- persistence stores a serialized object for flashlight status
+            const lightStatus = persistence.getFlashlightStatus() as any;
+            if (storyCore.hasFlashlight() && lightStatus != null) {
                 const power = lightStatus.batteryLevel < 1
                     ? 'Dead'
                     : lightStatus.isOn ? 'On' : 'Off';
@@ -85,10 +94,10 @@ export default function CmdOrigin() {
             return [];
         }
 
-        function makeAsciiProgressBar(curr, max) {
+        function makeAsciiProgressBar(curr: number, max: number): string {
             const completionRatio = curr / max;
             const subtractAmount = completionRatio === 1 ? 3 : 2;
-            const maxChars = inputProcessorRef.current.state.maxCharsPerLine - subtractAmount;
+            const maxChars = inputProcessorRef.current!.state.maxCharsPerLine - subtractAmount;
             const completedChars = Math.floor(completionRatio * maxChars);
             return '|'.concat(
                 '|'.padStart(completedChars - 1, '=').padEnd(maxChars - 2, '-').concat('|')
@@ -98,34 +107,34 @@ export default function CmdOrigin() {
         // Internal helpers that accept args directly, avoiding state mutation issues.
         // (Ember mutated currentArgs in pick(); React state can't be mutated.)
 
-        function _take(args) {
+        function _take(args: string[]) {
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
-            const roomItems = storyCore.getRoomInventory();
-            const targetItemId = storyCore.getItemIdByName(targetItemName);
+            const roomItems: number[] = storyCore.getRoomInventory();
+            const targetItemId: number | null = storyCore.getItemIdByName(targetItemName);
 
             if (targetItemId != null && roomItems.includes(targetItemId)) {
                 if (storyCore.canTakeItem(targetItemId)) {
                     persistence.removeItemFromRoom(storyCore.getCurrentRoomId(), targetItemId);
                     persistence.addStoryInventoryItem(targetItemId);
-                    inputProcessorRef.current.handleFunctionFromApp([`You take the ${targetItemName}`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`You take the ${targetItemName}`]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([`The ${targetItemName} is too heavy.`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`The ${targetItemName} is too heavy.`]);
                 }
             } else {
                 if (targetItemName != null) {
-                    if (persistence.getStoryInventoryItems().includes(targetItemId)) {
-                        inputProcessorRef.current.handleFunctionFromApp([`You already have the ${targetItemName}.`]);
+                    if (targetItemId != null && persistence.getStoryInventoryItems().includes(targetItemId)) {
+                        inputProcessorRef.current!.handleFunctionFromApp([`You already have the ${targetItemName}.`]);
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
+                        inputProcessorRef.current!.handleFunctionFromApp([`I don't know what a ${targetItemName} is.`]);
                     }
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([`What do you want to take?`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`What do you want to take?`]);
                 }
             }
             handlePotentiallyFatalMistake();
         }
 
-        function _use(args) {
+        function _use(args: string[]) {
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
             const localInventories = getLocalAndPersonalInventories();
             const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -133,19 +142,19 @@ export default function CmdOrigin() {
 
             if (localInventories.includes(targetItemId) &&
                 itemType === environmentValues.ITEM_TYPE_THING) {
-                inputProcessorRef.current.handleFunctionFromApp(
+                inputProcessorRef.current!.handleFunctionFromApp(
                     storyCore.useItem(targetItemId, args)
                 );
             } else {
                 if (targetItemName != null) {
-                    inputProcessorRef.current.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`You don't have a ${targetItemName}.`]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([`What do you want to use?`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`What do you want to use?`]);
                 }
             }
         }
 
-        function _drop(isThrow, args = []) {
+        function _drop(isThrow: boolean, args: string[] = []) {
             const actionWord = isThrow ? 'throw' : 'drop';
             const targetItemName = args[0] === 'the' ? args[1] : args[0];
             const userInventory = persistence.getStoryInventoryItems();
@@ -164,14 +173,14 @@ export default function CmdOrigin() {
                     response.push('');
                     response.push('It doesn\'t go very far. You feel a little silly.');
                 }
-                inputProcessorRef.current.handleFunctionFromApp(response);
+                inputProcessorRef.current!.handleFunctionFromApp(response);
             } else {
                 if (targetItemName != null) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You don't have a ${targetItemName}.`
                     ]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `What do you want to ${actionWord}?`
                     ]);
                 }
@@ -198,40 +207,40 @@ export default function CmdOrigin() {
                     'Why hello there.',
                     'Oh hai.'
                 ];
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     environmentHelpers.getRandomResponseFromList(helloResponses)
                 ]);
             },
 
             dig() {
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     'You don\'t have any tools for digging, and you are not into digging with your bare hands.'
                 ]);
             },
 
-            destroy(args) { scope.smash(args); },
-            smash(args = []) {
+            destroy(args: string[]) { scope.smash(args); },
+            smash(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
                 const localInventories = getLocalAndPersonalInventories();
 
                 if (targetItemName == null || targetItemName === '') {
-                    inputProcessorRef.current.handleFunctionFromApp(['What do you want to smash?']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['What do you want to smash?']);
                     return;
                 }
 
                 if (localInventories.includes(targetItemId)) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You're like RAAAAAA and you smash the ${targetItemName} real hard. You wish you were a giant robot though 'cause nothing really happens - you weren't cut out for smashing.`
                     ]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You don't see ${getItemArticle(targetItemName)} ${targetItemName} to smash.`
                     ]);
                 }
             },
 
-            wave(args = []) {
+            wave(args: string[] = []) {
                 let responseObjectName = '';
 
                 if (args[0] === 'to' || args[0] === 'at') {
@@ -242,18 +251,18 @@ export default function CmdOrigin() {
                     ? `You wave at the ${responseObjectName}. It doesn't wave back. You're a little disappointed but you were also kind of expecting it.`
                     : 'You wave your hand back and forth above your head.';
 
-                inputProcessorRef.current.handleFunctionFromApp([response]);
+                inputProcessorRef.current!.handleFunctionFromApp([response]);
             },
 
-            stab(args) { scope.kill(args); },
-            attack(args) { scope.kill(args); },
-            kill(args = []) {
+            stab(args: string[]) { scope.kill(args); },
+            attack(args: string[]) { scope.kill(args); },
+            kill(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
 
                 if (targetItemName == null || targetItemName === '') {
-                    inputProcessorRef.current.handleFunctionFromApp(['What do you want to attack?']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['What do you want to attack?']);
                     return;
                 }
 
@@ -263,30 +272,30 @@ export default function CmdOrigin() {
                         'Hahahahah what are you gonna destroy it with harsh language? Stop it.',
                         'You settle into your fighting stance and then immediately think better of your decision to go on the offensive. You actually feel pretty silly for even having considered it. Look at this thing.'
                     ];
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         environmentHelpers.getRandomResponseFromList(attackRobotResponses)
                     ]);
                 } else if (['yourself', 'self'].includes(targetItemName)) {
-                    inputProcessorRef.current.handleFunctionFromApp(['Come on now it\'s not that bad.']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['Come on now it\'s not that bad.']);
                 } else if (['alien', 'aliens'].includes(targetItemName) &&
                            [13, 27].includes(storyCore.getCurrentRoomId())) {
-                    inputProcessorRef.current.handleFunctionFromApp(storyCore.attackAlien());
+                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.attackAlien());
                 } else if (['ducks', 'geese', 'fish'].includes(targetItemName) &&
                            storyCore.getCurrentRoomId() === 2) {
-                    inputProcessorRef.current.handleFunctionFromApp(['That would just be cruel.']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['That would just be cruel.']);
                 } else if (localInventories.includes(targetItemId)) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You fling yourself at the ${targetItemName} and immediately discover that you've played too many videogames because you just fall down and vow to make better decisions in the future as you dust yourself off and lift yourself off the floor.`,
                         `The ${targetItemName} is unaffected.`
                     ]);
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `Try talking like that when there's ${getItemArticle(targetItemName)} ${targetItemName} around.`
                     ]);
                 }
             },
 
-            feed(args = []) {
+            feed(args: string[] = []) {
                 const targetItemName = args[0] === 'the'
                     ? args[1].toLowerCase()
                     : args[0].toLowerCase();
@@ -294,28 +303,28 @@ export default function CmdOrigin() {
 
                 if (currentRoomId === 2) {
                     if (['ducks', 'geese', 'fish'].includes(targetItemName)) {
-                        inputProcessorRef.current.handleFunctionFromApp(storyCore.feedDucks());
+                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedDucks());
                         return;
                     }
                 }
                 if (currentRoomId === 10) {
                     if (targetItemName === 'robot') {
-                        inputProcessorRef.current.handleFunctionFromApp(storyCore.feedRobot());
+                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedRobot());
                         return;
                     }
                 }
                 if (currentRoomId === 13 || currentRoomId === 27) {
                     if (targetItemName === 'alien' || targetItemName === 'aliens') {
-                        inputProcessorRef.current.handleFunctionFromApp(storyCore.feedAliens());
+                        inputProcessorRef.current!.handleFunctionFromApp(storyCore.feedAliens());
                         return;
                     }
                 }
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     `That's very nice of you but you can't feed the ${targetItemName}.`
                 ]);
             },
 
-            eat(args = []) {
+            eat(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -323,33 +332,33 @@ export default function CmdOrigin() {
 
                 if (localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_FOOD) {
-                    inputProcessorRef.current.handleFunctionFromApp(storyCore.eatObject(targetItemId));
+                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.eatObject(targetItemId));
                 } else {
                     if (targetItemName != null) {
                         if (localInventories.includes(targetItemId) && targetItemId === 11) {
                             if (storyCore.getIsRoomInSpace()) {
-                                inputProcessorRef.current.handleFunctionFromApp(storyCore.eatCake());
+                                inputProcessorRef.current!.handleFunctionFromApp(storyCore.eatCake());
                             } else {
-                                inputProcessorRef.current.handleFunctionFromApp([
+                                inputProcessorRef.current!.handleFunctionFromApp([
                                     'You try to lift the cover to get at the cake, but it seems to be powerfully sealed on there. You even try smashing the glass with a rock - it holds fast. This is no ordinary cake display. Your curiosity about the nature of the cake becomes more powerful than your hunger to eat it.'
                                 ]);
                             }
                         } else if (localInventories.includes(targetItemId)) {
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `You can't eat a ${targetItemName}. That would be crazy.`
                             ]);
                         } else {
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `If you had a ${targetItemName}, you'd eat it. But you don't have a ${targetItemName}.`
                             ]);
                         }
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp([`What do you want to eat?`]);
+                        inputProcessorRef.current!.handleFunctionFromApp([`What do you want to eat?`]);
                     }
                 }
             },
 
-            drink(args = []) {
+            drink(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -357,40 +366,40 @@ export default function CmdOrigin() {
 
                 if (localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_DRINK) {
-                    inputProcessorRef.current.handleFunctionFromApp(storyCore.drinkObject(targetItemId));
+                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.drinkObject(targetItemId));
                 } else {
                     if (targetItemName != null) {
                         if (localInventories.includes(targetItemId) && targetItemId === 16) {
-                            inputProcessorRef.current.handleFunctionFromApp(storyCore.drinkPoison(targetItemId));
+                            inputProcessorRef.current!.handleFunctionFromApp(storyCore.drinkPoison(targetItemId));
                         } else if (localInventories.includes(targetItemId)) {
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `You can't drink ${targetItemName}. That's preposterous.`
                             ]);
                         } else {
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `If you had some ${targetItemName}, you'd drink it. But you don't have any ${targetItemName}.`
                             ]);
                         }
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp([`What do you want to drink?`]);
+                        inputProcessorRef.current!.handleFunctionFromApp([`What do you want to drink?`]);
                     }
                 }
             },
 
             // --- from cmd-origin route ---
 
-            walk(args) { scope.go(args); },
-            move(args) { scope.go(args); },
-            go(args = []) {
+            walk(args: string[]) { scope.go(args); },
+            move(args: string[]) { scope.go(args); },
+            go(args: string[] = []) {
                 if (!args || args.length === 0) {
-                    inputProcessorRef.current.handleFunctionFromApp(['Which way do you want to go?']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['Which way do you want to go?']);
                     return;
                 }
 
                 const chosenDirection = parseDirectionFromEntries(args);
 
                 if (chosenDirection == null) {
-                    inputProcessorRef.current.handleFunctionFromApp(['Please enter a valid direction to go in.']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['Please enter a valid direction to go in.']);
                     return;
                 }
 
@@ -402,14 +411,14 @@ export default function CmdOrigin() {
                     }
 
                     storyCore.handlePositionChange(nextRoomInfo);
-                    inputProcessorRef.current.handleFunctionFromApp(storyCore.getCurrentRoomDescription());
+                    inputProcessorRef.current!.handleFunctionFromApp(storyCore.getCurrentRoomDescription());
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp(['you can\'t go that way.']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['you can\'t go that way.']);
                 }
             },
 
             exits() {
-                inputProcessorRef.current.handleFunctionFromApp([storyCore.getExitDescriptions()]);
+                inputProcessorRef.current!.handleFunctionFromApp([storyCore.getExitDescriptions()]);
             },
 
             items() { scope.list(); },
@@ -418,7 +427,7 @@ export default function CmdOrigin() {
                 const yourItems = persistence.getStoryInventoryItems();
 
                 if (yourItems.length === 0) {
-                    inputProcessorRef.current.handleFunctionFromApp(['You don\'t have anything.']);
+                    inputProcessorRef.current!.handleFunctionFromApp(['You don\'t have anything.']);
                     return;
                 }
 
@@ -426,33 +435,33 @@ export default function CmdOrigin() {
                 const weightStats = `[${curr}/${environmentValues.WEIGHT_CAPACITY}]`;
                 const inventoryResponse = [`You're carrying ${weightStats}:`];
 
-                yourItems.forEach((currItem) => {
+                yourItems.forEach((currItem: number) => {
                     inventoryResponse.push(` - ${storyCore.getItemNameById(currItem)}`);
                 });
 
-                inputProcessorRef.current.handleFunctionFromApp(inventoryResponse);
+                inputProcessorRef.current!.handleFunctionFromApp(inventoryResponse);
             },
 
-            pick(args = []) {
+            pick(args: string[] = []) {
                 if (args[0] === 'up') {
                     // "pick up X" → take X (skip the 'up' arg without mutating state)
                     _take(args.slice(1));
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp([`What do you want to pick up?`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`What do you want to pick up?`]);
                 }
             },
 
-            get(args) { scope.take(args); },
-            take(args = []) {
+            get(args: string[]) { scope.take(args); },
+            take(args: string[] = []) {
                 _take(args);
             },
 
-            throw(args = []) { _drop(true, args); },
-            discard(args = []) { _drop(false, args); },
-            drop(args = []) { _drop(false, args); },
+            throw(args: string[] = []) { _drop(true, args); },
+            discard(args: string[] = []) { _drop(false, args); },
+            drop(args: string[] = []) { _drop(false, args); },
 
-            inspect(args) { scope.examine(args); },
-            examine(passedArgs) {
+            inspect(args: string[]) { scope.examine(args); },
+            examine(passedArgs?: string[]) {
                 const theArgs = passedArgs || [];
                 const objectName = theArgs[0] === 'the' ? theArgs[1] : theArgs[0];
                 const localInventories = getLocalAndPersonalInventories();
@@ -460,19 +469,19 @@ export default function CmdOrigin() {
 
                 if (objectId != null && localInventories.includes(objectId)) {
                     const itemDescription = storyCore.getItemDetailsById(objectId);
-                    inputProcessorRef.current.handleFunctionFromApp([itemDescription]);
+                    inputProcessorRef.current!.handleFunctionFromApp([itemDescription]);
                 } else {
                     if (objectName != null) {
-                        inputProcessorRef.current.handleFunctionFromApp([
+                        inputProcessorRef.current!.handleFunctionFromApp([
                             `You can't learn anything more about ${objectName} by examining it.`
                         ]);
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp([`What do you want to examine?`]);
+                        inputProcessorRef.current!.handleFunctionFromApp([`What do you want to examine?`]);
                     }
                 }
             },
 
-            talk(args = []) {
+            talk(args: string[] = []) {
                 let responseObjectName = 'that';
 
                 if (args[0] === 'to') {
@@ -484,12 +493,12 @@ export default function CmdOrigin() {
                     }
                 }
 
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     `You don't know how to talk to ${responseObjectName}.`
                 ]);
             },
 
-            turn(args = []) {
+            turn(args: string[] = []) {
                 const firstArg = args[0];
 
                 if (firstArg === 'on' || firstArg === 'off') {
@@ -502,16 +511,16 @@ export default function CmdOrigin() {
                     return;
                 }
 
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     `ERROR: I do not understand turn ${firstArg}`
                 ]);
             },
 
-            use(args = []) {
+            use(args: string[] = []) {
                 _use(args);
             },
 
-            give(args = []) {
+            give(args: string[] = []) {
                 const targetItemName = args[0];
                 const operator = args[1];
                 const recipientName = args[2] === 'the' ? args[3] : args[2];
@@ -520,12 +529,12 @@ export default function CmdOrigin() {
                 const currRoom = storyCore.getCurrentRoomId();
 
                 if (targetItemId == null || targetItemId === '') {
-                    inputProcessorRef.current.handleFunctionFromApp([`What's a ${targetItemName}?`]);
+                    inputProcessorRef.current!.handleFunctionFromApp([`What's a ${targetItemName}?`]);
                     return;
                 }
 
                 if (!yourItems.includes(targetItemId)) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You don't have a ${targetItemName}`
                     ]);
                     return;
@@ -533,7 +542,7 @@ export default function CmdOrigin() {
 
                 if (operator === 'to') {
                     if (recipientName == null || recipientName === '') {
-                        inputProcessorRef.current.handleFunctionFromApp([
+                        inputProcessorRef.current!.handleFunctionFromApp([
                             `Who do you want to give the ${targetItemName} to?`
                         ]);
                         return;
@@ -542,40 +551,40 @@ export default function CmdOrigin() {
                     if (recipientName.toUpperCase() === 'ROBOT') {
                         if (currRoom === 10) {
                             if (environmentValues.COMPLETION_ITEM_IDS.includes(targetItemId)) {
-                                inputProcessorRef.current.handleFunctionFromApp(
+                                inputProcessorRef.current!.handleFunctionFromApp(
                                     storyCore.handleCompletionEvent(targetItemId)
                                 );
                                 return;
                             }
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `The robot doesn't need a ${targetItemName}.`
                             ]);
                             return;
                         } else {
-                            inputProcessorRef.current.handleFunctionFromApp([
+                            inputProcessorRef.current!.handleFunctionFromApp([
                                 `You aren't with the robot, so you can't give it the ${targetItemName}.`
                             ]);
                             return;
                         }
                     }
 
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `You can't give the ${targetItemName} to the ${recipientName}.`
                     ]);
                     return;
                 }
 
                 if (targetItemName != null) {
-                    inputProcessorRef.current.handleFunctionFromApp([
+                    inputProcessorRef.current!.handleFunctionFromApp([
                         `Who do you want to give the ${targetItemName} to?`
                     ]);
                     return;
                 }
 
-                inputProcessorRef.current.handleFunctionFromApp([`What do you want to give?`]);
+                inputProcessorRef.current!.handleFunctionFromApp([`What do you want to give?`]);
             },
 
-            read(args = []) {
+            read(args: string[] = []) {
                 const targetItemName = args[0] === 'the' ? args[1] : args[0];
                 const localInventories = getLocalAndPersonalInventories();
                 const targetItemId = storyCore.getItemIdByName(targetItemName);
@@ -583,62 +592,62 @@ export default function CmdOrigin() {
 
                 if (localInventories.includes(targetItemId) &&
                     itemType === environmentValues.ITEM_TYPE_DOC) {
-                    inputProcessorRef.current.handleFunctionFromApp(
+                    inputProcessorRef.current!.handleFunctionFromApp(
                         storyCore.readDocument(targetItemId)
                     );
                 } else {
                     if (targetItemName != null) {
-                        inputProcessorRef.current.handleFunctionFromApp([
+                        inputProcessorRef.current!.handleFunctionFromApp([
                             `The ${targetItemName} isn't a thing that you read.`
                         ]);
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp([`What do you want to read?`]);
+                        inputProcessorRef.current!.handleFunctionFromApp([`What do you want to read?`]);
                     }
                 }
             },
 
             where() {
-                inputProcessorRef.current.handleFunctionFromApp(storyCore.whereAmI());
+                inputProcessorRef.current!.handleFunctionFromApp(storyCore.whereAmI());
             },
 
-            surroundings(args) { scope.look(args); },
-            look(args = []) {
+            surroundings(args: string[]) { scope.look(args); },
+            look(args: string[] = []) {
                 if (args != null && args.length > 0) {
                     const chosenDirection = parseDirectionFromEntries(args);
 
                     if (args[0] === 'at') {
                         scope.examine(args.slice(1));
                     } else if (chosenDirection != null) {
-                        inputProcessorRef.current.handleFunctionFromApp(
+                        inputProcessorRef.current!.handleFunctionFromApp(
                             storyCore.getDescriptionInDirection(chosenDirection)
                         );
                     } else {
-                        inputProcessorRef.current.handleFunctionFromApp(
+                        inputProcessorRef.current!.handleFunctionFromApp(
                             storyCore.getFullRoomDescription()
                         );
                     }
                 } else {
-                    inputProcessorRef.current.handleFunctionFromApp(
+                    inputProcessorRef.current!.handleFunctionFromApp(
                         storyCore.getFullRoomDescription()
                     );
                 }
             },
 
             save() {
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     'Story progress is auto-saved to local client, no need to manually save.  But I like that you care.'
                 ]);
             },
 
             xp() {
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     `Your XP: ${storyCore.getXp()} / ${storyCore.getMaxXp()}`
                 ]);
             },
 
             report() {
                 storyCore.reportStoryData();
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     'Processing report...', 'Done.', '', 'See console.'
                 ]);
             },
@@ -650,12 +659,12 @@ export default function CmdOrigin() {
                 const maxXp = storyCore.getMaxXp();
                 const currXp = storyCore.getXp();
                 const deathCount = persistence.getStoryDeaths();
-                let barProgress = makeAsciiProgressBar(currXp, maxXp);
+                const barProgress = makeAsciiProgressBar(currXp, maxXp);
 
                 const isHacker = persistence.getAllUnlockedItems().includes(1);
                 const hackerReport = isHacker ? ['', 'Hacker Status:', ' [x] hacker'] : [];
 
-                const completionReport = [];
+                const completionReport: string[] = [];
                 const hasUnlockedRobot = persistence.getAllUnlockedItems().includes(10);
 
                 if (hasUnlockedRobot) {
@@ -668,9 +677,11 @@ export default function CmdOrigin() {
                     } else {
                         completionReport.push('Robot\'s Quest:');
                         const collectedCompletionItems = persistence.getStoryCompletionItemsCollected();
-                        environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId) => {
-                            const itemObtained = collectedCompletionItems.includes(currCompletionId);
-                            const itemName = items.getItemById(currCompletionId).name;
+                        environmentValues.COMPLETION_ITEM_IDS.forEach((currCompletionId: number) => {
+                            // getStoryCompletionItemsCollected stores ids as strings — any: legacy serialization
+                            const itemObtained = (collectedCompletionItems as unknown as number[]).includes(currCompletionId);
+                            const foundItem = items.getItemById(currCompletionId);
+                            const itemName = foundItem?.name ?? String(currCompletionId);
                             completionReport.push(` [${itemObtained ? 'x' : ' '}] ${itemName}`);
                         });
                     }
@@ -687,35 +698,36 @@ export default function CmdOrigin() {
 
                 result = result.concat(hackerReport.concat(completionReport));
 
-                if (persistence.getCakeEaten()) {
+                if (persistence.getCakeStatus() != null) {
                     result.push('');
                     result.push('You ate the cake.');
                     result.push(' [x] happiness');
                 }
 
-                result.push(['', `Deaths: ${deathCount}`]);
+                result.push('');
+                result.push(`Deaths: ${deathCount}`);
 
-                inputProcessorRef.current.handleFunctionFromApp(result);
+                inputProcessorRef.current!.handleFunctionFromApp(result);
             },
 
             format() {
                 storyCore.formatStoryData();
-                inputProcessorRef.current.handleFunctionFromApp(
+                inputProcessorRef.current!.handleFunctionFromApp(
                     [`Welcome to Origin ${persistence.getUsername()}`, '']
                         .concat(storyCore.getCurrentRoomDescription())
                 );
             },
 
             quit() {
-                inputProcessorRef.current.quit();
+                inputProcessorRef.current!.quit();
             },
 
             clear() {
-                inputProcessorRef.current.clear();
+                inputProcessorRef.current!.clear();
             },
 
             help() {
-                inputProcessorRef.current.handleFunctionFromApp([
+                inputProcessorRef.current!.handleFunctionFromApp([
                     'Origin help:',
                     '',
                     'This is an interactive text adventure. Here is a list of some of the basic commands you can use, but there are plenty of others (some of which are required to WIN) you can find by experimenting.',
@@ -736,7 +748,7 @@ export default function CmdOrigin() {
                 ]);
             },
 
-            commandComplete(fragment) {
+            commandComplete(fragment: string) {
                 const commandRegistry = [
                     'status', 'progress', 'report', 'xp', 'save', 'look', 'where',
                     'read', 'give', 'use', 'talk', 'examine', 'inspect', 'drop',
@@ -747,7 +759,7 @@ export default function CmdOrigin() {
                 ];
                 return environmentHelpers.handleTabComplete(
                     fragment,
-                    [commandRegistry, items.items.map(i => i.name)]
+                    [commandRegistry, items.items.map((i: { name: string }) => i.name)]
                 );
             },
         };
@@ -762,7 +774,7 @@ export default function CmdOrigin() {
             welcomePrefix = 'Welcome to Origin';
         }
 
-        persistence.setIsInitialVisit(false);
+        persistence.setStoryIsInitialVisit(false);
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
             activeAppName: 'cmd-origin',

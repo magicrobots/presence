@@ -3,9 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
+import type { InputProcessor } from '../types/terminal';
 
-// Identical logic to cmd-less (cat and less both show file content in this OS)
-function showItemContent(currentArgs) {
+function showItemContent(currentArgs: string[] | null): string[] {
     const itemArg = currentArgs != null ? currentArgs[0] : null;
 
     if (itemArg == null) {
@@ -26,15 +26,15 @@ function showItemContent(currentArgs) {
         return [`${itemArg} is an executable`];
     }
 
-    return matchedItem != null ? matchedItem.content : [`${itemArg}: No such file or directory`];
+    return matchedItem.content ?? [`${itemArg}: No such file or directory`];
 }
 
-export default function CmdCat() {
-    const inputProcessor = useOutletContext();
+export default function CmdLess() {
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     useEffect(() => {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
-            activeAppName: 'cmd-cat',
+            activeAppName: 'cmd-less',
             response: showItemContent(inputProcessor.state.currentArgs)
         });
 

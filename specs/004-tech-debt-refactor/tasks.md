@@ -60,7 +60,7 @@
 - [x] T017 [US1] Update all import sites of `usePersistence` → `persistence` throughout `frontend/src/` (hooks, game commands, storyCore)
 - [x] T018 [P] [US1] Rename `frontend/src/components/LoadingIndicator.jsx`, `MpfIndicator.jsx`, `ScreenInput.jsx` → `.tsx`; add prop type annotations
 - [x] T019 [US1] Rename `frontend/src/App.jsx` → `App.tsx`, `router.jsx` → `router.tsx`, `main.jsx` → `main.tsx`; add type annotations
-- [ ] T020 [US1] Rename all `frontend/src/routes/Cmd*.jsx` → `.tsx` (CmdCat, CmdLess, CmdViewer, CmdShop, and all remaining ×15 routes); add prop/context types
+- [x] T020 [US1] Rename all `frontend/src/routes/Cmd*.jsx` → `.tsx` (CmdCat, CmdLess, CmdViewer, CmdShop, and all remaining ×15 routes); add prop/context types
 - [ ] T021 [US1] Evaluate `frontend/src/context/StatusBarContext.tsx` — remove file if unused after all refactors; update any remaining references
 - [ ] T022 [US1] Fix all TypeScript strict mode errors surfaced by `tsc --noEmit` across `frontend/src/`; add inline comment for each `any`/`unknown` usage per FR-002a
 - [ ] T023 [US1] Disable `allowJs` in `frontend/tsconfig.json` (or verify no .js remain in `frontend/src/`); run strict typecheck to confirm SC-001

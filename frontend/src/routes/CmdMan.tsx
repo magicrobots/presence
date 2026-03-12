@@ -3,8 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 
 import commandRegistry from '../constants/command-registry';
 import environmentHelpers from '../utils/environment-helpers';
+import type { InputProcessor } from '../types/terminal';
 
-function getResponse(currentArgs) {
+function getResponse(currentArgs: string[] | null): string[] {
     if (currentArgs != null && currentArgs.length > 0) {
         const helpAppName = currentArgs[0];
         const matchedCommand = commandRegistry.getMatchingCommand(helpAppName);
@@ -31,7 +32,7 @@ function getResponse(currentArgs) {
 }
 
 export default function CmdMan() {
-    const inputProcessor = useOutletContext();
+    const inputProcessor = useOutletContext<InputProcessor>();
 
     useEffect(() => {
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
