@@ -109,7 +109,7 @@
 - [x] T037 [P] [US3] Create `frontend/src/utils/game/flashlightManager.ts` with hasFlashlight, turnOffFlashlight, useFlashlight, getUserCanSeeInTheDark, getIsFlashlightWorking per `contracts/module-contracts.md` §flashlightManager
 - [x] T038 [US3] Update all `storyCore.js` consumers throughout `frontend/src/` to import from new game modules; delete `frontend/src/utils/storyCore.js` after zero remaining imports verified
 - [x] T039 [US3] Refactor `frontend/src/hooks/useInputProcessor.js` → `useInputProcessor.ts`: import inputReducer; replace stateRef direct mutation (lines 583–586) with argument-passing to `_execute()` per research.md §5; dispatch typed InputActions throughout
-- [ ] T040 [US3] Write `inputReducer` unit tests covering SET_FIELDS, SET_CURSOR, PUSH_HISTORY, CLEAR, RESET actions in `frontend/src/tests/unit/inputReducer.test.ts`
+- [x] T040 [US3] Write `inputReducer` unit tests covering SET_FIELDS, SET_CURSOR, PUSH_HISTORY, CLEAR, RESET actions in `frontend/src/tests/unit/inputReducer.test.ts`
 
 **Checkpoint**: storyCore decomposed (4 modules), useInputProcessor refactored with typed reducer. Run full game session to verify game state integrity.
 
