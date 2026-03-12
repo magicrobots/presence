@@ -2,15 +2,17 @@ import { useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
+import { createGalleryEnvironment } from './shared/galleryNavigator';
+import type { GalleryImage, GalleryConfig } from './shared/galleryNavigator';
 import type { InputProcessor } from '../types/terminal';
 
-const STILL_IMAGES = Object.freeze([
-    'bot_00.jpg',
-    'bot_01.jpg',
-    'bot_02.jpg',
-    'robot.jpg',
-    'bot_04.jpg',
-    'bot_05.jpg',
+const STILL_IMAGES: readonly GalleryImage[] = Object.freeze([
+    { path: 'bot_00.jpg' },
+    { path: 'bot_01.jpg' },
+    { path: 'bot_02.jpg' },
+    { path: 'robot.jpg' },
+    { path: 'bot_04.jpg' },
+    { path: 'bot_05.jpg' },
 ]);
 
 export default function CmdViewer() {
@@ -21,42 +23,29 @@ export default function CmdViewer() {
     const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
-    // Mutable index that doesn't need to trigger re-renders.
-    const currentImgIndexRef = useRef(0);
-
     useEffect(() => {
-        function getImagePath() {
-            return `stills/${STILL_IMAGES[currentImgIndexRef.current]}`;
-        }
+        const config: GalleryConfig<GalleryImage> = {
+            images: STILL_IMAGES,
+            getImagePath: (item) => {
+                const path = `stills/${item.path}`;
+                inputProcessorRef.current!.setBgImage(path);
+                return path;
+            },
+            initialResponse: ['<- use arrows to navigate imagery ->', 'ESC to quit'],
+        };
 
-        function displayImage() {
-            inputProcessorRef.current!.setBgImage(getImagePath());
-        }
+        const galleryEnv = createGalleryEnvironment(config);
 
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
+            ...galleryEnv,
             activeAppName: 'cmd-viewer',
             displayAppNameInPrompt: true,
             interruptPrompt: true,
-            response: ['<- use arrows to navigate imagery ->', 'ESC to quit'],
-            keyOverrides: {
-                ARROWLEFT: () => {
-                    let newIndex = currentImgIndexRef.current - 1;
-                    if (newIndex < 0) { newIndex = STILL_IMAGES.length - 1; }
-                    currentImgIndexRef.current = newIndex;
-                    displayImage();
-                },
-                ARROWRIGHT: () => {
-                    let newIndex = currentImgIndexRef.current + 1;
-                    if (newIndex > STILL_IMAGES.length - 1) { newIndex = 0; }
-                    currentImgIndexRef.current = newIndex;
-                    displayImage();
-                },
-            },
-            overrideScope: {}
         });
 
         inputProcessor.setAppEnvironment(appEnvironment);
-        displayImage();
+        // Display initial image
+        inputProcessorRef.current!.setBgImage(`stills/${STILL_IMAGES[0].path}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

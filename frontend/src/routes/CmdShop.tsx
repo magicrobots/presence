@@ -2,12 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import environmentHelpers from '../utils/environment-helpers';
+import { createGalleryEnvironment } from './shared/galleryNavigator';
+import type { ShopImage, GalleryConfig } from './shared/galleryNavigator';
 import type { InputProcessor } from '../types/terminal';
-
-interface ShopImage {
-    url: string;
-    itemMapId: number | null;
-}
 
 interface ShopItem {
     id: number;
@@ -17,15 +14,15 @@ interface ShopItem {
 }
 
 const SHOP_IMAGES: readonly ShopImage[] = Object.freeze([
-    { url: 'shop.jpg', itemMapId: null },
-    { url: 'teeshirt1.jpg', itemMapId: 0 },
-    { url: 'hoodie2.jpg', itemMapId: 1 },
-    { url: 'stickers3.jpg', itemMapId: 2 },
-    { url: 'hoodie1.jpg', itemMapId: 1 },
-    { url: 'teeshirt2.jpg', itemMapId: 0 },
-    { url: 'stickers1.jpg', itemMapId: 2 },
-    { url: 'hoodie3.jpg', itemMapId: 1 },
-    { url: 'teeshirt3.jpg', itemMapId: 0 },
+    { path: 'shop.jpg', itemMapId: -1 },
+    { path: 'teeshirt1.jpg', itemMapId: 0 },
+    { path: 'hoodie2.jpg', itemMapId: 1 },
+    { path: 'stickers3.jpg', itemMapId: 2 },
+    { path: 'hoodie1.jpg', itemMapId: 1 },
+    { path: 'teeshirt2.jpg', itemMapId: 0 },
+    { path: 'stickers1.jpg', itemMapId: 2 },
+    { path: 'hoodie3.jpg', itemMapId: 1 },
+    { path: 'teeshirt3.jpg', itemMapId: 0 },
 ]);
 
 const SHOP_ITEMS: readonly ShopItem[] = Object.freeze([
@@ -56,52 +53,45 @@ export default function CmdShop() {
     const inputProcessorRef = useRef<InputProcessor | null>(null);
     inputProcessorRef.current = inputProcessor;
 
-    // Mutable index that doesn't need to trigger re-renders.
-    const currentShopIndexRef = useRef(0);
-
     useEffect(() => {
-        function getImagePath() {
-            return `shop/${SHOP_IMAGES[currentShopIndexRef.current].url}`;
-        }
-
-        function displayImage() {
-            inputProcessorRef.current!.setBgImage(getImagePath());
-        }
-
-        const scope = {
-            help() {
-                inputProcessorRef.current!.handleFunctionFromApp([...MAIN_DESCRIPTION]);
+        const config: GalleryConfig<ShopImage> = {
+            images: SHOP_IMAGES,
+            getImagePath: (item) => {
+                const path = `shop/${item.path}`;
+                inputProcessorRef.current!.setBgImage(path);
+                return path;
             },
-            inventory() { scope.items(); },
-            items() {
-                inputProcessorRef.current!.handleFunctionFromApp(getItems());
+            initialResponse: [...MAIN_DESCRIPTION],
+            additionalCommands: {
+                help: () => {
+                    inputProcessorRef.current!.handleFunctionFromApp([...MAIN_DESCRIPTION]);
+                    return [...MAIN_DESCRIPTION];
+                },
+                inventory: () => {
+                    const items = getItems();
+                    inputProcessorRef.current!.handleFunctionFromApp(items);
+                    return items;
+                },
+                items: () => {
+                    const items = getItems();
+                    inputProcessorRef.current!.handleFunctionFromApp(items);
+                    return items;
+                },
             },
         };
 
+        const galleryEnv = createGalleryEnvironment(config);
+
         const appEnvironment = environmentHelpers.generateEnvironmentWithDefaults({
+            ...galleryEnv,
             activeAppName: 'cmd-shop',
             displayAppNameInPrompt: true,
             interruptPrompt: true,
-            response: [...MAIN_DESCRIPTION],
-            keyOverrides: {
-                ARROWLEFT: () => {
-                    let newIndex = currentShopIndexRef.current - 1;
-                    if (newIndex < 0) { newIndex = SHOP_IMAGES.length - 1; }
-                    currentShopIndexRef.current = newIndex;
-                    displayImage();
-                },
-                ARROWRIGHT: () => {
-                    let newIndex = currentShopIndexRef.current + 1;
-                    if (newIndex > SHOP_IMAGES.length - 1) { newIndex = 0; }
-                    currentShopIndexRef.current = newIndex;
-                    displayImage();
-                },
-            },
-            overrideScope: scope
         });
 
         inputProcessor.setAppEnvironment(appEnvironment);
-        displayImage();
+        // Display initial image
+        inputProcessorRef.current!.setBgImage(`shop/${SHOP_IMAGES[0].path}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
