@@ -128,7 +128,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T043 [US4] Refactor `frontend/src/utils/deformers.js` → `deformers.ts`: export pixelizeBit, shiftPixel, glowEdgesBit, applyAllDeformers individually with typed signatures and JSDoc per `contracts/module-contracts.md` §deformers; retain pixel loops (research.md §1)
+- [x] T043 [US4] Refactor `frontend/src/utils/deformers.js` → `deformers.ts`: export pixelizeBit, shiftPixel, glowEdgesBit, applyAllDeformers individually with typed signatures and JSDoc per `contracts/module-contracts.md` §deformers; retain pixel loops (research.md §1)
 - [ ] T044 [US4] Create `frontend/src/components/canvas/qualityAdapter.ts` with createQualityAdapter and evaluateQuality (pure, no side effects, includes debounce via lastTransitionMs) per `contracts/module-contracts.md` §qualityAdapter
 - [ ] T045 [US4] Create `frontend/src/components/canvas/CanvasRenderer.ts` with initCanvases, renderFrame, triggerRepaint (double-rAF pattern replacing setTimeout z-index hack per FR-018) per `contracts/module-contracts.md` §CanvasRenderer; set imageSmoothingEnabled=false before every drawImage call
 - [ ] T046 [US4] Refactor `frontend/src/components/IzaComputer.jsx` → `IzaComputer.tsx` as orchestrator-only component (~150 lines) that wires CanvasRenderer and qualityAdapter; add inline comment documenting dual-canvas data flow per FR-016
