@@ -1,42 +1,50 @@
 module.exports = {
   root: true,
   parserOptions: {
-    ecmaVersion: 2017,
-    sourceType: 'module'
+    ecmaVersion: 2020,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true
+    }
   },
   plugins: [
-    'ember'
+    'react',
+    'react-hooks'
   ],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended'
   ],
   env: {
-    browser: true
+    browser: true,
+    es6: true
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
   },
   rules: {
-    'block-indentation': 4,
-    'no-console': 1
+    'no-console': 1,
+    'react/react-in-jsx-scope': 'off'
   },
   overrides: [
     // node files
     {
       files: [
         '.eslintrc.js',
-        '.template-lintrc.js',
-        'ember-cli-build.js',
-        'testem.js',
-        'blueprints/*/index.js',
-        'config/**/*.js',
-        'lib/*/index.js'
+        'vite.config.*',
+        'vitest.config.*'
       ],
       parserOptions: {
         sourceType: 'script',
-        ecmaVersion: 2015
+        ecmaVersion: 2020
       },
       env: {
         browser: false,
-        node: true
+        node: true,
+        es6: true
       }
     }
   ]
