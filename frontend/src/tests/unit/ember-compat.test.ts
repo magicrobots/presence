@@ -49,3 +49,20 @@
  *     2. `typeof useInputProcessor === 'function'` is true.
  * ──────────────────────────────────────────────────────────────────────────────
  */
+
+import { describe, it, expect } from 'vitest';
+import useInputProcessor from '../../hooks/useInputProcessor';
+
+/**
+ * Ported from the Ember QUnit test: "Unit | Service | key-handler" → "it exists"
+ *
+ * The original Ember test verified that the input-processor service could be
+ * resolved from the DI container and was truthy. The React/Vitest equivalent
+ * verifies that the useInputProcessor hook module exports a callable function —
+ * the same "the module exists and is usable" assertion in React terms.
+ */
+describe('Unit | Hook | useInputProcessor', () => {
+  it('exists and is a function (ported from Ember "it exists" assertion)', () => {
+    expect(typeof useInputProcessor).toBe('function');
+  });
+});
