@@ -65,14 +65,10 @@ export function initGameState(): void {
   persistence.setStoryDeaths(0);
   persistence.setStoryPosX(MagicNumbers.HOME_COORD_X);
   persistence.setStoryPosY(MagicNumbers.HOME_COORD_Y);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape; will be replaced when persistence is fully typed
-  (persistence as any).setStoryVisitedRooms([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).setStoryInventoryItems(MagicNumbers.INIT_USER_INVENTORY);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).setCakeEaten(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).setIsInitialVisit(true);
+  persistence.setStoryVisitedRooms([]);
+  persistence.setStoryInventoryItems([...(MagicNumbers.INIT_USER_INVENTORY as readonly number[])]);
+  persistence.setCakeEaten(false);
+  persistence.setIsInitialVisit(true);
 
   // Initialize room inventories
   const roomInventories: Record<string, number[]> = {
@@ -119,12 +115,9 @@ export function initGameState(): void {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).clearAllUnlockedDirections();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).setAllUnlockedItems([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape
-  (persistence as any).setStoryCompletionItemsCollected([]);
+  persistence.clearAllUnlockedDirections();
+  persistence.setAllUnlockedItems([]);
+  persistence.setStoryCompletionItemsCollected([]);
 
   persistence.setFlashlightStatus({
     isOn: false,
@@ -215,10 +208,7 @@ export function getXp(): number {
   const completionItemXp =
     persistence.getStoryCompletionItemsCollected().length * MagicNumbers.XP_PER_COMPLETION_ITEM;
 
-  // Unlocked directions XP — persistence.ts does not expose getAllUnlockedExits as a named export.
-  // Access via default export for backward compat; typed in T038 cleanup.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy storyCore shape; getAllUnlockedExits not yet in named exports
-  const unlockedExits: unknown[] = (persistence as any).getAllUnlockedExits?.() ?? [];
+  const unlockedExits = persistence.getAllUnlockedExits();
   const unlockedDirectionXp = unlockedExits.length * MagicNumbers.XP_PER_UNLOCK;
 
   return visitedRoomXp + unlockedItemXp + completionItemXp + unlockedDirectionXp;

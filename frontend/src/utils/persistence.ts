@@ -182,6 +182,12 @@ export function addStoryVisitedRoom(roomId: string): void {
   _setStorageObject();
 }
 
+/** Bulk-reset the visited rooms list (used by initGameState on new game). */
+export function setStoryVisitedRooms(rooms: string[]): void {
+  magicRobotsData[KEY_STORY_VISITED_ROOMS] = rooms;
+  _setStorageObject();
+}
+
 export function getStoryVisitedRooms(): string[] {
   return (_getStorageObject()[KEY_STORY_VISITED_ROOMS] as string[] | undefined) ?? [];
 }
@@ -196,6 +202,12 @@ export function addStoryInventoryItem(itemId: number): void {
     currItems = [...currItems, itemId];
   }
   magicRobotsData[KEY_STORY_INVENTORY_ITEMS] = currItems;
+  _setStorageObject();
+}
+
+/** Bulk-reset the inventory item list (used by initGameState on new game). */
+export function setStoryInventoryItems(items: number[]): void {
+  magicRobotsData[KEY_STORY_INVENTORY_ITEMS] = items;
   _setStorageObject();
 }
 
@@ -231,20 +243,34 @@ export function removeItemFromRoom(roomId: string, itemId: number): void {
   _setStorageObject();
 }
 
-export function getIsUnlockedDirectionFromRoom(roomId: string, direction: string): boolean {
-  type UnlockEntry = { roomId: string; unlocked: string[] };
-  const unlockedPairs = (
+/** Internal type for the unlocked-directions storage shape. */
+type UnlockEntry = { roomId: string; unlocked: string[] };
+
+function _getUnlockEntries(): UnlockEntry[] {
+  return (
     (_getStorageObject()[KEY_STORY_ROOM_UNLOCKED_DIRECTIONS] as UnlockEntry[] | undefined) ?? []
   );
+}
+
+export function getIsUnlockedDirectionFromRoom(roomId: string, direction: string): boolean {
+  const unlockedPairs = _getUnlockEntries();
   const roomEntry = unlockedPairs.find((r) => r.roomId === roomId);
   return roomEntry != null ? roomEntry.unlocked.includes(direction) : false;
 }
 
+/** Return all rooms with their unlocked exit directions (used for XP calculation). */
+export function getAllUnlockedExits(): UnlockEntry[] {
+  return _getUnlockEntries();
+}
+
+/** Clear all unlocked direction data (used by initGameState on new game). */
+export function clearAllUnlockedDirections(): void {
+  magicRobotsData[KEY_STORY_ROOM_UNLOCKED_DIRECTIONS] = [];
+  _setStorageObject();
+}
+
 export function setIsUnlockedDirectionInRoom(roomId: string, direction: string): void {
-  type UnlockEntry = { roomId: string; unlocked: string[] };
-  const unlockedPairs: UnlockEntry[] = (
-    (_getStorageObject()[KEY_STORY_ROOM_UNLOCKED_DIRECTIONS] as UnlockEntry[] | undefined) ?? []
-  );
+  const unlockedPairs: UnlockEntry[] = _getUnlockEntries();
   const roomEntry = unlockedPairs.find((r) => r.roomId === roomId);
   if (roomEntry != null) {
     if (!roomEntry.unlocked.includes(direction)) {
@@ -259,6 +285,12 @@ export function setIsUnlockedDirectionInRoom(roomId: string, direction: string):
 
 export function getAllUnlockedItems(): number[] {
   return (_getStorageObject()[KEY_STORY_UNLOCKED_ITEMS] as number[] | undefined) ?? [];
+}
+
+/** Bulk-reset the unlocked items list (used by initGameState on new game). */
+export function setAllUnlockedItems(items: number[]): void {
+  magicRobotsData[KEY_STORY_UNLOCKED_ITEMS] = items;
+  _setStorageObject();
 }
 
 export function unlockItem(itemId: number): void {
@@ -281,6 +313,12 @@ export function addStoryCompletionItemCollected(itemId: string): void {
     magicRobotsData[KEY_STORY_COMPLETION_ITEMS] = [...currItems, itemId];
     _setStorageObject();
   }
+}
+
+/** Bulk-reset the completion items list (used by initGameState on new game). */
+export function setStoryCompletionItemsCollected(items: string[]): void {
+  magicRobotsData[KEY_STORY_COMPLETION_ITEMS] = items;
+  _setStorageObject();
 }
 
 export function setFlashlightStatus(value: FlashlightState): void {
@@ -307,6 +345,15 @@ export function setCakeStatus(value: string): void {
   _setStorageObject();
 }
 
+/**
+ * Legacy API — stores a boolean cake-eaten flag.
+ * The original usePersistence used a boolean; new callers should prefer setCakeStatus.
+ */
+export function setCakeEaten(value: boolean): void {
+  magicRobotsData[KEY_CAKE_STATUS] = value;
+  _setStorageObject();
+}
+
 export function getCakeStatus(): string | null {
   return (_getStorageObject()[KEY_CAKE_STATUS] as string | undefined) ?? null;
 }
@@ -314,6 +361,14 @@ export function getCakeStatus(): string | null {
 export function setStoryIsInitialVisit(value: boolean): void {
   magicRobotsData[KEY_STORY_IS_INITIAL_VISIT] = value;
   _setStorageObject();
+}
+
+/**
+ * Legacy alias for setStoryIsInitialVisit — kept for backward-compat with storyCore consumers.
+ * New code should call setStoryIsInitialVisit directly.
+ */
+export function setIsInitialVisit(value: boolean): void {
+  setStoryIsInitialVisit(value);
 }
 
 export function getStoryIsInitialVisit(): boolean {
@@ -350,24 +405,32 @@ const persistence = {
   setStoryDeaths,
   getStoryDeaths,
   addStoryVisitedRoom,
+  setStoryVisitedRooms,
   getStoryVisitedRooms,
   addStoryInventoryItem,
   removeStoryInventoryItem,
   getStoryInventoryItems,
+  setStoryInventoryItems,
   getStoryRoomInventories,
   addItemToRoom,
   removeItemFromRoom,
   getIsUnlockedDirectionFromRoom,
+  getAllUnlockedExits,
+  clearAllUnlockedDirections,
   setIsUnlockedDirectionInRoom,
   getAllUnlockedItems,
+  setAllUnlockedItems,
   unlockItem,
   addStoryCompletionItemCollected,
   getStoryCompletionItemsCollected,
+  setStoryCompletionItemsCollected,
   setFlashlightStatus,
   getFlashlightStatus,
   setCakeStatus,
+  setCakeEaten,
   getCakeStatus,
   setStoryIsInitialVisit,
+  setIsInitialVisit,
   getStoryIsInitialVisit,
 } as const;
 

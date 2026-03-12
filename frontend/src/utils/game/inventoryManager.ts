@@ -389,8 +389,7 @@ export function drinkPoison(currentRoomId: string, targetItemId: number, onDeath
  */
 export function eatCake(currentRoomId: string): string[] {
   _removeItemFromWorld(currentRoomId, 11);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- setCakeEaten not yet in typed persistence
-  (persistence as any).setCakeEaten?.(true);
+  persistence.setCakeEaten(true);
   return [
     "You lift the glass cover off the pedestal. You throw it on the floor, excited about finally taking a moment to yourself to eat some cake. The cover bounces with a high pitched TANG! You grasp the perfect slice of cake in one hand, gently supporting the narrow end with your pinky. You stare down your snack.",
     '',
