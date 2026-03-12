@@ -26,7 +26,7 @@ export interface InputProcessorState {
   isPromptCursorVisible: boolean;
   cursorPosition: number;
   currCommandIndex: number;
-  previousExecutionBlocks: unknown[];
+  previousExecutionBlocks: unknown[]; // unknown[]: execution blocks are heterogeneous display objects with no shared typed interface yet
   forceDisplayCursor: boolean;
   displayAppNameInPrompt: boolean | undefined;
   interruptPrompt: boolean | undefined;

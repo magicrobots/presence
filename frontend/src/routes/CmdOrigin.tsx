@@ -77,8 +77,7 @@ export default function CmdOrigin() {
         }
 
         function showFlashlightStatus(): string[] {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- persistence stores a serialized object for flashlight status
-            const lightStatus = persistence.getFlashlightStatus() as any;
+            const lightStatus = persistence.getFlashlightStatus();
             if (storyCore.hasFlashlight() && lightStatus != null) {
                 const power = lightStatus.batteryLevel < 1
                     ? 'Dead'
