@@ -1,13 +1,30 @@
 import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import MagicNumbers from '../constants/magic-numbers';
 
-const StatusBarContext = createContext(null);
+interface ViewportMeasurements {
+    width: number;
+    height: number;
+}
 
-export function StatusBarProvider({ children }) {
-    const [statusMessage, setStatusMessageState] = useState(null);
+interface StatusBarContextValue {
+    statusMessage: string | null;
+    drawStatusBar: (ctx: CanvasRenderingContext2D, viewportMeasurements: ViewportMeasurements) => void;
+    clearStatusMessage: () => void;
+    setStatusMessage: (newMessage: string | null) => void;
+}
 
-    function drawStatusBar(ctx, viewportMeasurements) {
+const StatusBarContext = createContext<StatusBarContextValue | null>(null);
+
+interface StatusBarProviderProps {
+    children: ReactNode;
+}
+
+export function StatusBarProvider({ children }: StatusBarProviderProps) {
+    const [statusMessage, setStatusMessageState] = useState<string | null>(null);
+
+    function drawStatusBar(ctx: CanvasRenderingContext2D, viewportMeasurements: ViewportMeasurements) {
         if (statusMessage != null) {
             // draw rect
             const rectHeight = 30;
@@ -32,7 +49,7 @@ export function StatusBarProvider({ children }) {
         setStatusMessageState(null);
     }
 
-    function setStatusMessage(newMessage) {
+    function setStatusMessage(newMessage: string | null) {
         setStatusMessageState(newMessage);
     }
 
@@ -43,8 +60,12 @@ export function StatusBarProvider({ children }) {
     );
 }
 
-export function useStatusBar() {
-    return useContext(StatusBarContext);
+export function useStatusBar(): StatusBarContextValue {
+    const ctx = useContext(StatusBarContext);
+    if (ctx === null) {
+        throw new Error('useStatusBar must be used within a StatusBarProvider');
+    }
+    return ctx;
 }
 
 export default StatusBarContext;
