@@ -152,7 +152,7 @@
 - [x] T050 [P] [US5] Move `MIGRATION_STATUS.md` and `EMBER_REACT_PATTERNS.md` to `docs/archive/` (FR-023); create `docs/archive/` if it does not exist
 - [x] T051 [US5] Remove all Ember devDependencies from root `package.json` (ember-cli, ember-data, ember-source, @ember/*, ember-template-lint, and any related packages)
 - [x] T052 [US5] Update `.eslintrc.js` — remove Ember plugin and template-lint rules; configure React-appropriate rules (FR-021)
-- [ ] T053 [US5] Audit `appveyor.yml` for stale Ember commands or artifact paths; replace each with React/Vite equivalent per research.md §8 (FR-023a)
+- [x] T053 [US5] Audit `appveyor.yml` for stale Ember commands or artifact paths; replace each with React/Vite equivalent per research.md §8 (FR-023a)
 - [ ] T053a [US5] Port the Ember QUnit test assertion concept to Vitest (FR-022 second half): using the assertion logic recorded in `frontend/src/tests/unit/ember-compat.test.ts` by T048a, implement an equivalent test using the Vitest framework, confirming the same behavior is verified in the new test suite. **Depends on T048a** (assertion already recorded); **Depends on T048** (source file deleted, port from recorded notes only).
 - [ ] T054 [US5] Verify: `npm install`, `npm run dev -w frontend`, `npm run build --workspaces --if-present` all succeed with zero errors; verify SC-006 (zero ember filenames in repo root) and SC-007
 

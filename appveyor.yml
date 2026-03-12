@@ -32,10 +32,10 @@ test_script:
 
 # build.
 build_script:
-  # add .env file containing aws keys
-  - echo AWS_KEY=%AWS_KEY_EMAIL% > config/.env
-  - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> config/.env
-  - echo BUILD_NUMBER=%buildVersion% >> config/.env
+  # add .env file containing aws keys (written to api workspace root)
+  - echo AWS_KEY=%AWS_KEY_EMAIL% > api/.env
+  - echo AWS_SECRET=%AWS_SECRET_EMAIL% >> api/.env
+  - echo BUILD_NUMBER=%buildVersion% >> api/.env
   # build workspaces in dependency order: types → api → frontend
   - npm run build -w packages/types
   - npm run build -w api
