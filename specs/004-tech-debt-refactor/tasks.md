@@ -131,7 +131,7 @@
 - [x] T043 [US4] Refactor `frontend/src/utils/deformers.js` → `deformers.ts`: export pixelizeBit, shiftPixel, glowEdgesBit, applyAllDeformers individually with typed signatures and JSDoc per `contracts/module-contracts.md` §deformers; retain pixel loops (research.md §1)
 - [x] T044 [US4] Create `frontend/src/components/canvas/qualityAdapter.ts` with createQualityAdapter and evaluateQuality (pure, no side effects, includes debounce via lastTransitionMs) per `contracts/module-contracts.md` §qualityAdapter
 - [x] T045 [US4] Create `frontend/src/components/canvas/CanvasRenderer.ts` with initCanvases, renderFrame, triggerRepaint (double-rAF pattern replacing setTimeout z-index hack per FR-018) per `contracts/module-contracts.md` §CanvasRenderer; set imageSmoothingEnabled=false before every drawImage call
-- [ ] T046 [US4] Refactor `frontend/src/components/IzaComputer.jsx` → `IzaComputer.tsx` as orchestrator-only component (~150 lines) that wires CanvasRenderer and qualityAdapter; add inline comment documenting dual-canvas data flow per FR-016
+- [x] T046 [US4] Refactor `frontend/src/components/IzaComputer.jsx` → `IzaComputer.tsx` as orchestrator-only component (~150 lines) that wires CanvasRenderer and qualityAdapter; add inline comment documenting dual-canvas data flow per FR-016
 - [ ] T047 [US4] Canvas visual fidelity verification — capture screenshots at quality levels 0–7 before and after refactor using quickstart.md §Canvas procedure; document side-by-side comparison checklist in PR (SC-004, SC-005)
 
 **Checkpoint**: Canvas pipeline decomposed. deformers.test.ts and qualityAdapter.test.ts pass. SC-010 verified (no setTimeout in rendering).
