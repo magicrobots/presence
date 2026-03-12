@@ -1,57 +1,77 @@
-# frontend
+# presence
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+A text-adventure / interactive terminal experience built with React + Vite.
 
 ## Prerequisites
 
 You will need the following things properly installed on your computer.
 
 * [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
-* [Ember CLI](https://ember-cli.com/)
-* [Google Chrome](https://google.com/chrome/)
+* [Node.js](https://nodejs.org/) 20 LTS (with npm 9+)
 
 ## Installation
 
-* `git clone <repository-url>` this repository
-* `cd frontend`
-* `npm install`
+```bash
+git clone <repository-url>
+cd presence
+npm install
+```
 
 ## Running / Development
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
-* Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
+```bash
+# Frontend dev server (React + Vite)
+npm run dev -w frontend
+# → http://localhost:5173
 
-### Code Generators
+# API server (Node/Express)
+npm run dev -w api
+```
 
-Make use of the many generators for code, try `ember help generate` for more details
+## Running Tests
 
-### Running Tests
+```bash
+# Run all tests
+npm test --workspaces --if-present
 
-* `ember test`
-* `ember test --server`
+# Run frontend tests only
+npm test -w frontend
 
-### Linting
+# Run frontend tests in watch mode
+npm run test:watch -w frontend
 
-* `npm run lint:hbs`
-* `npm run lint:js`
-* `npm run lint:js -- --fix`
+# Run with coverage
+npm run test:coverage -w frontend
+```
 
-### Building
+## Type Checking
 
-* `ember build` (development)
-* `ember build --environment production` (production)
+```bash
+# Check all workspaces
+npm run typecheck --workspaces --if-present
 
-### Deploying
+# Check frontend only
+npm run typecheck -w frontend
+```
+
+## Building
+
+```bash
+# Build all workspaces in dependency order
+npm run build -w packages/types
+npm run build -w api
+npm run build -w frontend
+
+# Or build all at once
+npm run build --workspaces --if-present
+```
+
+## Deploying
 
 * Deploy via appveyor
 
 ## Further Reading / Useful Links
 
-* [ember.js](https://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+* [React](https://react.dev/)
+* [Vite](https://vitejs.dev/)
+* [Vitest](https://vitest.dev/)
