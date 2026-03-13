@@ -261,7 +261,8 @@ function _getUnlockEntries(): UnlockEntry[] {
 
 export function getIsUnlockedDirectionFromRoom(roomId: string, direction: string): boolean {
   const unlockedPairs = _getUnlockEntries();
-  const roomEntry = unlockedPairs.find((r) => r.roomId === roomId);
+  // String() coercion handles legacy saves where roomId was stored as a number
+  const roomEntry = unlockedPairs.find((r) => String(r.roomId) === roomId);
   return roomEntry != null ? roomEntry.unlocked.includes(direction) : false;
 }
 
@@ -278,8 +279,11 @@ export function clearAllUnlockedDirections(): void {
 
 export function setIsUnlockedDirectionInRoom(roomId: string, direction: string): void {
   const unlockedPairs: UnlockEntry[] = _getUnlockEntries();
-  const roomEntry = unlockedPairs.find((r) => r.roomId === roomId);
+  // String() coercion handles legacy saves where roomId was stored as a number
+  const roomEntry = unlockedPairs.find((r) => String(r.roomId) === roomId);
   if (roomEntry != null) {
+    // Normalize legacy numeric roomId to string on first write
+    roomEntry.roomId = roomId;
     if (!roomEntry.unlocked.includes(direction)) {
       roomEntry.unlocked = [...roomEntry.unlocked, direction];
     }

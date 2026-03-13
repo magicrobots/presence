@@ -315,6 +315,26 @@ describe('save / load — unlocked directions', () => {
     setIsUnlockedDirectionInRoom('room-x', 'n');
     expect(getIsUnlockedDirectionFromRoom('room-y', 'n')).toBe(false);
   });
+
+  it('reads a direction unlocked by a legacy save with numeric roomId', () => {
+    // Regression: old Ember/pre-TS saves stored roomId as a number (e.g. 1), not a string ("1").
+    // The new code queries with String(room.id), so strict === failed on 1 === "1".
+    writeRawData({
+      'story-room-unlocked-directions': [{ roomId: 1, unlocked: ['E'] }],
+    });
+    expect(getIsUnlockedDirectionFromRoom('1', 'E')).toBe(true);
+  });
+
+  it('normalizes a legacy numeric roomId to string on write', () => {
+    writeRawData({
+      'story-room-unlocked-directions': [{ roomId: 1, unlocked: ['E'] }],
+    });
+    setIsUnlockedDirectionInRoom('1', 'W');
+    const raw = readRawData()['story-room-unlocked-directions'] as Array<{ roomId: unknown; unlocked: string[] }>;
+    expect(raw).toHaveLength(1);
+    expect(typeof raw[0].roomId).toBe('string');
+    expect(raw[0].unlocked).toContain('W');
+  });
 });
 
 // ---------------------------------------------------------------------------
